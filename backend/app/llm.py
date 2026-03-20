@@ -1,0 +1,81 @@
+import requests
+import json
+import os
+
+GROQ_API_KEY = os.getenv("GROQ_API_KEY")
+GROQ_URL = "https://api.groq.com/openai/v1/chat/completions"
+MODEL = "llama-3.1-8b-instant"
+
+def analyze_with_llm(cv_text: str, job_description: str, categoria: str = "", stack: str = "") -> dict:
+    if not GROQ_API_KEY:
+        return {"error": "GROQ_API_KEY no configurada"}
+
+    filtros = ""
+    if categoria:
+        filtros += f"\nCategoría del puesto: {categoria}"
+    if stack:
+        filtros += f"\nRequisitos técnicos clave: {stack}"
+
+    prompt = f"""Analiza este CV frente a la oferta de trabajo.{filtros}
+
+OFERTA:
+{job_description}
+
+CV:
+{cv_text}
+
+Responde ÚNICAMENTE con este JSON exacto, sin texto adicional:
+{{
+  "fortalezas": ["punto 1", "punto 2", "punto 3"],
+  "carencias": ["punto 1", "punto 2"],
+  "valoracion": "2-3 frases de valoración",
+  "recomendacion": "Entrevistar",
+  "email_candidato": "email@ejemplo.com o null",
+  "telefono_candidato": "+34 600 000 000 o null"
+}}
+
+El campo recomendacion solo puede ser: "Entrevistar", "Considerar" o "Descartar".
+Para email_candidato y telefono_candidato extrae los datos del CV si existen, si no pon null."""
+
+    headers = {
+        "Authorization": f"Bearer {GROQ_API_KEY}",
+        "Content-Type": "application/json"
+    }
+
+    body = {
+        "model": MODEL,
+        "messages": [
+            {
+                "role": "system",
+                "content": "Eres un asistente de reclutamiento experto. Responde ÚNICAMENTE con JSON válido, sin texto adicional ni markdown."
+            },
+            {
+                "role": "user",
+                "content": prompt
+            }
+        ],
+        "temperature": 0.3,
+        "max_tokens": 600
+    }
+
+    try:
+        response = requests.post(GROQ_URL, headers=headers, json=body, timeout=30)
+        response.raise_for_status()
+        raw = response.json()["choices"][0]["message"]["content"].strip()
+
+        if raw.startswith("```"):
+            raw = raw.split("```")[1]
+            if raw.startswith("json"):
+                raw = raw[4:]
+        raw = raw.strip()
+
+        return json.loads(raw)
+
+    except requests.exceptions.ConnectionError:
+        return {"error": "No se pudo conectar con Groq"}
+    except requests.exceptions.HTTPError as e:
+        return {"error": f"Error Groq API: {e.response.status_code}", "detail": e.response.text}
+    except json.JSONDecodeError:
+        return {"error": "El LLM no devolvió JSON válido", "raw": raw}
+    except Exception as e:
+        return {"error": str(e)}
