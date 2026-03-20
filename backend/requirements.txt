@@ -1,7 +1,10 @@
 fastapi
-uvicorn
+uvicorn[standard]
+pypdf
 sentence-transformers
 scikit-learn
-pypdf
+requests
 python-multipart
 python-dotenv
+sqlalchemy
+psycopg2-binary
