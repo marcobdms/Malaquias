@@ -36,7 +36,7 @@ function App() {
     files.forEach(f => formData.append('cvs', f))
 
     try {
-      const res = await fetch('http://localhost:8000/analyze', {
+      const res = await fetch('https://malaquias.onrender.com/analyze', {
         method: 'POST',
         body: formData
       })
