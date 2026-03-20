@@ -12,7 +12,12 @@ def get_embedding(text: str) -> list:
         headers=headers,
         json={"inputs": text}
     )
-    return response.json()
+    result = response.json()
+    
+    if isinstance(result, dict):
+        raise ValueError(f"Error de Hugging Face: {result}")
+    
+    return result
 
 def cosine_similarity_manual(a, b) -> float:
     a, b = np.array(a), np.array(b)
