@@ -1,9 +1,8 @@
 fastapi
 uvicorn[standard]
 pypdf
-sentence-transformers
-scikit-learn
 requests
+numpy
 python-multipart
 python-dotenv
 sqlalchemy
