@@ -1,22 +1,26 @@
-import requests
 import os
+import json
+import requests
 import numpy as np
 
-HF_TOKEN = os.getenv("HF_TOKEN")
-API_URL = "https://router.huggingface.co/models/sentence-transformers/all-MiniLM-L6-v2"
+GROQ_API_KEY = os.getenv("GROQ_API_KEY")
+
 def get_embedding(text: str) -> list:
-    headers = {"Authorization": f"Bearer {HF_TOKEN}"}
+    headers = {
+        "Authorization": f"Bearer {GROQ_API_KEY}",
+        "Content-Type": "application/json"
+    }
+    body = {
+        "model": "nomic-embed-text-v1_5",
+        "input": text
+    }
     response = requests.post(
-        API_URL,
+        "https://api.groq.com/openai/v1/embeddings",
         headers=headers,
-        json={"inputs": text}
+        json=body,
+        timeout=30
     )
-    result = response.json()
-    
-    if isinstance(result, dict):
-        raise ValueError(f"Error de Hugging Face: {result}")
-    
-    return result
+    return response.json()["data"][0]["embedding"]
 
 def cosine_similarity_manual(a, b) -> float:
     a, b = np.array(a), np.array(b)
