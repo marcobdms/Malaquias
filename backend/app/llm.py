@@ -6,7 +6,7 @@ GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 GROQ_URL = "https://api.groq.com/openai/v1/chat/completions"
 MODEL = "llama-3.1-8b-instant"
 
-def analyze_with_llm(cv_text: str, job_description: str, categoria: str = "", stack: str = "") -> dict:
+def analyze_with_llm(cv_text: str, job_description: str, categoria: str = "", stack: str = "", strictness: str = "normal") -> dict:
     if not GROQ_API_KEY:
         return {"error": "GROQ_API_KEY no configurada"}
 
@@ -16,7 +16,14 @@ def analyze_with_llm(cv_text: str, job_description: str, categoria: str = "", st
     if stack:
         filtros += f"\nRequisitos técnicos clave: {stack}"
 
+    if strictness == "estricto":
+        criterio = "Sé muy estricto. Solo recomienda 'Entrevistar' si el candidato cumple claramente los requisitos principales. Penaliza ausencia de experiencia directa."
+    else:
+        criterio = "Sé equilibrado. Valora el potencial y habilidades transferibles además de la experiencia directa."
+
     prompt = f"""Analiza este CV frente a la oferta de trabajo.{filtros}
+
+{criterio}
 
 OFERTA:
 {job_description}
@@ -34,8 +41,7 @@ Responde ÚNICAMENTE con este JSON exacto, sin texto adicional:
   "telefono_candidato": "+34 600 000 000 o null"
 }}
 
-El campo recomendacion solo puede ser: "Entrevistar", "Considerar" o "Descartar".
-Para email_candidato y telefono_candidato extrae los datos del CV si existen, si no pon null."""
+El campo recomendacion solo puede ser: "Entrevistar", "Considerar" o "Descartar"."""
 
     headers = {
         "Authorization": f"Bearer {GROQ_API_KEY}",
@@ -71,8 +77,6 @@ Para email_candidato y telefono_candidato extrae los datos del CV si existen, si
 
         return json.loads(raw)
 
-    except requests.exceptions.ConnectionError:
-        return {"error": "No se pudo conectar con Groq"}
     except requests.exceptions.HTTPError as e:
         return {"error": f"Error Groq API: {e.response.status_code}", "detail": e.response.text}
     except json.JSONDecodeError:
