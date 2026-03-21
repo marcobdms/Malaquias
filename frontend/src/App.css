@@ -490,7 +490,7 @@ select:focus {
 
 .switcher-btn {
   flex: 1;
-  padding: 6px 0;
+  padding: 6px 12px;
   font-size: 12px;
   font-weight: 500;
   border: none;
