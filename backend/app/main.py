@@ -3,9 +3,11 @@ load_dotenv()
 
 from fastapi import FastAPI, UploadFile, File, Form, Depends
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import StreamingResponse
 from typing import List, Optional
 from sqlalchemy.orm import Session
 import json
+import asyncio
 
 from .cv_parser import extract_text_from_pdf
 from .matcher import compare_cv_to_job
@@ -31,57 +33,74 @@ async def analyze_cvs(
     job_description: str = Form(...),
     categoria: Optional[str] = Form(None),
     stack: Optional[str] = Form(None),
+    strictness: Optional[str] = Form("normal"),
     cvs: List[UploadFile] = File(...),
     db: Session = Depends(get_db)
 ):
-    oferta = models.Oferta(
-        descripcion=job_description,
-        categoria=categoria,
-        stack=stack
-    )
-    db.add(oferta)
-    db.commit()
-    db.refresh(oferta)
+    total = min(len(cvs), 10)
 
-    results = []
+    async def event_stream():
+        yield f"data: {json.dumps({'event': 'start', 'total': total})}\n\n"
 
-    for cv in cvs[:10]:
-        raw_text = extract_text_from_pdf(cv.file)
-
-        if not validate_pdf_text(raw_text):
-            results.append({
-                "filename": cv.filename,
-                "match_score": 0,
-                "analysis": {"error": "PDF sin texto extraíble"}
-            })
-            continue
-
-        clean = clean_text(raw_text)
-        score = compare_cv_to_job(clean, job_description)
-        analysis = analyze_with_llm(truncate_text(clean), job_description, categoria or "", stack or "")
-
-        candidato = models.Candidato(
-            oferta_id=oferta.id,
-            filename=cv.filename,
-            match_score=round(score * 100, 2),
-            fortalezas=json.dumps(analysis.get("fortalezas", [])),
-            carencias=json.dumps(analysis.get("carencias", [])),
-            valoracion=analysis.get("valoracion", ""),
-            recomendacion=analysis.get("recomendacion", ""),
-            email_candidato=analysis.get("email_candidato"),
-            telefono_candidato=analysis.get("telefono_candidato")
+        oferta = models.Oferta(
+            descripcion=job_description,
+            categoria=categoria,
+            stack=stack
         )
-        db.add(candidato)
+        db.add(oferta)
         db.commit()
+        db.refresh(oferta)
 
-        results.append({
-            "filename": cv.filename,
-            "match_score": round(score * 100, 2),
-            "analysis": analysis
-        })
+        results = []
 
-    results.sort(key=lambda x: x["match_score"], reverse=True)
-    return {"candidates": results}
+        for i, cv in enumerate(cvs[:10]):
+            raw_text = extract_text_from_pdf(cv.file)
+
+            if not validate_pdf_text(raw_text):
+                result = {
+                    "filename": cv.filename,
+                    "match_score": 0,
+                    "analysis": {"error": "PDF sin texto extraíble"}
+                }
+            else:
+                clean = clean_text(raw_text)
+                score = compare_cv_to_job(clean, job_description)
+                analysis = analyze_with_llm(
+                    truncate_text(clean),
+                    job_description,
+                    categoria or "",
+                    stack or "",
+                    strictness or "normal"
+                )
+
+                candidato = models.Candidato(
+                    oferta_id=oferta.id,
+                    filename=cv.filename,
+                    match_score=round(score * 100, 2),
+                    fortalezas=json.dumps(analysis.get("fortalezas", [])),
+                    carencias=json.dumps(analysis.get("carencias", [])),
+                    valoracion=analysis.get("valoracion", ""),
+                    recomendacion=analysis.get("recomendacion", ""),
+                    email_candidato=analysis.get("email_candidato"),
+                    telefono_candidato=analysis.get("telefono_candidato")
+                )
+                db.add(candidato)
+                db.commit()
+
+                result = {
+                    "filename": cv.filename,
+                    "match_score": round(score * 100, 2),
+                    "analysis": analysis
+                }
+
+            results.append(result)
+            yield f"data: {json.dumps({'event': 'cv_done', 'index': i + 1, 'total': total, 'result': result})}\n\n"
+            await asyncio.sleep(0.05)
+
+        results.sort(key=lambda x: x["match_score"], reverse=True)
+        yield f"data: {json.dumps({'event': 'complete', 'candidates': results})}\n\n"
+
+    return StreamingResponse(event_stream(), media_type="text/event-stream")
 
 
 @app.get("/health")
