@@ -3,8 +3,7 @@ import os
 import numpy as np
 
 HF_TOKEN = os.getenv("HF_TOKEN")
-API_URL = "https://api-inference.huggingface.co/models/sentence-transformers/all-MiniLM-L6-v2"
-
+API_URL = "https://router.huggingface.co/models/sentence-transformers/all-MiniLM-L6-v2"
 def get_embedding(text: str) -> list:
     headers = {"Authorization": f"Bearer {HF_TOKEN}"}
     response = requests.post(
