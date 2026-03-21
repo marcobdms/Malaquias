@@ -21,17 +21,26 @@ const STACKS = {
     administracion: ['Excel', 'Contabilidad', 'Facturación', 'Office', 'ERP'],
 }
 
-export default function JobForm({ value, onChange, categoria, setCategoria, stack, setStack }) {
+export default function JobForm({
+    value,
+    onChange,
+    categoria,
+    setCategoria,
+    setStack,
+    strictness,
+    setStrictness
+}) {
     const stackOptions = STACKS[categoria] || []
 
     function handleCategoria(e) {
         setCategoria(e.target.value)
-        setStack('')
+        setStack('') // Reseteamos el stack al cambiar de categoría
     }
 
     return (
         <div className="card">
             <div className="filtros-row">
+                {/* Selector de Categoría */}
                 <div className="filtro-group">
                     <label>Categoría</label>
                     <select value={categoria} onChange={handleCategoria}>
@@ -41,26 +50,42 @@ export default function JobForm({ value, onChange, categoria, setCategoria, stac
                     </select>
                 </div>
 
-                {stackOptions.length > 0 && (
+                {/* Selector de Severidad (Solo si hay una categoría seleccionada) */}
+                {categoria && (
                     <div className="filtro-group">
-                        <label>Requisito clave</label>
-                        <select value={stack} onChange={e => setStack(e.target.value)}>
-                            <option value="">Selecciona requisito</option>
-                            {stackOptions.map(s => (
-                                <option key={s} value={s}>{s}</option>
+                        <label>Severidad</label>
+                        <div className="switcher">
+                            {['ligero', 'normal', 'estricto'].map(opt => (
+                                <button
+                                    key={opt}
+                                    className={`switcher-btn ${strictness === opt ? 'active' : ''}`}
+                                    onClick={() => setStrictness(opt)}
+                                    type="button"
+                                >
+                                    {opt.charAt(0).toUpperCase() + opt.slice(1)}
+                                </button>
                             ))}
-                        </select>
+                            <div
+                                className="switcher-thumb"
+                                style={{
+                                    transform: `translateX(${['ligero', 'normal', 'estricto'].indexOf(strictness) * 100}%)`
+                                }}
+                            />
+                        </div>
                     </div>
                 )}
             </div>
 
-            <label style={{ marginTop: '1rem' }}>Descripción del puesto</label>
-            <textarea
-                value={value}
-                onChange={e => onChange(e.target.value)}
-                placeholder="Pega aquí la oferta de trabajo completa..."
-                rows={6}
-            />
+            {/* Área de Texto para la descripción */}
+            <div style={{ display: 'flex', flexDirection: 'column', marginTop: '1rem' }}>
+                <label>Descripción del puesto</label>
+                <textarea
+                    value={value}
+                    onChange={e => onChange(e.target.value)}
+                    placeholder="Pega aquí la oferta de trabajo completa..."
+                    rows={6}
+                />
+            </div>
         </div>
     )
 }
