@@ -1,11 +1,13 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import DropZone from './components/DropZone'
 import JobForm from './components/JobForm'
 import Results from './components/Results'
 import Progress from './components/Progress'
+import Login from './pages/Login'
 import './App.css'
 
 function App() {
+  const [user, setUser] = useState(null)
   const [jobDesc, setJobDesc] = useState('')
   const [categoria, setCategoria] = useState('')
   const [stack, setStack] = useState('')
@@ -14,6 +16,23 @@ function App() {
   const [results, setResults] = useState(null)
   const [progress, setProgress] = useState({ status: 'idle', done: 0, total: 0 })
   const [error, setError] = useState(null)
+
+  useEffect(() => {
+    const token = localStorage.getItem('token')
+    const nombre = localStorage.getItem('nombre')
+    if (token && nombre) setUser(nombre)
+  }, [])
+
+  function handleLogin(nombre) {
+    setUser(nombre)
+  }
+
+  function handleLogout() {
+    localStorage.removeItem('token')
+    localStorage.removeItem('nombre')
+    setUser(null)
+    handleReset()
+  }
 
   const canAnalyze = jobDesc.trim().length > 20 && files.length > 0
   const loading = progress.status === 'analyzing'
@@ -35,9 +54,8 @@ function App() {
 
     try {
       await fetch('https://malaquias.onrender.com/health')
-    } catch {
-      // servidor dormido, esperamos
-    }
+    } catch { }
+
     setProgress({ status: 'analyzing', done: 0, total: files.length })
 
     const formData = new FormData()
@@ -48,10 +66,17 @@ function App() {
     files.forEach(f => formData.append('cvs', f))
 
     try {
+      const token = localStorage.getItem('token')
       const res = await fetch('https://malaquias.onrender.com/analyze', {
         method: 'POST',
+        headers: { 'Authorization': `Bearer ${token}` },
         body: formData
       })
+
+      if (res.status === 401) {
+        handleLogout()
+        return
+      }
 
       if (!res.ok) throw new Error(`Error del servidor: ${res.status}`)
 
@@ -86,11 +111,19 @@ function App() {
     }
   }
 
+  if (!user) return <Login onLogin={handleLogin} />
+
   return (
     <div className="app">
       <div className="header">
-        <h1>Malaquías</h1>
-        <p>Screening de CVs con IA · hasta 10 candidatos</p>
+        <div>
+          <h1>Malaquías</h1>
+          <p>Screening de CVs con IA · hasta 10 candidatos</p>
+        </div>
+        <div className="header-right">
+          <span className="header-user">{user}</span>
+          <button className="btn-logout" onClick={handleLogout}>Salir</button>
+        </div>
       </div>
 
       <JobForm
@@ -114,11 +147,7 @@ function App() {
       </button>
 
       {progress.status !== 'idle' && (
-        <Progress
-          total={progress.total}
-          done={progress.done}
-          status={progress.status}
-        />
+        <Progress total={progress.total} done={progress.done} status={progress.status} />
       )}
 
       {error && <div className="error-box">{error}</div>}
