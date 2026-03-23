@@ -31,6 +31,13 @@ function App() {
   async function handleAnalyze() {
     setError(null)
     setResults(null)
+    setProgress({ status: 'waking', done: 0, total: files.length })
+
+    try {
+      await fetch('https://malaquias.onrender.com/health')
+    } catch {
+      // servidor dormido, esperamos
+    }
     setProgress({ status: 'analyzing', done: 0, total: files.length })
 
     const formData = new FormData()

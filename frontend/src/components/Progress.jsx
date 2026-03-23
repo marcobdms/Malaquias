@@ -1,5 +1,7 @@
 export default function Progress({ total, done, status }) {
-    const pct = total > 0 ? Math.round((done / total) * 100) : 0
+    const pct = status === 'waking' ? 20
+        : total > 0 ? Math.round((done / total) * 100)
+            : 0
 
     return (
         <div className="progress-wrap">
@@ -13,6 +15,16 @@ export default function Progress({ total, done, status }) {
                             </svg>
                             {/* icono spinner — puedes cambiar por el tuyo */}
                             <span>Analizando {done} de {total}...</span>
+                        </>
+                    )}
+                    {status === 'waking' && (
+                        <>
+                            <svg width="14" height="14" viewBox="0 0 16 16" className="spin" fill="none">
+                                <circle cx="8" cy="8" r="6" stroke="currentColor" strokeWidth="1.5"
+                                    strokeDasharray="20 18" />
+                            </svg>
+                            {/* icono spinner — puedes cambiar por el tuyo */}
+                            <span>Despertando a Malaquías...</span>
                         </>
                     )}
                     {status === 'done' && (
