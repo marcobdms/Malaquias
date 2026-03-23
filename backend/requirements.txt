@@ -7,3 +7,6 @@ python-multipart
 python-dotenv
 sqlalchemy
 psycopg2-binary
+passlib[bcrypt]
+python-jose[cryptography]
+resend
