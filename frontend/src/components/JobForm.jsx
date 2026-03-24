@@ -1,36 +1,24 @@
 const CATEGORIAS = [
     { value: '', label: 'Selecciona categoría' },
-    { value: 'desarrollo', label: 'Desarrollo' },
-    { value: 'diseño', label: 'Diseño' },
-    { value: 'marketing', label: 'Marketing' },
-    { value: 'ventas', label: 'Ventas' },
-    { value: 'logistica', label: 'Logística' },
-    { value: 'rrhh', label: 'RRHH' },
+    { value: 'desarrollo', label: 'Desarrollo de Software' },
+    { value: 'diseño', label: 'Diseño UX/UI' },
+    { value: 'marketing', label: 'Marketing Digital' },
+    { value: 'ventas', label: 'Ventas y Business' },
+    { value: 'logistica', label: 'Logística y Operaciones' },
+    { value: 'rrhh', label: 'Recursos Humanos' },
     { value: 'electromecanica', label: 'Electromecánica' },
     { value: 'administracion', label: 'Administración' },
 ]
-
-const STACKS = {
-    desarrollo: ['Python', 'JavaScript', 'React', 'Node.js', 'SQL', 'Java', 'TypeScript', 'FastAPI'],
-    diseño: ['Figma', 'Adobe XD', 'Illustrator', 'Photoshop', 'UI/UX', 'Sketch'],
-    marketing: ['SEO', 'SEM', 'Google Ads', 'Meta Ads', 'Email marketing', 'Analytics'],
-    ventas: ['CRM', 'Salesforce', 'HubSpot', 'Negociación', 'B2B', 'B2C'],
-    logistica: ['ERP', 'SAP', 'MRP', 'Gestión de almacén', 'Supply chain'],
-    rrhh: ['ATS', 'Selección', 'Nóminas', 'Formación', 'HRBP'],
-    electromecanica: ['PLC', 'Soldadura', 'Mantenimiento industrial', 'Neumática', 'Hidráulica'],
-    administracion: ['Excel', 'Contabilidad', 'Facturación', 'Office', 'ERP'],
-}
 
 export default function JobForm({
     value,
     onChange,
     categoria,
     setCategoria,
-    setStack,
+    setStack, // guardado en caso de usarlo luego
     strictness,
     setStrictness
 }) {
-    const stackOptions = STACKS[categoria] || []
 
     function handleCategoria(e) {
         setCategoria(e.target.value)
@@ -38,27 +26,40 @@ export default function JobForm({
     }
 
     return (
-        <div className="card">
-            <div className="filtros-row">
+        <div className="flex flex-col gap-6">
+            <div className="flex flex-col sm:flex-row gap-6">
                 {/* Selector de Categoría */}
-                <div className="filtro-group">
-                    <label>Categoría</label>
-                    <select value={categoria} onChange={handleCategoria}>
-                        {CATEGORIAS.map(c => (
-                            <option key={c.value} value={c.value}>{c.label}</option>
-                        ))}
-                    </select>
+                <div className="flex-1">
+                    <label className="block text-[11px] font-bold text-on-surface-variant uppercase tracking-widest mb-3">
+                        Categoría de la Oferta
+                    </label>
+                    <div className="relative">
+                        <select 
+                            value={categoria} 
+                            onChange={handleCategoria}
+                            className="w-full appearance-none bg-surface-container border border-white/5 rounded-2xl px-5 py-3.5 text-on-surface text-sm focus:outline-none focus:border-outline-variant cursor-pointer hover:bg-surface-container-high transition-colors"
+                        >
+                            {CATEGORIAS.map(c => (
+                                <option key={c.value} value={c.value}>{c.label}</option>
+                            ))}
+                        </select>
+                        <span className="absolute right-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-on-surface-variant pointer-events-none">
+                            keyboard_arrow_down
+                        </span>
+                    </div>
                 </div>
 
-                {/* Selector de Severidad (Solo si hay una categoría seleccionada) */}
+                {/* Selector de Severidad */}
                 {categoria && (
-                    <div className="filtro-group">
-                        <label>Severidad</label>
-                        <div className="switcher">
+                    <div className="w-[300px]">
+                        <label className="block text-[11px] font-bold text-on-surface-variant uppercase tracking-widest mb-3">
+                            Severidad de Evaluación
+                        </label>
+                        <div className="switcher h-[52px]">
                             {['ligero', 'normal', 'estricto'].map(opt => (
                                 <button
                                     key={opt}
-                                    className={`switcher-btn ${strictness === opt ? 'active' : ''}`}
+                                    className={`switcher-btn h-full flex items-center justify-center !text-[13px] ${strictness === opt ? 'active font-bold' : ''}`}
                                     onClick={() => setStrictness(opt)}
                                     type="button"
                                 >
@@ -68,7 +69,8 @@ export default function JobForm({
                             <div
                                 className="switcher-thumb"
                                 style={{
-                                    transform: `translateX(${['ligero', 'normal', 'estricto'].indexOf(strictness) * 100}%)`
+                                    transform: `translateX(${['ligero', 'normal', 'estricto'].indexOf(strictness) * 100}%)`,
+                                    width: '33.333%'
                                 }}
                             />
                         </div>
@@ -76,14 +78,17 @@ export default function JobForm({
                 )}
             </div>
 
-            {/* Área de Texto para la descripción */}
-            <div style={{ display: 'flex', flexDirection: 'column', marginTop: '1rem' }}>
-                <label>Descripción del puesto</label>
+            {/* Área de Texto */}
+            <div>
+                <label className="block text-[11px] font-bold text-on-surface-variant uppercase tracking-widest mb-3">
+                    Descripción del puesto
+                </label>
                 <textarea
                     value={value}
                     onChange={e => onChange(e.target.value)}
-                    placeholder="Pega aquí la oferta de trabajo completa..."
-                    rows={6}
+                    placeholder="Pega aquí la oferta de trabajo completa (responsabilidades, requisitos, beneficios)..."
+                    rows={8}
+                    className="w-full bg-surface-container border border-white/5 rounded-[2rem] p-6 text-on-surface text-[15px] focus:outline-none focus:border-outline-variant transition-colors resize-y shadow-inner placeholder:text-on-surface-variant/50 leading-relaxed"
                 />
             </div>
         </div>
