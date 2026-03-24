@@ -5,6 +5,7 @@ import Results from './components/Results'
 import Progress from './components/Progress'
 import Login from './pages/Login'
 import './App.css'
+import Confirm from './pages/Confirm'
 
 function App() {
   const [user, setUser] = useState(null)
@@ -110,6 +111,8 @@ function App() {
       setProgress(p => ({ ...p, status: 'error' }))
     }
   }
+
+  if (window.location.pathname === '/confirm') return <Confirm />
 
   if (!user) return <Login onLogin={handleLogin} />
 
