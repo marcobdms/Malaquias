@@ -17,8 +17,10 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
 def hash_password(password: str) -> str:
+    if len(password.encode('utf-8')) > 72:
+        raise ValueError("La contraseña no puede tener más de 72 caracteres")
     return pwd_context.hash(password)
-
+    
 def verify_password(plain: str, hashed: str) -> bool:
     return pwd_context.verify(plain, hashed)
 
