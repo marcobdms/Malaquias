@@ -123,17 +123,18 @@ function App() {
       <Sidebar />
       <Navbar user={user} onLogout={handleLogout} />
 
-      <main className="ml-[240px] pt-14 min-h-screen flex flex-col">
+      <main className="ml-[240px] pt-14 h-screen flex flex-col xl:flex-row overflow-hidden">
         {/* Glow effect sutil */}
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-white/5 blur-[120px] rounded-full pointer-events-none z-0" />
         
-        <div className="relative z-10 p-8 max-w-5xl w-full xl:mx-auto mt-4">
+        {/* PANEL IZQUIERDO (Formulario y Subida) */}
+        <div className="relative z-10 p-8 flex-1 xl:max-w-3xl flex flex-col h-full overflow-y-auto w-full mx-auto">
           <div className="mb-8">
             <h2 className="text-3xl font-black text-on-surface tracking-tight mb-2">Cribado de Candidatos</h2>
             <p className="text-on-surface-variant">Analiza y filtra perfiles automáticamente mediante inteligencia artificial.</p>
           </div>
 
-          <div className="crystal-card flex flex-col gap-8 mb-20 relative">
+          <div className="crystal-card flex flex-col gap-8 mb-8 relative shrink-0">
             <JobForm
               value={jobDesc}
               onChange={setJobDesc}
@@ -188,30 +189,39 @@ function App() {
                     <p className="text-sm text-red-400 font-medium">{error}</p>
                 </div>
             )}
-            
-            {results && (
-                <div className="mt-8 pt-8 border-t border-outline-variant/30">
-                    <Results candidates={results} />
-                </div>
-            )}
+          </div>
+          
+          {/* Footer info stats */}
+          <div className="mt-auto pt-8 flex items-center justify-between pointer-events-none shrink-0 border-t border-white/5">
+              <div className="flex gap-12">
+                  <div>
+                      <p className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">Capacidad</p>
+                      <p className="text-lg font-bold text-on-surface">500 CV/mes</p>
+                  </div>
+                  <div>
+                      <p className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">Precisión IA</p>
+                      <p className="text-lg font-bold text-on-surface">99.4%</p>
+                  </div>
+              </div>
+              <p className="text-xs text-on-surface-variant italic">
+                  Potenciado por Malaquías Engine v2.4
+              </p>
           </div>
         </div>
 
-        {/* Footer info stats */}
-        <div className="mt-auto px-8 pb-8 flex items-center justify-between pointer-events-none">
-            <div className="flex gap-12">
-                <div>
-                    <p className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">Capacidad</p>
-                    <p className="text-lg font-bold text-on-surface">500 CV/mes</p>
+        {/* PANEL DERECHO (Resultados) */}
+        <div className="flex-1 border-l border-white/5 bg-surface-container-lowest/50 relative h-full overflow-y-auto">
+            {results ? (
+                <div className="p-8 animate-[fade-in_0.5s_ease-out]">
+                    <Results candidates={results} />
                 </div>
-                <div>
-                    <p className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">Precisión IA</p>
-                    <p className="text-lg font-bold text-on-surface">99.4%</p>
+            ) : (
+                <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-8 text-on-surface-variant opacity-50">
+                    <span className="material-symbols-outlined text-6xl mb-4 opacity-50">data_exploration</span>
+                    <p className="text-lg font-medium">Los resultados del análisis aparecerán aquí</p>
+                    <p className="text-sm mt-2 max-w-sm">Completa el formulario y sube los currículums a evaluar para comenzar el proceso de matching.</p>
                 </div>
-            </div>
-            <p className="text-xs text-on-surface-variant italic">
-                Potenciado por Malaquías Engine v2.4
-            </p>
+            )}
         </div>
       </main>
     </div>

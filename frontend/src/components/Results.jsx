@@ -4,6 +4,7 @@ export default function Results({ candidates }) {
     // Por defecto, el top candidato (índice 0) está expandido
     const [expanded, setExpanded] = useState({ 0: true })
     const [contactoVisible, setContactoVisible] = useState({})
+    const [showAll, setShowAll] = useState(false)
 
     function toggleExpand(i) {
         setExpanded(prev => ({ ...prev, [i]: !prev[i] }))
@@ -18,6 +19,8 @@ export default function Results({ candidates }) {
         const name = filename.replace('.pdf', '')
         return name.substring(0, 2).toUpperCase()
     }
+
+    const visibleCandidates = showAll ? candidates : candidates.slice(0, 4)
 
     return (
         <div className="flex flex-col gap-4">
@@ -38,7 +41,7 @@ export default function Results({ candidates }) {
                 </div>
             </div>
 
-            {candidates.map((c, i) => {
+            {visibleCandidates.map((c, i) => {
                 const a = c.analysis || {}
                 const isExpanded = !!expanded[i]
                 const isTop = i === 0
@@ -52,7 +55,7 @@ export default function Results({ candidates }) {
                         onClick={() => !isTop && toggleExpand(i)}
                     >
                         {/* Cabecera de la Tarjeta (Siempre visible) */}
-                        <div className="flex items-center justify-between gap-6">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
                             <div className="flex items-center gap-6">
                                 {/* Avatar & Badge Placed Together */}
                                 <div className="flex flex-col items-center gap-2">
@@ -70,7 +73,7 @@ export default function Results({ candidates }) {
                                     <h4 className="text-xl font-bold text-on-surface tracking-tight">
                                         {c.filename.replace('.pdf', '')}
                                     </h4>
-                                    <div className="flex items-center gap-2 mt-1">
+                                    <div className="flex flex-wrap items-center gap-2 mt-1">
                                         <span className="text-xs text-on-surface-variant bg-surface-container px-2 py-0.5 rounded-md border border-white/5">
                                             Perfil Analizado
                                         </span>
@@ -83,7 +86,7 @@ export default function Results({ candidates }) {
                                 </div>
                             </div>
 
-                            <div className="flex items-center gap-6">
+                            <div className="flex items-center gap-6 sm:justify-end">
                                 <div className="text-right">
                                     <p className="text-3xl font-black tracking-tighter text-on-surface">{score}%</p>
                                     <p className="text-[9px] font-bold text-on-surface-variant uppercase tracking-widest mt-0.5">Match Score</p>
@@ -92,7 +95,7 @@ export default function Results({ candidates }) {
                                 <div className="flex items-center gap-3">
                                     {!isTop && (
                                         <button 
-                                            className="btn-outline h-10 px-6 flex items-center justify-center"
+                                            className="btn-outline h-10 px-6 flex items-center justify-center whitespace-nowrap"
                                             onClick={(e) => { e.stopPropagation(); toggleExpand(i); }}
                                         >
                                             {isExpanded ? 'Colapsar' : 'Ver Análisis'}
@@ -100,7 +103,7 @@ export default function Results({ candidates }) {
                                     )}
                                     {isTop && tieneContacto && (
                                         <button 
-                                            className="bg-primary text-on-primary h-10 px-6 rounded-full font-semibold text-sm hover:scale-[1.02] active:scale-95 transition-transform"
+                                            className="bg-primary text-on-primary h-10 px-6 rounded-full font-semibold text-sm hover:scale-[1.02] active:scale-95 transition-transform whitespace-nowrap"
                                             onClick={(e) => toggleContacto(e, i)}
                                         >
                                             {contactoVisible[i] ? 'Ocultar info' : 'Contactar'}
@@ -200,6 +203,18 @@ export default function Results({ candidates }) {
                     </div>
                 )
             })}
+
+            {!showAll && candidates.length > 4 && (
+                <div className="flex justify-center mt-4">
+                    <button 
+                        onClick={() => setShowAll(true)}
+                        className="flex flex-col items-center justify-center gap-1 text-on-surface-variant hover:text-on-surface transition-colors"
+                    >
+                        <span className="text-sm font-semibold">Mostrar más ({candidates.length - 4})</span>
+                        <span className="material-symbols-outlined">expand_more</span>
+                    </button>
+                </div>
+            )}
         </div>
     )
 }
