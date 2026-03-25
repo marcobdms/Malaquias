@@ -8,6 +8,7 @@ export default function Login({ onLogin }) {
     const [message, setMessage] = useState(null)
     const [error, setError] = useState(null)
     const [loading, setLoading] = useState(false)
+    const API = 'https://malaquias.onrender.com'
 
     async function handleSubmit() {
         if (loading || !email || !password || (mode === 'register' && !nombre)) return;
