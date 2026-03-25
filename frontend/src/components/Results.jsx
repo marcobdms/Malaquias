@@ -28,7 +28,7 @@ export default function Results({ candidates, onReset }) {
                 <div>
                     <h3 className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1 flex items-center gap-2">
                         Análisis Activo
-                        <span className="text-primary font-bold">{candidates.length} Analizados</span>
+                        <span className="text-on-surface font-bold">{candidates.length} Analizados</span>
                     </h3>
                     <p className="text-3xl font-black text-on-surface tracking-tight leading-tight">
                         Candidato<br className="hidden sm:block" /> Intelligence
@@ -71,13 +71,13 @@ export default function Results({ candidates, onReset }) {
                             <div className="flex items-start gap-4">
                                 {/* Avatar & Badge Placed Together */}
                                 <div className="flex flex-col items-center gap-2 relative mt-1">
-                                    <div className={`w-14 h-14 rounded-full flex items-center justify-center text-lg font-black shadow-crystal border ${isTop ? 'bg-gradient-to-br from-[#0bdacb] to-primary-container text-[#0a0a0a] border-transparent' : 'bg-surface-container text-on-surface border-white/5'}`}>
+                                    <div className={`w-14 h-14 rounded-full flex items-center justify-center text-lg font-black shadow-crystal border ${isTop ? 'bg-surface-container-high text-white border-white/20' : 'bg-surface-container text-on-surface border-white/5'}`}>
                                         {getInitials(c.filename)}
                                     </div>
                                     {isTop && (
-                                        <div className="absolute -bottom-3 -right-2 bg-background rounded-full p-1">
-                                            <div className="w-5 h-5 bg-[#0bdacb] rounded-full flex items-center justify-center">
-                                                <span className="material-symbols-outlined text-[12px] text-[#0a0a0a] font-black">done</span>
+                                        <div className="absolute -bottom-3 top-[44px] left-1/2 -translate-x-1/2 bg-background rounded-full p-1 z-20">
+                                            <div className="w-5 h-5 bg-white rounded-full flex items-center justify-center">
+                                                <span className="material-symbols-outlined text-[12px] text-black font-black">star</span>
                                             </div>
                                         </div>
                                     )}
@@ -85,7 +85,7 @@ export default function Results({ candidates, onReset }) {
 
                                 <div>
                                     {isTop && (
-                                        <span className="text-[#0bdacb] text-[9px] font-black tracking-widest uppercase mb-1 block">
+                                        <span className="text-white bg-white/10 border border-white/10 px-2 py-0.5 rounded-full text-[9px] font-black tracking-widest uppercase mb-2 inline-block">
                                             Mejor Candidato
                                         </span>
                                     )}
@@ -99,8 +99,11 @@ export default function Results({ candidates, onReset }) {
                             </div>
 
                             <div className="flex items-center justify-between sm:justify-end gap-6 sm:gap-4 mt-2 sm:mt-0">
-                                <div className={`flex items-center justify-center w-[60px] h-[60px] rounded-full border-4 ${isTop ? 'border-[#0bdacb]' : 'border-white/10'} shadow-[0_0_20px_rgba(11,218,203,0.1)] shrink-0`}>
-                                    <p className="text-[13px] font-bold tracking-tight text-white">{score}%</p>
+                                <div className="text-right mr-2 hidden sm:block">
+                                    <p className="text-[9px] font-bold text-on-surface-variant uppercase tracking-widest mt-0.5">Match Score</p>
+                                </div>
+                                <div className={`flex items-center justify-center w-[60px] h-[60px] rounded-full border-4 ${isTop ? 'border-white/60' : 'border-white/10'} shrink-0`}>
+                                    <p className="text-[14px] font-black tracking-tighter text-white">{score}%</p>
                                 </div>
 
                                 {!isTop && (
@@ -128,13 +131,13 @@ export default function Results({ candidates, onReset }) {
                                     {/* Fortalezas y Carencias stacked */}
                                     <div className="space-y-6">
                                         <div>
-                                            <h5 className="text-[10px] font-bold uppercase tracking-widest text-[#0bdacb] mb-3 flex items-center gap-2">
+                                            <h5 className="text-[10px] font-bold uppercase tracking-widest text-[#c6c6c6] mb-3 flex items-center gap-2">
                                                 Fortalezas
                                             </h5>
                                             <div className="flex flex-wrap gap-2">
                                                 {(a.fortalezas || []).map((f, j) => (
-                                                    <span key={j} className="flex items-center gap-2 text-xs text-white bg-surface-container border border-white/5 rounded-full px-3 py-1.5 shadow-sm hover:border-white/20 transition-colors">
-                                                        <span className="material-symbols-outlined text-[14px] text-[#0bdacb]">bolt</span>
+                                                    <span key={j} className="flex items-center gap-2 text-xs text-on-surface bg-surface-container border border-white/5 rounded-full px-3 py-1.5 shadow-sm hover:border-white/20 transition-colors">
+                                                        <span className="material-symbols-outlined text-[14px] text-green-500">check_circle</span>
                                                         {f}
                                                     </span>
                                                 ))}
@@ -142,13 +145,13 @@ export default function Results({ candidates, onReset }) {
                                         </div>
 
                                         <div>
-                                            <h5 className="text-[10px] font-bold uppercase tracking-widest text-red-400 mb-3 flex items-center gap-2">
+                                            <h5 className="text-[10px] font-bold uppercase tracking-widest text-[#c6c6c6] mb-3 flex items-center gap-2">
                                                 Carencias
                                             </h5>
                                             <div className="flex flex-wrap gap-2">
                                                 {(a.carencias || []).map((car, j) => (
-                                                    <span key={j} className="flex items-center gap-2 text-xs text-on-surface-variant bg-surface-container border border-red-500/10 rounded-full px-3 py-1.5 shadow-sm hover:border-red-500/30 transition-colors">
-                                                        <span className="material-symbols-outlined text-[14px] text-red-400">warning</span>
+                                                    <span key={j} className="flex items-center gap-2 text-xs text-on-surface-variant bg-surface-container border border-white/5 rounded-full px-3 py-1.5 shadow-sm hover:border-white/20 transition-colors">
+                                                        <span className="material-symbols-outlined text-[14px] text-red-500">info</span>
                                                         {car}
                                                     </span>
                                                 ))}
@@ -159,12 +162,12 @@ export default function Results({ candidates, onReset }) {
                                     {/* Panel Derecho de Expanded: Valoración AI  & Contact */}
                                     <div className="flex flex-col justify-between">
                                         {a.valoracion && (
-                                            <div className="bg-surface-container-low rounded-2xl p-5 border border-white/5 relative overflow-hidden group h-full flex flex-col">
-                                                <h5 className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-on-surface mb-3">
-                                                    <span className="material-symbols-outlined text-[16px] text-[#0bdacb]">auto_awesome</span>
+                                            <div className="bg-[#1a1a1a] rounded-2xl p-5 border border-white/5 relative overflow-hidden group h-full flex flex-col">
+                                                <h5 className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-3">
+                                                    <span className="material-symbols-outlined text-[16px] text-on-surface-variant">auto_awesome</span>
                                                     Resumen de Malaquías AI
                                                 </h5>
-                                                <p className="text-sm leading-relaxed text-on-surface-variant italic relative z-10 flex-1">
+                                                <p className="text-sm leading-relaxed text-[#c6c6c6] italic relative z-10 flex-1">
                                                     "{a.valoracion}"
                                                 </p>
                                             </div>
@@ -177,21 +180,21 @@ export default function Results({ candidates, onReset }) {
                                     {tieneContacto ? (
                                         <>
                                             <button 
-                                                className="bg-white text-black h-12 rounded-full font-bold text-sm hover:bg-white/90 active:scale-[0.98] transition-all flex-1"
+                                                className="btn-primary h-12 rounded-full font-bold text-sm hover:scale-[1.02] active:scale-[0.98] transition-all flex-1"
                                                 onClick={(e) => toggleContacto(e, i)}
                                             >
                                                 {contactoVisible[i] ? 'Ocultar Contacto' : 'Contactar'}
                                             </button>
-                                            <button className="bg-surface-container border border-white/10 text-white h-12 rounded-full font-bold text-sm hover:bg-surface-container-high active:scale-[0.98] transition-all flex-1">
+                                            <button className="bg-surface-container-high border border-white/10 text-white h-12 rounded-full font-bold text-sm hover:bg-surface-container-highest active:scale-[0.98] transition-all flex-1">
                                                 Considerar
                                             </button>
                                         </>
                                     ) : (
                                         <>
-                                            <button className="bg-white text-black h-12 rounded-full font-bold text-sm hover:bg-white/90 active:scale-[0.98] transition-all flex-[2]">
+                                            <button className="btn-primary h-12 rounded-full font-bold text-sm hover:scale-[1.02] active:scale-[0.98] transition-all flex-[2]">
                                                 Guardar
                                             </button>
-                                            <button className="bg-surface-container border border-white/10 text-white h-12 rounded-full font-bold text-sm hover:bg-surface-container-high active:scale-[0.98] transition-all flex-[1]">
+                                            <button className="bg-surface-container-high border border-white/10 text-white h-12 rounded-full font-bold text-sm hover:bg-surface-container-highest active:scale-[0.98] transition-all flex-[1]">
                                                 Descartar
                                             </button>
                                         </>
@@ -203,13 +206,13 @@ export default function Results({ candidates, onReset }) {
                                     <div className="mt-3 p-4 rounded-xl bg-surface-container-low border border-white/10 flex flex-wrap gap-6 items-center flex-col sm:flex-row animate-[fade-in_0.2s_ease-out]">
                                         {a.email_candidato && a.email_candidato !== 'null' && (
                                             <div className="flex items-center justify-center gap-2 text-sm text-on-surface w-full sm:w-auto">
-                                                <span className="material-symbols-outlined text-[18px] text-[#0bdacb]">mail</span>
+                                                <span className="material-symbols-outlined text-[18px] text-on-surface-variant">mail</span>
                                                 <a href={`mailto:${a.email_candidato}`} className="hover:underline font-medium">{a.email_candidato}</a>
                                             </div>
                                         )}
                                         {a.telefono_candidato && a.telefono_candidato !== 'null' && (
                                             <div className="flex items-center justify-center gap-2 text-sm text-on-surface w-full sm:w-auto">
-                                                <span className="material-symbols-outlined text-[18px] text-[#0bdacb]">call</span>
+                                                <span className="material-symbols-outlined text-[18px] text-on-surface-variant">call</span>
                                                 <a href={`tel:${a.telefono_candidato}`} className="hover:underline font-medium">{a.telefono_candidato}</a>
                                             </div>
                                         )}
@@ -220,7 +223,7 @@ export default function Results({ candidates, onReset }) {
                         
                         {/* Soft Glow Background para Top Candidato */}
                         {isTop && (
-                            <div className="absolute top-[-50px] left-[-50px] w-[200px] h-[200px] bg-[#0bdacb]/10 blur-[60px] pointer-events-none z-0 rounded-full" />
+                            <div className="absolute top-[-50px] left-[-50px] w-[200px] h-[200px] bg-white/5 blur-[60px] pointer-events-none z-0 rounded-full" />
                         )}
                     </div>
                 )
