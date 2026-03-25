@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-export default function Results({ candidates }) {
+export default function Results({ candidates, onReset }) {
     // Por defecto, el top candidato (índice 0) está expandido
     const [expanded, setExpanded] = useState({ 0: true })
     const [contactoVisible, setContactoVisible] = useState({})
@@ -24,22 +24,34 @@ export default function Results({ candidates }) {
 
     return (
         <div className="flex flex-col gap-4">
-            <div className="flex items-center justify-between mb-2">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 gap-4">
                 <div>
-                    <h3 className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">
-                        Candidatos Analizados
+                    <h3 className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1 flex items-center gap-2">
+                        Análisis Activo
+                        <span className="text-primary font-bold">{candidates.length} Analizados</span>
                     </h3>
-                    <p className="text-2xl font-black text-on-surface tracking-tight">
-                        Inteligencia de Selección
+                    <p className="text-3xl font-black text-on-surface tracking-tight leading-tight">
+                        Candidato<br className="hidden sm:block" /> Intelligence
                     </p>
                 </div>
                 <div className="flex items-center gap-3">
-                    <div className="text-right">
-                        <p className="text-xs text-on-surface-variant">Nuestro motor de matching evaluó</p>
-                        <p className="text-sm font-semibold text-on-surface">{candidates.length} perfiles técnicos</p>
-                    </div>
+                    <button 
+                        onClick={onReset}
+                        className="btn-outline h-10 px-4 flex items-center justify-center gap-2 text-sm text-on-surface-variant hover:text-on-surface flex-1 sm:flex-auto whitespace-nowrap"
+                    >
+                        <span className="material-symbols-outlined text-[18px]">refresh</span>
+                        Nueva búsqueda
+                    </button>
+                    <button className="bg-white text-black h-10 px-4 rounded-full font-bold text-sm shadow-crystal hover:scale-[1.02] active:scale-95 transition-transform flex items-center justify-center gap-2 flex-1 sm:flex-auto whitespace-nowrap">
+                        <span className="material-symbols-outlined text-[18px]">bookmark</span>
+                        Guardar análisis
+                    </button>
                 </div>
             </div>
+            
+            <p className="text-sm text-on-surface-variant mb-4 lg:hidden">
+                Hemos procesado los perfiles disponibles para encontrar el ajuste perfecto con tu cultura y requisitos técnicos.
+            </p>
 
             {visibleCandidates.map((c, i) => {
                 const a = c.analysis || {}
@@ -51,154 +63,164 @@ export default function Results({ candidates }) {
                 return (
                     <div 
                         key={i} 
-                        className={`crystal-card overflow-hidden transition-all duration-300 ${isTop ? 'bg-surface-container-low border-white/10' : 'bg-surface border-transparent hover:bg-surface-container-lowest cursor-pointer'} border`}
+                        className={`crystal-card overflow-hidden transition-all duration-300 ${isTop ? 'bg-surface-container border-t border-white/10 shadow-[0_10px_40px_rgba(0,0,0,0.5)]' : 'bg-surface border-transparent hover:bg-surface-container-lowest cursor-pointer'} border relative`}
                         onClick={() => !isTop && toggleExpand(i)}
                     >
                         {/* Cabecera de la Tarjeta (Siempre visible) */}
-                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
-                            <div className="flex items-center gap-6">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 relative z-10">
+                            <div className="flex items-start gap-4">
                                 {/* Avatar & Badge Placed Together */}
-                                <div className="flex flex-col items-center gap-2">
-                                    <div className={`w-14 h-14 rounded-full flex items-center justify-center text-lg font-black shadow-crystal border ${isTop ? 'bg-gradient-to-br from-primary to-primary-container text-on-primary border-transparent' : 'bg-surface-container text-on-surface border-white/5'}`}>
+                                <div className="flex flex-col items-center gap-2 relative mt-1">
+                                    <div className={`w-14 h-14 rounded-full flex items-center justify-center text-lg font-black shadow-crystal border ${isTop ? 'bg-gradient-to-br from-[#0bdacb] to-primary-container text-[#0a0a0a] border-transparent' : 'bg-surface-container text-on-surface border-white/5'}`}>
                                         {getInitials(c.filename)}
                                     </div>
                                     {isTop && (
-                                        <span className="bg-primary text-on-primary text-[9px] font-black tracking-widest uppercase px-2 py-0.5 rounded-full whitespace-nowrap">
-                                            Mejor Candidato
-                                        </span>
+                                        <div className="absolute -bottom-3 -right-2 bg-background rounded-full p-1">
+                                            <div className="w-5 h-5 bg-[#0bdacb] rounded-full flex items-center justify-center">
+                                                <span className="material-symbols-outlined text-[12px] text-[#0a0a0a] font-black">done</span>
+                                            </div>
+                                        </div>
                                     )}
                                 </div>
 
                                 <div>
-                                    <h4 className="text-xl font-bold text-on-surface tracking-tight">
+                                    {isTop && (
+                                        <span className="text-[#0bdacb] text-[9px] font-black tracking-widest uppercase mb-1 block">
+                                            Mejor Candidato
+                                        </span>
+                                    )}
+                                    <h4 className="text-xl md:text-2xl font-bold text-white tracking-tight leading-none mb-1">
                                         {c.filename.replace('.pdf', '')}
                                     </h4>
-                                    <div className="flex flex-wrap items-center gap-2 mt-1">
-                                        <span className="text-xs text-on-surface-variant bg-surface-container px-2 py-0.5 rounded-md border border-white/5">
-                                            Perfil Analizado
-                                        </span>
-                                        {a.recomendacion && (
-                                            <span className="text-xs text-on-surface-variant bg-surface-container px-2 py-0.5 rounded-md border border-white/5">
-                                                Recomendación: {a.recomendacion}
-                                            </span>
-                                        )}
-                                    </div>
+                                    <p className="text-sm text-on-surface-variant">
+                                        Perfil Analizado
+                                    </p>
                                 </div>
                             </div>
 
-                            <div className="flex items-center gap-6 sm:justify-end">
-                                <div className="text-right">
-                                    <p className="text-3xl font-black tracking-tighter text-on-surface">{score}%</p>
-                                    <p className="text-[9px] font-bold text-on-surface-variant uppercase tracking-widest mt-0.5">Match Score</p>
+                            <div className="flex items-center justify-between sm:justify-end gap-6 sm:gap-4 mt-2 sm:mt-0">
+                                <div className={`flex items-center justify-center w-[60px] h-[60px] rounded-full border-4 ${isTop ? 'border-[#0bdacb]' : 'border-white/10'} shadow-[0_0_20px_rgba(11,218,203,0.1)] shrink-0`}>
+                                    <p className="text-[13px] font-bold tracking-tight text-white">{score}%</p>
                                 </div>
 
-                                <div className="flex items-center gap-3">
-                                    {!isTop && (
-                                        <button 
-                                            className="btn-outline h-10 px-6 flex items-center justify-center whitespace-nowrap"
-                                            onClick={(e) => { e.stopPropagation(); toggleExpand(i); }}
-                                        >
-                                            {isExpanded ? 'Colapsar' : 'Ver Análisis'}
-                                        </button>
-                                    )}
-                                    {isTop && tieneContacto && (
-                                        <button 
-                                            className="bg-primary text-on-primary h-10 px-6 rounded-full font-semibold text-sm hover:scale-[1.02] active:scale-95 transition-transform whitespace-nowrap"
-                                            onClick={(e) => toggleContacto(e, i)}
-                                        >
-                                            {contactoVisible[i] ? 'Ocultar info' : 'Contactar'}
-                                        </button>
-                                    )}
-                                </div>
+                                {!isTop && (
+                                    <button 
+                                        className="sm:hidden btn-outline h-10 px-4 flex items-center justify-center whitespace-nowrap text-sm"
+                                        onClick={(e) => { e.stopPropagation(); toggleExpand(i); }}
+                                    >
+                                        {isExpanded ? 'Colapsar' : 'Ver'}
+                                    </button>
+                                )}
                             </div>
                         </div>
 
                         {/* Error Handling si existe en el análisis */}
                         {a.error && isExpanded && (
-                            <div className="mt-6 p-4 bg-red-500/10 border border-red-500/20 rounded-2xl">
+                            <div className="mt-6 p-4 bg-red-500/10 border border-red-500/20 rounded-2xl relative z-10">
                                 <p className="text-sm text-red-400">Error en análisis: {a.error}</p>
                             </div>
                         )}
 
                         {/* Contenido Expandido */}
                         {!a.error && isExpanded && (
-                            <div className={`mt-8 pt-8 border-t border-outline-variant/30 transition-all duration-500 origin-top`}>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-                                    {/* Fortalezas */}
-                                    <div>
-                                        <h5 className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-4 flex items-center gap-2">
-                                            Fortalezas Destacadas
-                                        </h5>
-                                        <ul className="space-y-4">
-                                            {(a.fortalezas || []).map((f, j) => (
-                                                <li key={j} className="flex gap-3 text-sm text-on-surface">
-                                                    <span className="material-symbols-outlined text-[18px] text-primary shrink-0 mt-0.5">check_circle</span>
-                                                    <span className="leading-relaxed">{f}</span>
-                                                </li>
-                                            ))}
-                                        </ul>
-                                    </div>
+                            <div className={`mt-6 pt-6 border-t border-outline-variant/30 transition-all duration-500 origin-top relative z-10`}>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
+                                    {/* Fortalezas y Carencias stacked */}
+                                    <div className="space-y-6">
+                                        <div>
+                                            <h5 className="text-[10px] font-bold uppercase tracking-widest text-[#0bdacb] mb-3 flex items-center gap-2">
+                                                Fortalezas
+                                            </h5>
+                                            <div className="flex flex-wrap gap-2">
+                                                {(a.fortalezas || []).map((f, j) => (
+                                                    <span key={j} className="flex items-center gap-2 text-xs text-white bg-surface-container border border-white/5 rounded-full px-3 py-1.5 shadow-sm hover:border-white/20 transition-colors">
+                                                        <span className="material-symbols-outlined text-[14px] text-[#0bdacb]">bolt</span>
+                                                        {f}
+                                                    </span>
+                                                ))}
+                                            </div>
+                                        </div>
 
-                                    {/* Carencias */}
-                                    <div>
-                                        <h5 className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-4 flex items-center gap-2">
-                                            Áreas de Mejora
-                                        </h5>
-                                        <ul className="space-y-4">
-                                            {(a.carencias || []).map((car, j) => (
-                                                <li key={j} className="flex gap-3 text-sm text-on-surface-variant">
-                                                    <span className="material-symbols-outlined text-[18px] text-on-surface-variant shrink-0 mt-0.5">info</span>
-                                                    <span className="leading-relaxed">{car}</span>
-                                                </li>
-                                            ))}
-                                        </ul>
+                                        <div>
+                                            <h5 className="text-[10px] font-bold uppercase tracking-widest text-red-400 mb-3 flex items-center gap-2">
+                                                Carencias
+                                            </h5>
+                                            <div className="flex flex-wrap gap-2">
+                                                {(a.carencias || []).map((car, j) => (
+                                                    <span key={j} className="flex items-center gap-2 text-xs text-on-surface-variant bg-surface-container border border-red-500/10 rounded-full px-3 py-1.5 shadow-sm hover:border-red-500/30 transition-colors">
+                                                        <span className="material-symbols-outlined text-[14px] text-red-400">warning</span>
+                                                        {car}
+                                                    </span>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    {/* Panel Derecho de Expanded: Valoración AI  & Contact */}
+                                    <div className="flex flex-col justify-between">
+                                        {a.valoracion && (
+                                            <div className="bg-surface-container-low rounded-2xl p-5 border border-white/5 relative overflow-hidden group h-full flex flex-col">
+                                                <h5 className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-on-surface mb-3">
+                                                    <span className="material-symbols-outlined text-[16px] text-[#0bdacb]">auto_awesome</span>
+                                                    Resumen de Malaquías AI
+                                                </h5>
+                                                <p className="text-sm leading-relaxed text-on-surface-variant italic relative z-10 flex-1">
+                                                    "{a.valoracion}"
+                                                </p>
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
 
-                                {/* Valoración AI */}
-                                {a.valoracion && (
-                                    <div className="mt-8 bg-surface-container rounded-2xl p-6 border border-white/5 relative overflow-hidden group">
-                                        <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
-                                        <h5 className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-on-surface mb-3">
-                                            <span className="material-symbols-outlined text-[16px]">auto_awesome</span>
-                                            Resumen de Malaquías AI
-                                        </h5>
-                                        <p className="text-[15px] leading-relaxed text-on-surface-variant italic relative z-10">
-                                            "{a.valoracion}"
-                                        </p>
-                                    </div>
-                                )}
+                                {/* Botones Acciones al final */}
+                                <div className="mt-8 flex flex-col sm:flex-row gap-3">
+                                    {tieneContacto ? (
+                                        <>
+                                            <button 
+                                                className="bg-white text-black h-12 rounded-full font-bold text-sm hover:bg-white/90 active:scale-[0.98] transition-all flex-1"
+                                                onClick={(e) => toggleContacto(e, i)}
+                                            >
+                                                {contactoVisible[i] ? 'Ocultar Contacto' : 'Contactar'}
+                                            </button>
+                                            <button className="bg-surface-container border border-white/10 text-white h-12 rounded-full font-bold text-sm hover:bg-surface-container-high active:scale-[0.98] transition-all flex-1">
+                                                Considerar
+                                            </button>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <button className="bg-white text-black h-12 rounded-full font-bold text-sm hover:bg-white/90 active:scale-[0.98] transition-all flex-[2]">
+                                                Guardar
+                                            </button>
+                                            <button className="bg-surface-container border border-white/10 text-white h-12 rounded-full font-bold text-sm hover:bg-surface-container-high active:scale-[0.98] transition-all flex-[1]">
+                                                Descartar
+                                            </button>
+                                        </>
+                                    )}
+                                </div>
 
-                                {/* Panel de Contacto Expandido para todos (No solo top, si tienen y hacen click en "Ver perfil / Contactar" pero no caben los botones) */}
-                                {(!isTop && tieneContacto) && (
-                                    <div className="mt-6 flex justify-end">
-                                         <button 
-                                            className="bg-primary text-on-primary h-10 px-6 rounded-full font-semibold text-sm hover:scale-[1.02] active:scale-95 transition-transform"
-                                            onClick={(e) => toggleContacto(e, i)}
-                                        >
-                                            {contactoVisible[i] ? 'Ocultar contacto' : 'Revelar contacto'}
-                                        </button>
-                                    </div>
-                                )}
-
-                                {/* Datos de Contacto */}
+                                {/* Datos de Contacto (Dropdown suave) */}
                                 {contactoVisible[i] && tieneContacto && (
-                                    <div className="mt-4 p-4 rounded-2xl bg-surface-container-high border border-white/10 flex flex-wrap gap-6 items-center animate-[fade-in_0.3s_ease-out]">
+                                    <div className="mt-3 p-4 rounded-xl bg-surface-container-low border border-white/10 flex flex-wrap gap-6 items-center flex-col sm:flex-row animate-[fade-in_0.2s_ease-out]">
                                         {a.email_candidato && a.email_candidato !== 'null' && (
-                                            <div className="flex items-center gap-2 text-sm text-on-surface">
-                                                <span className="material-symbols-outlined text-[18px] text-on-surface-variant">mail</span>
-                                                <a href={`mailto:${a.email_candidato}`} className="hover:underline">{a.email_candidato}</a>
+                                            <div className="flex items-center justify-center gap-2 text-sm text-on-surface w-full sm:w-auto">
+                                                <span className="material-symbols-outlined text-[18px] text-[#0bdacb]">mail</span>
+                                                <a href={`mailto:${a.email_candidato}`} className="hover:underline font-medium">{a.email_candidato}</a>
                                             </div>
                                         )}
                                         {a.telefono_candidato && a.telefono_candidato !== 'null' && (
-                                            <div className="flex items-center gap-2 text-sm text-on-surface">
-                                                <span className="material-symbols-outlined text-[18px] text-on-surface-variant">call</span>
-                                                <a href={`tel:${a.telefono_candidato}`} className="hover:underline">{a.telefono_candidato}</a>
+                                            <div className="flex items-center justify-center gap-2 text-sm text-on-surface w-full sm:w-auto">
+                                                <span className="material-symbols-outlined text-[18px] text-[#0bdacb]">call</span>
+                                                <a href={`tel:${a.telefono_candidato}`} className="hover:underline font-medium">{a.telefono_candidato}</a>
                                             </div>
                                         )}
                                     </div>
                                 )}
                             </div>
+                        )}
+                        
+                        {/* Soft Glow Background para Top Candidato */}
+                        {isTop && (
+                            <div className="absolute top-[-50px] left-[-50px] w-[200px] h-[200px] bg-[#0bdacb]/10 blur-[60px] pointer-events-none z-0 rounded-full" />
                         )}
                     </div>
                 )
@@ -208,7 +230,7 @@ export default function Results({ candidates }) {
                 <div className="flex justify-center mt-4">
                     <button 
                         onClick={() => setShowAll(true)}
-                        className="flex flex-col items-center justify-center gap-1 text-on-surface-variant hover:text-on-surface transition-colors"
+                        className="flex flex-col items-center justify-center gap-1 text-on-surface-variant hover:text-white transition-colors"
                     >
                         <span className="text-sm font-semibold">Mostrar más ({candidates.length - 4})</span>
                         <span className="material-symbols-outlined">expand_more</span>

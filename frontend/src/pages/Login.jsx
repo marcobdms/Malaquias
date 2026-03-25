@@ -9,9 +9,9 @@ export default function Login({ onLogin }) {
     const [error, setError] = useState(null)
     const [loading, setLoading] = useState(false)
 
-    const API = 'https://malaquias.onrender.com'
-
     async function handleSubmit() {
+        if (loading || !email || !password || (mode === 'register' && !nombre)) return;
+
         setLoading(true)
         setError(null)
         setMessage(null)
@@ -26,7 +26,7 @@ export default function Login({ onLogin }) {
                 const data = await res.json()
                 if (!res.ok) throw new Error(data.detail)
                 setMessage(data.message)
-
+                setLoading(false)
             } else {
                 const form = new URLSearchParams()
                 form.append('username', email)
@@ -42,11 +42,15 @@ export default function Login({ onLogin }) {
 
                 localStorage.setItem('token', data.access_token)
                 localStorage.setItem('nombre', data.nombre)
-                onLogin(data.nombre)
+                
+                // Animación de éxito antes de navegar a dashboard
+                setLoading('success')
+                setTimeout(() => {
+                    onLogin(data.nombre)
+                }, 1500)
             }
         } catch (err) {
             setError(err.message)
-        } finally {
             setLoading(false)
         }
     }
@@ -149,22 +153,27 @@ export default function Login({ onLogin }) {
                         </div>
 
                         {error && (
-                            <div className="mt-4 p-3 bg-red-500/10 border border-red-500/20 rounded-xl">
+                            <div className="mt-4 p-3 bg-red-500/10 border border-red-500/20 rounded-xl animate-[fade-in_0.3s_ease]">
                                 <p className="text-sm text-red-400">{error}</p>
                             </div>
                         )}
                         {message && (
-                            <div className="mt-4 p-3 bg-green-500/10 border border-green-500/20 rounded-xl">
+                            <div className="mt-4 p-3 bg-green-500/10 border border-green-500/20 rounded-xl animate-[fade-in_0.3s_ease]">
                                 <p className="text-sm text-green-400">{message}</p>
                             </div>
                         )}
 
                         <button
-                            className="btn-primary mt-8"
+                            className="btn-primary mt-8 relative overflow-hidden transition-all duration-300"
                             onClick={handleSubmit}
-                            disabled={loading || !email || !password || (mode === 'register' && !nombre)}
+                            disabled={!!loading || !email || !password || (mode === 'register' && !nombre)}
                         >
-                            {loading ? (
+                            {loading === 'success' ? (
+                                <span className="flex items-center justify-center gap-2 animate-[fade-in_0.3s_ease]">
+                                    <span className="material-symbols-outlined text-[20px] text-green-700 font-bold scale-150 transition-transform">check_circle</span>
+                                    ¡Acceso concedido!
+                                </span>
+                            ) : loading === true ? (
                                 <span className="flex items-center justify-center gap-2">
                                     <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
                                         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"></circle>
