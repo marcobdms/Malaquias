@@ -20,6 +20,25 @@ export default function Results({ candidates, onReset }) {
         return name.substring(0, 2).toUpperCase()
     }
 
+    const truncate = (text) => {
+        if (!text) return '';
+        return text.length > 80 ? text.substring(0, 60) + '...' : text;
+    }
+
+    const getRecommendationBadge = (rec) => {
+        const r = rec?.toLowerCase() || '';
+        if (r.includes('entrevistar')) {
+            return <span className="bg-white/10 border border-white/10 text-white px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest">Entrevistar</span>;
+        }
+        if (r.includes('considerar')) {
+            return <span className="bg-surface-container-highest border border-white/5 text-zinc-400 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest">Considerar</span>;
+        }
+        if (r.includes('descartar')) {
+            return <span className="bg-red-500/10 border border-red-500/20 text-red-400 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest">Descartar</span>;
+        }
+        return null;
+    }
+
     const visibleCandidates = showAll ? candidates : candidates.slice(0, 4)
 
     return (
@@ -138,7 +157,7 @@ export default function Results({ candidates, onReset }) {
                                                 {(a.fortalezas || []).map((f, j) => (
                                                     <span key={j} className="flex items-center gap-2 text-xs text-on-surface bg-surface-container border border-white/5 rounded-full px-3 py-1.5 shadow-sm hover:border-white/20 transition-colors">
                                                         <span className="material-symbols-outlined text-[14px] text-green-500">check_circle</span>
-                                                        {f}
+                                                        {truncate(f)}
                                                     </span>
                                                 ))}
                                             </div>
@@ -152,7 +171,7 @@ export default function Results({ candidates, onReset }) {
                                                 {(a.carencias || []).map((car, j) => (
                                                     <span key={j} className="flex items-center gap-2 text-xs text-on-surface-variant bg-surface-container border border-white/5 rounded-full px-3 py-1.5 shadow-sm hover:border-white/20 transition-colors">
                                                         <span className="material-symbols-outlined text-[14px] text-red-500">info</span>
-                                                        {car}
+                                                        {truncate(car)}
                                                     </span>
                                                 ))}
                                             </div>
@@ -176,27 +195,27 @@ export default function Results({ candidates, onReset }) {
                                 </div>
 
                                 {/* Botones Acciones al final */}
-                                <div className="mt-8 flex flex-col sm:flex-row gap-3">
+                                <div className="mt-8 flex flex-col sm:flex-row items-center gap-3">
                                     {tieneContacto ? (
                                         <>
                                             <button 
-                                                className="btn-primary h-12 rounded-full font-bold text-sm hover:scale-[1.02] active:scale-[0.98] transition-all flex-1"
+                                                className="btn-primary h-12 rounded-full font-bold text-sm hover:scale-[1.02] active:scale-[0.98] transition-all flex-[2] w-full"
                                                 onClick={(e) => toggleContacto(e, i)}
                                             >
                                                 {contactoVisible[i] ? 'Ocultar Contacto' : 'Contactar'}
                                             </button>
-                                            <button className="bg-surface-container-high border border-white/10 text-white h-12 rounded-full font-bold text-sm hover:bg-surface-container-highest active:scale-[0.98] transition-all flex-1">
-                                                Considerar
-                                            </button>
+                                            <div className="flex-1 flex justify-center sm:justify-end">
+                                                {getRecommendationBadge(a.recomendacion || (score > 70 ? 'Entrevistar' : score > 40 ? 'Considerar' : 'Descartar'))}
+                                            </div>
                                         </>
                                     ) : (
                                         <>
-                                            <button className="btn-primary h-12 rounded-full font-bold text-sm hover:scale-[1.02] active:scale-[0.98] transition-all flex-[2]">
+                                            <button className="btn-primary h-12 rounded-full font-bold text-sm hover:scale-[1.02] active:scale-[0.98] transition-all flex-[2] w-full">
                                                 Guardar
                                             </button>
-                                            <button className="bg-surface-container-high border border-white/10 text-white h-12 rounded-full font-bold text-sm hover:bg-surface-container-highest active:scale-[0.98] transition-all flex-[1]">
-                                                Descartar
-                                            </button>
+                                            <div className="flex-1 flex justify-center sm:justify-end">
+                                                {getRecommendationBadge(a.recomendacion || (score > 70 ? 'Entrevistar' : score > 40 ? 'Considerar' : 'Descartar'))}
+                                            </div>
                                         </>
                                     )}
                                 </div>

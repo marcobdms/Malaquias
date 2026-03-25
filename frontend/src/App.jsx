@@ -192,7 +192,7 @@ function App() {
           </div>
           
           {/* Footer info stats */}
-          <div className="mt-auto pt-8 flex-col sm:flex-row flex items-start sm:items-center justify-between pointer-events-none shrink-0 border-t border-white/5 gap-4">
+          <div className="mt-auto pt-8 hidden sm:flex flex-col sm:flex-row items-start sm:items-center justify-between pointer-events-none shrink-0 border-t border-white/5 gap-4">
               <div className="flex gap-8 sm:gap-12">
                   <div>
                       <p className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">Capacidad</p>
