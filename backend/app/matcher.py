@@ -1,36 +1,38 @@
-KEYWORDS_PENALTY = [
-    "ventas", "sales", "comercial", "erp", "sap", "plc", "soldadura",
-    "react", "python", "javascript", "sql", "salesforce", "hubspot"
-]
+from sentence_transformers import SentenceTransformer, util
+import numpy as np
+
+# Cargamos el modelo globalmente para que persista en el proceso de FastAPI
+# Usamos un modelo multilingüe balanceado (español/inglés)
+print("Cargando modelo SentenceTransformer...")
+try:
+    model = SentenceTransformer('paraphrase-multilingual-MiniLM-L12-v2')
+except Exception as e:
+    print(f"Error cargando modelo: {e}")
+    model = None
 
 def compare_cv_to_job(cv_text: str, job_description: str, strictness: str = "normal") -> float:
-    cv_lower = cv_text.lower()
-    job_lower = job_description.lower()
-
-    cv_words = set(cv_lower.split())
-    # Para el matching básico, consideramos que palabras de más de 3 letras
-    # tienen más sentido para evitar "de", "la", "el", "que", etc.
-    job_words = set([w for w in job_lower.split() if len(w) > 3])
-
-    if len(job_words) == 0:
+    """
+    Calcula la similitud semántica entre el texto del CV y la descripción de la vacante.
+    Ignora las penalizaciones por palabras clave concretas en favor del contexto global.
+    """
+    if model is None:
         return 0.0
 
-    common = job_words & cv_words
+    # Generamos los vectores (embeddings)
+    # convert_to_numpy=True para operaciones simples con arrays
+    cv_emb = model.encode([cv_text])
+    job_emb = model.encode([job_description])
 
-    # Al normalizar, el base score será más realista
-    base_score = len(common) / len(job_words)
+    # Calculamos la similitud del coseno (Cosine Similarity)
+    # util.cos_sim devuelve una matriz, tomamos el valor escalar
+    cosine_sim = util.cos_sim(cv_emb, job_emb)
+    score = float(cosine_sim[0][0])
 
-    # Escalamos el score para que no quede aplastado en números bajísimos
-    # (por ej, 20% de coincidencia de palabras largas ya es muy bueno)
-    scaled_score = min(1.0, base_score * 2.5)
-
+    # El score de similitud semántica suele ser alto (0.4-0.9) incluso para perfiles no tan ideales
+    # Ajustamos el rango para que sea más reactivo en el Dashboard
     if strictness == "estricto":
-        critical_missing = [k for k in KEYWORDS_PENALTY if k in job_lower and k not in cv_lower]
-        penalty = len(critical_missing) * 0.12
-    elif strictness == "normal":
-        critical_missing = [k for k in KEYWORDS_PENALTY if k in job_lower and k not in cv_lower]
-        penalty = len(critical_missing) * 0.06
+        final_score = (score - 0.5) / 0.5  # Escala 0.5-1.0 -> 0-1
     else:
-        penalty = 0.0
+        final_score = (score - 0.3) / 0.7  # Escala 0.3-1.0 -> 0-1
 
-    return round(max(0.0, min(1.0, scaled_score - penalty)), 2)
+    return round(max(0.0, min(1.0, final_score)), 2)
