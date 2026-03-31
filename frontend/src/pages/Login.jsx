@@ -8,7 +8,7 @@ export default function Login({ onLogin }) {
     const [message, setMessage] = useState(null)
     const [error, setError] = useState(null)
     const [loading, setLoading] = useState(false)
-    const API = 'https://malaquias.onrender.com'
+    const API = import.meta.env.VITE_API_URL || 'http://localhost:8000'
 
     async function handleSubmit() {
         if (loading || !email || !password || (mode === 'register' && !nombre)) return;
@@ -43,7 +43,7 @@ export default function Login({ onLogin }) {
 
                 localStorage.setItem('token', data.access_token)
                 localStorage.setItem('nombre', data.nombre)
-                
+
                 // Animación de éxito antes de navegar a dashboard
                 setLoading('success')
                 setTimeout(() => {
@@ -62,7 +62,7 @@ export default function Login({ onLogin }) {
             <div className="hidden lg:flex flex-1 flex-col justify-between p-12 bg-surface-container-lowest border-r border-outline-variant/30 relative overflow-hidden">
                 {/* Degradado subtil de fondo */}
                 <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-white/5 to-transparent pointer-events-none" />
-                
+
                 <div className="relative z-10 max-w-xl self-center my-auto">
                     <span className="inline-block py-1 px-3 rounded-full border border-outline-variant text-[10px] font-bold text-on-surface-variant tracking-widest mb-8 uppercase bg-surface-container/50">
                         Malaquías Recruiting Suite
@@ -86,7 +86,7 @@ export default function Login({ onLogin }) {
             <div className="flex-1 flex flex-col items-center justify-center p-6 relative overflow-hidden min-h-screen lg:min-h-0">
                 {/* Gradiente radial de fondo sutil (glow effect) */}
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-white/5 blur-[120px] rounded-full pointer-events-none" />
-                
+
                 <div className="w-full max-w-md relative z-10">
                     <div className="text-center mb-10">
                         <h2 className="text-4xl font-black text-on-surface tracking-tight mb-2">Malaquías</h2>
@@ -190,7 +190,7 @@ export default function Login({ onLogin }) {
 
                     <div className="mt-8 text-center text-sm text-on-surface-variant">
                         {mode === 'login' ? '¿No tienes una cuenta? ' : '¿Ya tienes cuenta? '}
-                        <button 
+                        <button
                             onClick={() => setMode(mode === 'login' ? 'register' : 'login')}
                             className="text-on-surface font-semibold hover:underline"
                         >

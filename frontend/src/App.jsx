@@ -55,8 +55,9 @@ function App() {
     setResults(null)
     setProgress({ status: 'waking', done: 0, total: files.length })
 
+    const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
     try {
-      await fetch('https://malaquias.onrender.com/health')
+      await fetch(`${API_URL}/health`)
     } catch { }
 
     setProgress({ status: 'analyzing', done: 0, total: files.length })
@@ -70,7 +71,7 @@ function App() {
 
     try {
       const token = localStorage.getItem('token')
-      const res = await fetch('https://malaquias.onrender.com/analyze', {
+      const res = await fetch(`${API_URL}/analyze`, {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${token}` },
         body: formData
@@ -126,7 +127,7 @@ function App() {
       <main className="md:ml-[240px] pt-14 pb-[70px] md:pb-0 min-h-screen md:h-[100dvh] flex flex-col xl:flex-row md:overflow-hidden relative">
         {/* Glow effect sutil */}
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-white/5 blur-[120px] rounded-full pointer-events-none z-0" />
-        
+
         {/* PANEL IZQUIERDO (Formulario y Subida) */}
         <div className="relative z-10 p-4 md:p-8 flex-1 xl:max-w-3xl flex flex-col md:overflow-y-auto w-full mx-auto">
           <div className="mb-8">
@@ -145,83 +146,83 @@ function App() {
               strictness={strictness}
               setStrictness={setStrictness}
             />
-            
+
             <DropZone files={files} setFiles={setFiles} />
 
             <div className="flex flex-col-reverse sm:flex-row items-center justify-between pt-6 mt-2 border-t border-outline-variant/30 gap-4">
-              <button 
+              <button
                 className="text-sm font-semibold text-on-surface-variant hover:text-on-surface transition-colors w-full sm:w-auto text-center"
                 onClick={handleReset}
               >
                 Nueva búsqueda
               </button>
 
-              <button 
-                className="bg-primary text-on-primary px-6 py-3 rounded-full font-bold shadow-crystal hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-50 disabled:pointer-events-none flex items-center justify-center gap-2 w-full sm:w-auto" 
-                disabled={!canAnalyze || loading} 
+              <button
+                className="bg-primary text-on-primary px-6 py-3 rounded-full font-bold shadow-crystal hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-50 disabled:pointer-events-none flex items-center justify-center gap-2 w-full sm:w-auto"
+                disabled={!canAnalyze || loading}
                 onClick={handleAnalyze}
               >
                 {loading ? (
-                    <>
-                        <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
-                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"></circle>
-                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                        </svg>
-                        <span>Procesando...</span>
-                    </>
+                  <>
+                    <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    <span>Procesando...</span>
+                  </>
                 ) : (
-                    <>
-                        <span>Analizar candidatos</span>
-                        <span className="material-symbols-outlined text-[18px]">bolt</span>
-                    </>
+                  <>
+                    <span>Analizar candidatos</span>
+                    <span className="material-symbols-outlined text-[18px]">bolt</span>
+                  </>
                 )}
               </button>
             </div>
-            
+
             {progress.status !== 'idle' && (
-                <div className="mt-4">
-                    <Progress total={progress.total} done={progress.done} status={progress.status} />
-                </div>
+              <div className="mt-4">
+                <Progress total={progress.total} done={progress.done} status={progress.status} />
+              </div>
             )}
 
             {error && (
-                <div className="mt-4 p-4 bg-red-500/10 border border-red-500/20 rounded-2xl">
-                    <p className="text-sm text-red-400 font-medium">{error}</p>
-                </div>
+              <div className="mt-4 p-4 bg-red-500/10 border border-red-500/20 rounded-2xl">
+                <p className="text-sm text-red-400 font-medium">{error}</p>
+              </div>
             )}
           </div>
-          
+
           {/* Footer info stats */}
           <div className="mt-auto pt-8 hidden sm:flex flex-col sm:flex-row items-start sm:items-center justify-between pointer-events-none shrink-0 border-t border-white/5 gap-4">
-              <div className="flex gap-8 sm:gap-12">
-                  <div>
-                      <p className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">Capacidad</p>
-                      <p className="text-lg font-bold text-on-surface">500 CV/mes</p>
-                  </div>
-                  <div>
-                      <p className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">Precisión IA</p>
-                      <p className="text-lg font-bold text-on-surface">99.4%</p>
-                  </div>
+            <div className="flex gap-8 sm:gap-12">
+              <div>
+                <p className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">Capacidad</p>
+                <p className="text-lg font-bold text-on-surface">500 CV/mes</p>
               </div>
-              <p className="text-xs text-on-surface-variant italic">
-                  Power by Malaquías v2.4
-              </p>
+              <div>
+                <p className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">Precisión IA</p>
+                <p className="text-lg font-bold text-on-surface">99.4%</p>
+              </div>
+            </div>
+            <p className="text-xs text-on-surface-variant italic">
+              Power by Malaquías v2.4
+            </p>
           </div>
         </div>
 
         {/* PANEL DERECHO (Resultados) */}
         <div id="results" className={`${results ? 'flex-1' : 'hidden xl:flex-1'} xl:flex xl:border-l border-t xl:border-t-0 border-white/5 bg-surface-container-lowest/50 relative md:overflow-y-auto w-full xl:h-full`}>
-            {results ? (
-                <div className="p-4 md:p-8 animate-[fade-in_0.5s_ease-out] w-full">
-                    <Results candidates={results} onReset={handleReset} />
-                </div>
-            ) : (
-                <div className="hidden xl:flex absolute inset-0 flex-col items-center justify-center text-center p-8 text-on-surface-variant opacity-50">
-                    <span className="material-symbols-outlined text-6xl mb-4 opacity-50">data_exploration</span>
-                    <p className="text-lg font-medium">Los resultados del análisis aparecerán aquí</p>
-                    <p className="text-sm mt-2 max-w-sm">Completa el formulario y sube los currículums a evaluar para comenzar el proceso de matching.</p>
-                </div>
-            )}
+          {results ? (
+            <div className="p-4 md:p-8 animate-[fade-in_0.5s_ease-out] w-full">
+              <Results candidates={results} onReset={handleReset} />
+            </div>
+          ) : (
+            <div className="hidden xl:flex absolute inset-0 flex-col items-center justify-center text-center p-8 text-on-surface-variant opacity-50">
+              <span className="material-symbols-outlined text-6xl mb-4 opacity-50">data_exploration</span>
+              <p className="text-lg font-medium">Los resultados del análisis aparecerán aquí</p>
+              <p className="text-sm mt-2 max-w-sm">Completa el formulario y sube los currículums a evaluar para comenzar el proceso de matching.</p>
+            </div>
+          )}
         </div>
       </main>
     </div>

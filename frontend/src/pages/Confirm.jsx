@@ -7,7 +7,8 @@ export default function Confirm() {
         const token = new URLSearchParams(window.location.search).get('token')
         if (!token) { setStatus('error'); return }
 
-        fetch(`https://malaquias.onrender.com/confirm?token=${token}`)
+        const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
+        fetch(`${API_URL}/confirm?token=${token}`)
             .then(res => res.json())
             .then(data => setStatus(data.message ? 'ok' : 'error'))
             .catch(() => setStatus('error'))
