@@ -1,6 +1,8 @@
 from dotenv import load_dotenv
 load_dotenv()
 
+print(f"DEBUG: ¿Existe la clave de Groq?: {'GROQ_API_KEY' in os.environ}")
+
 from fastapi import FastAPI, UploadFile, File, Form, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
