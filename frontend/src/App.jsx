@@ -22,6 +22,7 @@ function App() {
   const [strictness, setStrictness] = useState('normal')
   const [files, setFiles] = useState([])
   const [results, setResults] = useState(null)
+  const [currentOfertaId, setCurrentOfertaId] = useState(null)
   const [progress, setProgress] = useState({ status: 'idle', done: 0, total: 0 })
   const [error, setError] = useState(null)
 
@@ -55,6 +56,7 @@ function App() {
     setStack('')
     setFiles([])
     setResults(null)
+    setCurrentOfertaId(null)
     setError(null)
     setProgress({ status: 'idle', done: 0, total: 0 })
   }
@@ -114,6 +116,7 @@ function App() {
           }
           if (payload.event === 'complete') {
             setResults(payload.candidates)
+            setCurrentOfertaId(payload.oferta_id)
             setProgress({ status: 'done', done: payload.candidates.length, total: payload.candidates.length })
           }
         }
@@ -140,12 +143,7 @@ function App() {
         </main>
       )}
 
-      {/* ── Talent Pool View ── */}
-      {currentView === 'talentpool' && (
-        <main className="md:ml-[240px] pt-14 pb-[70px] md:pb-0 min-h-screen">
-          <TalentPool onNavigate={handleNavigate} />
-        </main>
-      )}
+
 
       {/* ── Profile View ── */}
       {currentView === 'profile' && (
@@ -253,7 +251,7 @@ function App() {
           {results ? (
             <div className="xl:flex-1 xl:border-l border-t xl:border-t-0 border-white/5 bg-surface-container-lowest/50 relative xl:overflow-y-auto w-full xl:h-full">
               <div className="p-4 md:p-8 animate-[fade-in_0.5s_ease-out] w-full">
-                <Results candidates={results} onReset={handleReset} />
+                <Results candidates={results} onReset={handleReset} ofertaId={currentOfertaId} onNavigate={handleNavigate} />
               </div>
             </div>
           ) : (

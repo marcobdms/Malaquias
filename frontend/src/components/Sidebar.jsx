@@ -2,8 +2,7 @@ export default function Sidebar({ currentView, onNavigate }) {
     const navItems = [
         { id: 'dashboard', icon: 'dashboard', label: 'Dashboard' },
         { id: 'screener', icon: 'group', label: 'CV Screener' },
-        { id: 'positions', icon: 'work', label: 'Posiciones' },
-        { id: 'talentpool', icon: 'person_search', label: 'Talent Pool' },
+        { id: 'positions', icon: 'bookmarks', label: 'Análisis Guardados' },
     ]
 
     return (

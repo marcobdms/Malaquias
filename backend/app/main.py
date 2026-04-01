@@ -168,7 +168,7 @@ async def analyze_cvs(
             await asyncio.sleep(1.5)
 
         results.sort(key=lambda x: x["match_score"], reverse=True)
-        yield f"data: {json.dumps({'event': 'complete', 'candidates': results})}\n\n"
+        yield f"data: {json.dumps({'event': 'complete', 'oferta_id': oferta.id, 'candidates': results})}\n\n"
 
     return StreamingResponse(event_stream(), media_type="text/event-stream")
 
@@ -307,6 +307,26 @@ def get_oferta_candidatos(oferta_id: int, db: Session = Depends(get_db), current
         } for c in candidatos]
     }
 
+
+@app.get("/ofertas/{oferta_id}/pdf")
+def get_oferta_pdf(oferta_id: int, db: Session = Depends(get_db), current_user=Depends(get_current_user)):
+    from fastapi.responses import Response
+    from .report_pdf import generate_oferta_pdf
+    
+    oferta = db.query(models.Oferta).filter(
+        models.Oferta.id == oferta_id,
+        models.Oferta.user_id == current_user.id
+    ).first()
+
+    if not oferta:
+        raise HTTPException(status_code=404, detail="Oferta no encontrada")
+
+    candidatos = db.query(models.Candidato).filter(
+        models.Candidato.oferta_id == oferta_id
+    ).all()
+
+    pdf_buffer = generate_oferta_pdf(oferta, candidatos)
+    return Response(content=pdf_buffer.getvalue(), media_type="application/pdf", headers={"Content-Disposition": f"attachment; filename=Reporte_Malaquias_Oferta_{oferta.id}.pdf"})
 
 @app.delete("/ofertas/{oferta_id}")
 def delete_oferta(oferta_id: int, db: Session = Depends(get_db), current_user=Depends(get_current_user)):

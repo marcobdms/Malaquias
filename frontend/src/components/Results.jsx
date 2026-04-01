@@ -1,10 +1,13 @@
 import { useState } from 'react'
 
-export default function Results({ candidates, onReset }) {
-    // Por defecto, el top candidato (índice 0) está expandido
+export default function Results({ candidates, onReset, ofertaId, onDownloadPDF, isSavedView, onNavigate }) {
     const [expanded, setExpanded] = useState({ 0: true })
     const [contactoVisible, setContactoVisible] = useState({})
     const [showAll, setShowAll] = useState(false)
+    const [saved, setSaved] = useState(false)
+    const [discardPopup, setDiscardPopup] = useState(false)
+
+    const API = import.meta.env.VITE_API_URL || 'http://localhost:8000'
 
     function toggleExpand(i) {
         setExpanded(prev => ({ ...prev, [i]: !prev[i] }))
@@ -23,6 +26,35 @@ export default function Results({ candidates, onReset }) {
     const truncate = (text) => {
         if (!text) return '';
         return text.length > 80 ? text.substring(0, 60) + '...' : text;
+    }
+
+    async function handleDiscard() {
+        if (ofertaId && !saved && !isSavedView) {
+            try {
+                const token = localStorage.getItem('token')
+                await fetch(`${API}/ofertas/${ofertaId}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                })
+            } catch(e) {
+                console.error(e)
+            }
+        }
+        setDiscardPopup(false)
+        onReset()
+    }
+
+    function handleNewSearchClick() {
+        if (!isSavedView && !saved) {
+            setDiscardPopup(true)
+        } else {
+            onReset()
+        }
+    }
+
+    function handleSave() {
+        setSaved(true)
+        alert('Análisis guardado. Búscalo en "Análisis Guardados" del menú principal.')
     }
 
     const getRecommendationBadge = (rec) => {
@@ -53,18 +85,33 @@ export default function Results({ candidates, onReset }) {
                         Candidato<br className="hidden sm:block" /> Intelligence
                     </p>
                 </div>
-                <div className="flex items-center gap-3">
+                <div className="flex flex-col sm:flex-row items-center gap-3">
                     <button 
-                        onClick={onReset}
-                        className="btn-outline h-10 px-4 flex items-center justify-center gap-2 text-sm text-on-surface-variant hover:text-on-surface flex-1 sm:flex-auto whitespace-nowrap"
+                        onClick={handleNewSearchClick}
+                        className="btn-outline h-10 px-4 w-full sm:w-auto flex items-center justify-center gap-2 text-sm text-on-surface-variant hover:text-on-surface whitespace-nowrap"
                     >
                         <span className="material-symbols-outlined text-[18px]">refresh</span>
-                        Nueva búsqueda
+                        {isSavedView ? 'Volver' : 'Nueva búsqueda'}
                     </button>
-                    <button className="bg-white text-black h-10 px-4 rounded-full font-bold text-sm shadow-crystal hover:scale-[1.02] active:scale-95 transition-transform flex items-center justify-center gap-2 flex-1 sm:flex-auto whitespace-nowrap">
-                        <span className="material-symbols-outlined text-[18px]">bookmark</span>
-                        Guardar análisis
-                    </button>
+                    
+                    {isSavedView ? (
+                        <button 
+                            onClick={onDownloadPDF}
+                            className="bg-white text-black h-10 px-4 w-full sm:w-auto rounded-full font-bold text-sm shadow-crystal hover:scale-[1.02] active:scale-95 transition-transform flex items-center justify-center gap-2 whitespace-nowrap"
+                        >
+                            <span className="material-symbols-outlined text-[18px]">picture_as_pdf</span>
+                            Descargar PDF
+                        </button>
+                    ) : (
+                        <button 
+                            onClick={handleSave}
+                            disabled={saved}
+                            className={`${saved ? 'bg-green-500/20 text-green-400' : 'bg-white text-black hover:scale-[1.02] active:scale-95 shadow-crystal'} h-10 px-4 w-full sm:w-auto rounded-full font-bold text-sm transition-transform flex items-center justify-center gap-2 whitespace-nowrap`}
+                        >
+                            <span className="material-symbols-outlined text-[18px]">{saved ? 'check' : 'bookmark'}</span>
+                            {saved ? 'Guardado' : 'Guardar análisis'}
+                        </button>
+                    )}
                 </div>
             </div>
             
@@ -249,14 +296,42 @@ export default function Results({ candidates, onReset }) {
             })}
 
             {!showAll && candidates.length > 4 && (
-                <div className="flex justify-center mt-4">
+                <div className="flex justify-center mt-4 border-t border-white/5 pt-4">
                     <button 
                         onClick={() => setShowAll(true)}
-                        className="flex flex-col items-center justify-center gap-1 text-on-surface-variant hover:text-white transition-colors"
+                        className="flex flex-col items-center justify-center gap-1 text-on-surface-variant hover:text-white transition-colors pb-4"
                     >
                         <span className="text-sm font-semibold">Mostrar más ({candidates.length - 4})</span>
                         <span className="material-symbols-outlined">expand_more</span>
                     </button>
+                </div>
+            )}
+
+            {/* Pop up de descartar */}
+            {discardPopup && (
+                <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
+                    <div className="bg-surface-container border border-white/10 rounded-3xl p-6 max-w-sm w-full shadow-2xl animate-[fade-in_0.2s_ease-out]">
+                        <div className="w-12 h-12 rounded-full bg-red-500/10 flex items-center justify-center mb-4">
+                            <span className="material-symbols-outlined text-red-500 text-2xl">warning</span>
+                        </div>
+                        <h3 className="text-xl font-bold text-on-surface mb-2">¿Descartar análisis?</h3>
+                        <p className="text-sm text-on-surface-variant mb-6">Si realizas una nueva búsqueda, los resultados actuales se borrarán y no aparecerán en el historial a menos que los guardes.</p>
+                        
+                        <div className="flex flex-col gap-3">
+                            <button 
+                                onClick={handleDiscard}
+                                className="w-full btn-outline border-red-500/20 text-red-400 hover:bg-red-500/10"
+                            >
+                                Sí, descartar y buscar
+                            </button>
+                            <button 
+                                onClick={() => { setDiscardPopup(false); handleSave(); }}
+                                className="w-full bg-white text-black rounded-full h-11 font-bold text-sm"
+                            >
+                                Cancelar y guardar
+                            </button>
+                        </div>
+                    </div>
                 </div>
             )}
         </div>

@@ -97,6 +97,28 @@ export default function Positions() {
         return map[cat] || cat || 'General'
     }
 
+    async function handleDownloadPDF() {
+        if (!selectedOferta) return
+        const token = localStorage.getItem('token')
+        const url = `${API}/ofertas/${selectedOferta.id}/pdf`
+        
+        try {
+            const res = await fetch(url, { headers: { 'Authorization': `Bearer ${token}` } })
+            if (!res.ok) throw new Error('Error al generar PDF')
+            const blob = await res.blob()
+            const downloadUrl = window.URL.createObjectURL(blob)
+            const a = document.createElement('a')
+            a.href = downloadUrl
+            a.download = `Reporte_${selectedOferta.categoria || 'Oferta'}.pdf`
+            document.body.appendChild(a)
+            a.click()
+            a.remove()
+        } catch (e) {
+            console.error('Download error:', e)
+            alert('Error descargando el PDF.')
+        }
+    }
+
     // Vista de candidatos de una oferta
     if (selectedOferta && candidatos) {
         return (
@@ -129,7 +151,13 @@ export default function Positions() {
                         <p className="text-sm">No hay candidatos para esta posición</p>
                     </div>
                 ) : (
-                    <Results candidates={candidatos} onReset={() => { setSelectedOferta(null); setCandidatos(null) }} />
+                    <Results 
+                        candidates={candidatos} 
+                        onReset={() => { setSelectedOferta(null); setCandidatos(null) }}
+                        ofertaId={selectedOferta.id}
+                        onDownloadPDF={handleDownloadPDF}
+                        isSavedView={true}
+                    />
                 )}
             </div>
         )
@@ -139,8 +167,8 @@ export default function Positions() {
     return (
         <div className="p-4 md:p-8 max-w-5xl mx-auto w-full">
             <div className="mb-8">
-                <h2 className="text-3xl font-black text-on-surface tracking-tight mb-2">Posiciones Abiertas</h2>
-                <p className="text-on-surface-variant">Historial de ofertas y sus candidatos analizados.</p>
+                <h2 className="text-3xl font-black text-on-surface tracking-tight mb-2">Análisis Guardados</h2>
+                <p className="text-on-surface-variant">Historial de selecciones y sus candidatos analizados.</p>
             </div>
 
             {loading ? (
