@@ -13,3 +13,4 @@ python-jose[cryptography]
 resend
 sentence-transformers
 torch
+reportlab

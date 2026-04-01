@@ -163,12 +163,12 @@ function App() {
 
       {/* ── CV Screener View (Original) ── */}
       {currentView === 'screener' && (
-        <main className="md:ml-[240px] pt-14 pb-[70px] md:pb-0 min-h-screen xl:h-[100dvh] flex flex-col xl:flex-row xl:overflow-hidden relative">
+        <main className="md:ml-[240px] pt-14 pb-[70px] md:pb-0 min-h-screen xl:h-[100dvh] flex flex-col xl:flex-row xl:overflow-hidden relative w-full">
           {/* Glow effect sutil */}
           <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-white/5 blur-[120px] rounded-full pointer-events-none z-0" />
 
           {/* PANEL IZQUIERDO (Formulario y Subida) */}
-          <div className="relative z-10 p-4 md:p-8 flex-1 xl:max-w-3xl flex flex-col xl:overflow-y-auto w-full mx-auto">
+          <div className="relative z-10 p-4 md:p-8 xl:flex-1 xl:max-w-3xl flex flex-col xl:overflow-y-auto w-full">
             <div className="mb-8">
               <h2 className="text-3xl font-black text-on-surface tracking-tight mb-2">Cribado de Candidatos</h2>
               <p className="text-on-surface-variant">Analiza y filtra perfiles automáticamente mediante inteligencia artificial.</p>
@@ -231,8 +231,8 @@ function App() {
               )}
             </div>
 
-            {/* Footer info stats */}
-            <div className="mt-auto pt-8 hidden sm:flex flex-col sm:flex-row items-start sm:items-center justify-between pointer-events-none shrink-0 border-t border-white/5 gap-4">
+            {/* Footer info stats - solo visible si no hay resultados en mobile */}
+            <div className={`mt-auto pt-8 hidden ${results ? 'xl:flex' : 'sm:flex'} flex-col sm:flex-row items-start sm:items-center justify-between pointer-events-none shrink-0 border-t border-white/5 gap-4`}>
               <div className="flex gap-8 sm:gap-12">
                 <div>
                   <p className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">Capacidad</p>
@@ -249,20 +249,22 @@ function App() {
             </div>
           </div>
 
-          {/* PANEL DERECHO (Resultados) */}
-          <div id="results" className={`${results ? 'flex-1' : 'hidden xl:flex-1'} xl:flex xl:border-l border-t xl:border-t-0 border-white/5 bg-surface-container-lowest/50 relative xl:overflow-y-auto w-full xl:h-full`}>
-            {results ? (
+          {/* PANEL DERECHO (Resultados) — En móvil fluye como continuación del scroll, en xl es un panel separado */}
+          {results ? (
+            <div className="xl:flex-1 xl:border-l border-t xl:border-t-0 border-white/5 bg-surface-container-lowest/50 relative xl:overflow-y-auto w-full xl:h-full">
               <div className="p-4 md:p-8 animate-[fade-in_0.5s_ease-out] w-full">
                 <Results candidates={results} onReset={handleReset} />
               </div>
-            ) : (
-              <div className="hidden xl:flex absolute inset-0 flex-col items-center justify-center text-center p-8 text-on-surface-variant opacity-50">
+            </div>
+          ) : (
+            <div className="hidden xl:flex xl:flex-1 xl:border-l border-white/5 bg-surface-container-lowest/50 relative xl:overflow-y-auto w-full xl:h-full">
+              <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-8 text-on-surface-variant opacity-50">
                 <span className="material-symbols-outlined text-6xl mb-4 opacity-50">data_exploration</span>
                 <p className="text-lg font-medium">Los resultados del análisis aparecerán aquí</p>
                 <p className="text-sm mt-2 max-w-sm">Completa el formulario y sube los currículums a evaluar para comenzar el proceso de matching.</p>
               </div>
-            )}
-          </div>
+            </div>
+          )}
         </main>
       )}
     </div>
