@@ -6,6 +6,7 @@ import numpy as np
 print("Cargando modelo SentenceTransformer...")
 try:
     model = SentenceTransformer('paraphrase-multilingual-MiniLM-L12-v2')
+    print("Modelo SentenceTransformer cargado OK.")
 except Exception as e:
     print(f"Error cargando modelo: {e}")
     model = None

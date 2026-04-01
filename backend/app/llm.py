@@ -2,12 +2,12 @@ import requests
 import json
 import os
 
-GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 GROQ_URL = "https://api.groq.com/openai/v1/chat/completions"
 MODEL = "llama-3.1-8b-instant"
 
 def analyze_with_llm(cv_text: str, job_description: str, categoria: str = "", stack: str = "", strictness: str = "normal") -> dict:
-    if not GROQ_API_KEY:
+    api_key = os.getenv("GROQ_API_KEY")
+    if not api_key:
         return {"error": "GROQ_API_KEY no configurada"}
 
     filtros = ""
@@ -44,7 +44,7 @@ Responde ÚNICAMENTE con este JSON exacto, sin texto adicional:
 El campo recomendacion solo puede ser: "Entrevistar", "Considerar" o "Descartar"."""
 
     headers = {
-        "Authorization": f"Bearer {GROQ_API_KEY}",
+        "Authorization": f"Bearer {api_key}",
         "Content-Type": "application/json"
     }
 

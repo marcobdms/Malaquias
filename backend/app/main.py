@@ -1,7 +1,13 @@
 import os
+from pathlib import Path
 from dotenv import load_dotenv
-load_dotenv()
 
+# Asegurar que se cargue el .env desde la raíz de backend
+env_path = Path(__file__).parent.parent / '.env'
+load_dotenv(dotenv_path=env_path)
+
+print(f"DEBUG: Carpeta actual: {os.getcwd()}")
+print(f"DEBUG: Buscando .env en: {env_path}")
 print(f"DEBUG: ¿Existe la clave de Groq?: {'GROQ_API_KEY' in os.environ}")
 
 from fastapi import FastAPI, UploadFile, File, Form, Depends, HTTPException
