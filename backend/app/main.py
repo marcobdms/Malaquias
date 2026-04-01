@@ -142,7 +142,8 @@ async def analyze_cvs(
                     job_description,
                     categoria or "",
                     stack or "",
-                    strictness or "normal"
+                    strictness or "normal",
+                    match_score=score
                 )
 
                 candidato = models.Candidato(
@@ -167,7 +168,7 @@ async def analyze_cvs(
 
             results.append(result)
             yield f"data: {json.dumps({'event': 'cv_done', 'index': i + 1, 'total': total, 'result': result})}\n\n"
-            await asyncio.sleep(0.05)
+            await asyncio.sleep(1.5)
 
         results.sort(key=lambda x: x["match_score"], reverse=True)
         yield f"data: {json.dumps({'event': 'complete', 'candidates': results})}\n\n"

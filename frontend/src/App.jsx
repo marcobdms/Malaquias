@@ -124,12 +124,12 @@ function App() {
       <Sidebar />
       <Navbar user={user} onLogout={handleLogout} />
 
-      <main className="md:ml-[240px] pt-14 pb-[70px] md:pb-0 min-h-screen md:h-[100dvh] flex flex-col xl:flex-row md:overflow-hidden relative">
+      <main className="md:ml-[240px] pt-14 pb-[70px] md:pb-0 min-h-screen xl:h-[100dvh] flex flex-col xl:flex-row xl:overflow-hidden relative">
         {/* Glow effect sutil */}
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-white/5 blur-[120px] rounded-full pointer-events-none z-0" />
 
         {/* PANEL IZQUIERDO (Formulario y Subida) */}
-        <div className="relative z-10 p-4 md:p-8 flex-1 xl:max-w-3xl flex flex-col md:overflow-y-auto w-full mx-auto">
+        <div className="relative z-10 p-4 md:p-8 flex-1 xl:max-w-3xl flex flex-col xl:overflow-y-auto w-full mx-auto">
           <div className="mb-8">
             <h2 className="text-3xl font-black text-on-surface tracking-tight mb-2">Cribado de Candidatos</h2>
             <p className="text-on-surface-variant">Analiza y filtra perfiles automáticamente mediante inteligencia artificial.</p>
@@ -211,7 +211,7 @@ function App() {
         </div>
 
         {/* PANEL DERECHO (Resultados) */}
-        <div id="results" className={`${results ? 'flex-1' : 'hidden xl:flex-1'} xl:flex xl:border-l border-t xl:border-t-0 border-white/5 bg-surface-container-lowest/50 relative md:overflow-y-auto w-full xl:h-full`}>
+        <div id="results" className={`${results ? 'flex-1' : 'hidden xl:flex-1'} xl:flex xl:border-l border-t xl:border-t-0 border-white/5 bg-surface-container-lowest/50 relative xl:overflow-y-auto w-full xl:h-full`}>
           {results ? (
             <div className="p-4 md:p-8 animate-[fade-in_0.5s_ease-out] w-full">
               <Results candidates={results} onReset={handleReset} />

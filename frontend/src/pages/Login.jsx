@@ -170,9 +170,8 @@ export default function Login({ onLogin }) {
                             disabled={!!loading || !email || !password || (mode === 'register' && !nombre)}
                         >
                             {loading === 'success' ? (
-                                <span className="flex items-center justify-center gap-2 animate-[fade-in_0.3s_ease]">
-                                    <span className="material-symbols-outlined text-[20px] text-green-700 font-bold scale-150 transition-transform">check_circle</span>
-                                    ¡Acceso concedido!
+                                <span className="flex items-center justify-center animate-[fade-in_0.3s_ease]">
+                                    <span className="material-symbols-outlined text-[24px] text-green-500 font-bold">check_circle</span>
                                 </span>
                             ) : loading === true ? (
                                 <span className="flex items-center justify-center gap-2">

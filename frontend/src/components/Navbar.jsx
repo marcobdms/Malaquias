@@ -1,5 +1,20 @@
+import { useState, useRef, useEffect } from 'react'
+
 export default function Navbar({ user, onLogout }) {
-    // Generar iniciales ("Juan Perez" -> "JP")
+    const [menuOpen, setMenuOpen] = useState(false)
+    const menuRef = useRef(null)
+
+    // Cerrar menu al hacer click fuera
+    useEffect(() => {
+        function handleClickOutside(e) {
+            if (menuRef.current && !menuRef.current.contains(e.target)) {
+                setMenuOpen(false)
+            }
+        }
+        document.addEventListener('mousedown', handleClickOutside)
+        return () => document.removeEventListener('mousedown', handleClickOutside)
+    }, [])
+
     const getInitials = (name) => {
         if (!name) return '?'
         return name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase()
@@ -39,10 +54,45 @@ export default function Navbar({ user, onLogout }) {
                     </button>
                 </div>
 
-                <div className="flex items-center gap-3 pl-2 sm:border-l border-white/5 sm:ml-2 group cursor-pointer" onClick={onLogout} title="Cerrar sesión">
-                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#0bdacb] to-primary-container text-[#0a0a0a] font-bold text-xs flex items-center justify-center shadow-crystal group-hover:scale-105 transition-transform">
-                        {getInitials(user)}
+                {/* Avatar + Dropdown Menu */}
+                <div className="relative" ref={menuRef}>
+                    <div 
+                        className="flex items-center gap-3 pl-2 sm:border-l border-white/5 sm:ml-2 group cursor-pointer" 
+                        onClick={() => setMenuOpen(!menuOpen)}
+                    >
+                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#0bdacb] to-primary-container text-[#0a0a0a] font-bold text-xs flex items-center justify-center shadow-crystal group-hover:scale-105 transition-transform">
+                            {getInitials(user)}
+                        </div>
                     </div>
+
+                    {/* Dropdown Popup */}
+                    {menuOpen && (
+                        <div className="absolute right-0 top-12 w-52 bg-surface-container border border-white/10 rounded-2xl shadow-[0_8px_30px_rgba(0,0,0,0.5)] overflow-hidden animate-[fade-in_0.15s_ease-out] z-[60]">
+                            {/* User Info Header */}
+                            <div className="px-4 py-3 border-b border-white/5">
+                                <p className="text-sm font-semibold text-on-surface truncate">{user}</p>
+                                <p className="text-xs text-on-surface-variant mt-0.5">Cuenta personal</p>
+                            </div>
+
+                            {/* Menu Items */}
+                            <div className="py-1">
+                                <button 
+                                    className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors text-left"
+                                    onClick={() => setMenuOpen(false)}
+                                >
+                                    <span className="material-symbols-outlined text-[18px]">person</span>
+                                    Ir al perfil
+                                </button>
+                                <button 
+                                    className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-colors text-left"
+                                    onClick={() => { setMenuOpen(false); onLogout(); }}
+                                >
+                                    <span className="material-symbols-outlined text-[18px]">logout</span>
+                                    Cerrar sesión
+                                </button>
+                            </div>
+                        </div>
+                    )}
                 </div>
             </div>
         </nav>
