@@ -50,13 +50,12 @@ def register(data: RegisterRequest, db: Session = Depends(get_db)):
         email=data.email,
         nombre=data.nombre,
         password_hash=hash_password(data.password),
-        confirmed=False
+        confirmed=True  # Confirmación automática
     )
     db.add(user)
     db.commit()
 
-    send_confirmation_email(data.email, data.nombre, confirm_token)
-    return {"message": "Cuenta creada. Revisa tu email para confirmarla."}
+    return {"message": "Cuenta creada exitosamente. Ya puedes iniciar sesión."}
 
 
 @app.get("/confirm")
@@ -86,8 +85,6 @@ def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depend
     user = db.query(models.User).filter(models.User.email == form_data.username).first()
     if not user or not verify_password(form_data.password, user.password_hash):
         raise HTTPException(status_code=401, detail="Credenciales incorrectas")
-    if not user.confirmed:
-        raise HTTPException(status_code=403, detail="Confirma tu email antes de iniciar sesión")
 
     token = create_access_token({"sub": user.email})
     return {"access_token": token, "token_type": "bearer", "nombre": user.nombre}
@@ -310,6 +307,81 @@ def get_oferta_candidatos(oferta_id: int, db: Session = Depends(get_db), current
         } for c in candidatos]
     }
 
+
+@app.delete("/ofertas/{oferta_id}")
+def delete_oferta(oferta_id: int, db: Session = Depends(get_db), current_user=Depends(get_current_user)):
+    """Elimina una oferta (posición) y todos sus candidatos."""
+    oferta = db.query(models.Oferta).filter(
+        models.Oferta.id == oferta_id,
+        models.Oferta.user_id == current_user.id
+    ).first()
+
+    if not oferta:
+        raise HTTPException(status_code=404, detail="Oferta no encontrada")
+
+    # Borrar candidatos en cascada manualmente para asegurar
+    db.query(models.Candidato).filter(models.Candidato.oferta_id == oferta_id).delete()
+    db.delete(oferta)
+    db.commit()
+    return {"message": "Posición y todos sus candidatos eliminados"}
+
+
+@app.get("/talent-pool")
+def talent_pool(db: Session = Depends(get_db), current_user=Depends(get_current_user)):
+    """Devuelve todo el pool de talentos (candidatos) de todas las ofertas del usuario."""
+    # Obtenemos los IDs de las ofertas del usuario
+    user_ofertas = db.query(models.Oferta.id, models.Oferta.descripcion, models.Oferta.categoria).filter(
+        models.Oferta.user_id == current_user.id
+    ).all()
+    
+    if not user_ofertas:
+        return []
+
+    oferta_map = {o.id: {"descripcion": o.descripcion, "categoria": o.categoria} for o in user_ofertas}
+    oferta_ids = list(oferta_map.keys())
+
+    # Obtenemos todos los candidatos de esas ofertas
+    candidatos = db.query(models.Candidato).filter(
+        models.Candidato.oferta_id.in_(oferta_ids)
+    ).order_by(models.Candidato.created_at.desc()).all()
+
+    result = []
+    for c in candidatos:
+        result.append({
+            "id": c.id,
+            "filename": c.filename,
+            "match_score": c.match_score,
+            "recomendacion": c.recomendacion,
+            "email_candidato": c.email_candidato,
+            "telefono_candidato": c.telefono_candidato,
+            "created_at": c.created_at.isoformat() if c.created_at else None,
+            "oferta_id": c.oferta_id,
+            "oferta_categoria": oferta_map[c.oferta_id]["categoria"],
+            "oferta_descripcion": oferta_map[c.oferta_id]["descripcion"],
+            "fortalezas": json.loads(c.fortalezas) if c.fortalezas else [],
+            "carencias": json.loads(c.carencias) if c.carencias else []
+        })
+
+    return result
+
+class ProfileUpdateRequest(BaseModel):
+    nombre: str
+    current_password: Optional[str] = None
+    new_password: Optional[str] = None
+
+@app.put("/profile")
+def update_profile(data: ProfileUpdateRequest, db: Session = Depends(get_db), current_user=Depends(get_current_user)):
+    """Actualiza la información del perfil del usuario."""
+    # Si se envía nueva contraseña, validar y actualizar
+    if data.new_password:
+        if not data.current_password or not verify_password(data.current_password, current_user.password_hash):
+            raise HTTPException(status_code=400, detail="Contraseña actual incorrecta")
+        current_user.password_hash = hash_password(data.new_password)
+        
+    current_user.nombre = data.nombre
+    db.commit()
+    
+    return {"message": "Perfil actualizado", "nombre": current_user.nombre}
 
 @app.get("/health")
 def health():

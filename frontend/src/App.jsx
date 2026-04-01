@@ -7,6 +7,8 @@ import Navbar from './components/Navbar'
 import Sidebar from './components/Sidebar'
 import Dashboard from './components/Dashboard'
 import Positions from './components/Positions'
+import TalentPool from './components/TalentPool'
+import Profile from './components/Profile'
 import Login from './pages/Login'
 import './App.css'
 import Confirm from './pages/Confirm'
@@ -127,14 +129,28 @@ function App() {
   if (!user) return <Login onLogin={handleLogin} />
 
   return (
-    <div className="min-h-screen bg-background text-on-surface font-sans selection:bg-primary/20 selection:text-primary">
+    <div className="min-h-screen bg-background text-on-surface font-sans selection:bg-primary/20 selection:text-primary relative flex">
       <Sidebar currentView={currentView} onNavigate={handleNavigate} />
-      <Navbar user={user} onLogout={handleLogout} />
+      <Navbar user={user} onLogout={handleLogout} onNavigate={handleNavigate} />
 
       {/* ── Dashboard View ── */}
       {currentView === 'dashboard' && (
         <main className="md:ml-[240px] pt-14 pb-[70px] md:pb-0 min-h-screen">
           <Dashboard onNavigate={handleNavigate} />
+        </main>
+      )}
+
+      {/* ── Talent Pool View ── */}
+      {currentView === 'talentpool' && (
+        <main className="md:ml-[240px] pt-14 pb-[70px] md:pb-0 min-h-screen">
+          <TalentPool onNavigate={handleNavigate} />
+        </main>
+      )}
+
+      {/* ── Profile View ── */}
+      {currentView === 'profile' && (
+        <main className="md:ml-[240px] pt-14 pb-[70px] md:pb-0 min-h-screen">
+          <Profile user={user} onProfileUpdate={setUser} />
         </main>
       )}
 

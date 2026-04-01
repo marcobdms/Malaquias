@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 
-export default function Navbar({ user, onLogout }) {
+export default function Navbar({ user, onLogout, onNavigate }) {
     const [menuOpen, setMenuOpen] = useState(false)
     const menuRef = useRef(null)
 
@@ -78,10 +78,10 @@ export default function Navbar({ user, onLogout }) {
                             <div className="py-1">
                                 <button 
                                     className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors text-left"
-                                    onClick={() => setMenuOpen(false)}
+                                    onClick={() => { setMenuOpen(false); onNavigate('profile'); }}
                                 >
                                     <span className="material-symbols-outlined text-[18px]">person</span>
-                                    Ir al perfil
+                                    Configuración de Perfil
                                 </button>
                                 <button 
                                     className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-colors text-left"

@@ -27,6 +27,26 @@ export default function Positions() {
         }
     }
 
+    async function handleDelete(e, id) {
+        e.stopPropagation()
+        if (!confirm('¿Estás seguro de que deseas eliminar esta posición y todos sus candidatos analizados? Esta acción no se puede deshacer.')) return
+        
+        try {
+            const token = localStorage.getItem('token')
+            const res = await fetch(`${API}/ofertas/${id}`, {
+                method: 'DELETE',
+                headers: { 'Authorization': `Bearer ${token}` }
+            })
+            if (res.ok) {
+                setOfertas(ofertas.filter(o => o.id !== id))
+            } else {
+                alert('No se pudo eliminar la posición')
+            }
+        } catch (e) {
+            console.error('Error deleting:', e)
+        }
+    }
+
     async function viewCandidatos(oferta) {
         setSelectedOferta(oferta)
         setLoadingCandidatos(true)
@@ -164,7 +184,14 @@ export default function Positions() {
                                     <div className="text-right hidden sm:block">
                                         <p className="text-xs text-on-surface-variant">{formatDate(o.created_at)}</p>
                                     </div>
-                                    <span className="material-symbols-outlined text-on-surface-variant group-hover:text-on-surface transition-colors">
+                                    <button 
+                                        className="w-8 h-8 flex items-center justify-center rounded-full text-zinc-500 hover:bg-red-500/10 hover:text-red-400 transition-colors"
+                                        onClick={(e) => handleDelete(e, o.id)}
+                                        title="Eliminar posición"
+                                    >
+                                        <span className="material-symbols-outlined text-[18px]">delete</span>
+                                    </button>
+                                    <span className="material-symbols-outlined text-on-surface-variant group-hover:text-on-surface transition-colors ml-2">
                                         chevron_right
                                     </span>
                                 </div>
