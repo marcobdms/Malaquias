@@ -176,6 +176,141 @@ async def analyze_cvs(
     return StreamingResponse(event_stream(), media_type="text/event-stream")
 
 
+# ──────────────────────────────────────
+# Sprint 2: Dashboard & Posiciones
+# ──────────────────────────────────────
+
+from sqlalchemy import func
+
+@app.get("/dashboard")
+def dashboard(db: Session = Depends(get_db), current_user=Depends(get_current_user)):
+    """Métricas del dashboard del usuario."""
+    user_ofertas = db.query(models.Oferta).filter(models.Oferta.user_id == current_user.id).all()
+    oferta_ids = [o.id for o in user_ofertas]
+
+    total_ofertas = len(user_ofertas)
+
+    if not oferta_ids:
+        return {
+            "total_ofertas": 0,
+            "total_candidatos": 0,
+            "score_promedio": 0,
+            "distribucion": {"entrevistar": 0, "considerar": 0, "descartar": 0},
+            "ultimos_candidatos": []
+        }
+
+    total_candidatos = db.query(func.count(models.Candidato.id)).filter(
+        models.Candidato.oferta_id.in_(oferta_ids)
+    ).scalar()
+
+    score_promedio = db.query(func.avg(models.Candidato.match_score)).filter(
+        models.Candidato.oferta_id.in_(oferta_ids),
+        models.Candidato.match_score > 0
+    ).scalar() or 0
+
+    # Distribución de recomendaciones
+    all_candidatos = db.query(models.Candidato).filter(
+        models.Candidato.oferta_id.in_(oferta_ids),
+        models.Candidato.recomendacion != None,
+        models.Candidato.recomendacion != ""
+    ).all()
+
+    dist = {"entrevistar": 0, "considerar": 0, "descartar": 0}
+    for c in all_candidatos:
+        rec = (c.recomendacion or "").lower()
+        if "entrevistar" in rec:
+            dist["entrevistar"] += 1
+        elif "considerar" in rec:
+            dist["considerar"] += 1
+        elif "descartar" in rec:
+            dist["descartar"] += 1
+
+    # Últimos 5 candidatos
+    ultimos = db.query(models.Candidato).filter(
+        models.Candidato.oferta_id.in_(oferta_ids)
+    ).order_by(models.Candidato.created_at.desc()).limit(5).all()
+
+    ultimos_data = [{
+        "id": c.id,
+        "filename": c.filename,
+        "match_score": c.match_score,
+        "recomendacion": c.recomendacion,
+        "oferta_id": c.oferta_id,
+        "created_at": c.created_at.isoformat() if c.created_at else None
+    } for c in ultimos]
+
+    return {
+        "total_ofertas": total_ofertas,
+        "total_candidatos": total_candidatos,
+        "score_promedio": round(float(score_promedio), 1),
+        "distribucion": dist,
+        "ultimos_candidatos": ultimos_data
+    }
+
+
+@app.get("/ofertas")
+def list_ofertas(db: Session = Depends(get_db), current_user=Depends(get_current_user)):
+    """Lista todas las ofertas/posiciones del usuario con conteo de candidatos."""
+    ofertas = db.query(models.Oferta).filter(
+        models.Oferta.user_id == current_user.id
+    ).order_by(models.Oferta.created_at.desc()).all()
+
+    result = []
+    for o in ofertas:
+        count = db.query(func.count(models.Candidato.id)).filter(
+            models.Candidato.oferta_id == o.id
+        ).scalar()
+
+        result.append({
+            "id": o.id,
+            "descripcion": o.descripcion[:120] + "..." if len(o.descripcion) > 120 else o.descripcion,
+            "categoria": o.categoria,
+            "stack": o.stack,
+            "total_candidatos": count,
+            "created_at": o.created_at.isoformat() if o.created_at else None
+        })
+
+    return result
+
+
+@app.get("/ofertas/{oferta_id}/candidatos")
+def get_oferta_candidatos(oferta_id: int, db: Session = Depends(get_db), current_user=Depends(get_current_user)):
+    """Obtiene los candidatos de una oferta específica del usuario."""
+    oferta = db.query(models.Oferta).filter(
+        models.Oferta.id == oferta_id,
+        models.Oferta.user_id == current_user.id
+    ).first()
+
+    if not oferta:
+        raise HTTPException(status_code=404, detail="Oferta no encontrada")
+
+    candidatos = db.query(models.Candidato).filter(
+        models.Candidato.oferta_id == oferta_id
+    ).order_by(models.Candidato.match_score.desc()).all()
+
+    return {
+        "oferta": {
+            "id": oferta.id,
+            "descripcion": oferta.descripcion,
+            "categoria": oferta.categoria,
+            "stack": oferta.stack,
+            "created_at": oferta.created_at.isoformat() if oferta.created_at else None
+        },
+        "candidatos": [{
+            "id": c.id,
+            "filename": c.filename,
+            "match_score": c.match_score,
+            "fortalezas": json.loads(c.fortalezas) if c.fortalezas else [],
+            "carencias": json.loads(c.carencias) if c.carencias else [],
+            "valoracion": c.valoracion,
+            "recomendacion": c.recomendacion,
+            "email_candidato": c.email_candidato,
+            "telefono_candidato": c.telefono_candidato,
+            "created_at": c.created_at.isoformat() if c.created_at else None
+        } for c in candidatos]
+    }
+
+
 @app.get("/health")
 def health():
     return {"status": "ok"}

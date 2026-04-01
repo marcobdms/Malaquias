@@ -1,4 +1,10 @@
-export default function Sidebar() {
+export default function Sidebar({ currentView, onNavigate }) {
+    const navItems = [
+        { id: 'dashboard', icon: 'dashboard', label: 'Dashboard' },
+        { id: 'screener', icon: 'group', label: 'CV Screener' },
+        { id: 'positions', icon: 'work', label: 'Posiciones' },
+    ]
+
     return (
         <>
             {/* DESKTOP SIDEBAR */}
@@ -16,24 +22,31 @@ export default function Sidebar() {
 
                 {/* Navigation */}
                 <nav className="flex-1 px-4 mt-4 space-y-1">
-                    <button className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl bg-surface-container text-on-surface text-sm font-medium transition-colors border border-white/5 shadow-crystal">
-                        <span className="material-symbols-outlined text-[20px] text-primary">group</span>
-                        CV Screener
-                    </button>
-                    <button className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface text-sm font-medium transition-colors">
-                        <span className="material-symbols-outlined text-[20px]">dashboard</span>
-                        Dashboard
-                    </button>
-                    <button className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface text-sm font-medium transition-colors">
-                        <span className="material-symbols-outlined text-[20px]">bar_chart</span>
-                        Reports
-                    </button>
+                    {navItems.map(item => (
+                        <button
+                            key={item.id}
+                            onClick={() => onNavigate(item.id)}
+                            className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors ${
+                                currentView === item.id
+                                    ? 'bg-surface-container text-on-surface border border-white/5 shadow-crystal'
+                                    : 'text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface'
+                            }`}
+                        >
+                            <span className={`material-symbols-outlined text-[20px] ${currentView === item.id ? 'text-primary' : ''}`}>
+                                {item.icon}
+                            </span>
+                            {item.label}
+                        </button>
+                    ))}
                 </nav>
 
                 {/* Bottom Actions */}
                 <div className="p-4 border-t border-white/5 mt-auto">
-                    <button className="btn-primary w-full shadow-crystal mb-4">
-                        Post New Job
+                    <button 
+                        onClick={() => onNavigate('screener')}
+                        className="btn-primary w-full shadow-crystal mb-4"
+                    >
+                        Nuevo Análisis
                     </button>
                     <button className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface text-sm font-medium transition-colors">
                         <span className="material-symbols-outlined text-[18px]">help</span>
@@ -44,22 +57,20 @@ export default function Sidebar() {
 
             {/* MOBILE BOTTOM NAV */}
             <div className="md:hidden fixed bottom-0 left-0 right-0 h-[70px] bg-surface-container-lowest border-t border-white/5 z-50 flex items-center justify-around px-2 pb-safe shadow-[0_-10px_40px_rgba(0,0,0,0.5)]">
-                <button className="flex flex-col items-center justify-center gap-1 text-on-surface-variant p-2">
-                    <span className="material-symbols-outlined text-[24px]">dashboard</span>
-                    <span className="text-[10px] font-semibold">Dashboard</span>
-                </button>
-                <button className="flex flex-col items-center justify-center gap-1 text-primary p-2">
-                    <span className="material-symbols-outlined text-[24px] rounded-lg bg-primary/10 p-1">group</span>
-                    <span className="text-[10px] font-semibold">Screener</span>
-                </button>
-                <button className="flex flex-col items-center justify-center gap-1 text-on-surface-variant p-2">
-                    <span className="material-symbols-outlined text-[24px]">work</span>
-                    <span className="text-[10px] font-semibold">Jobs</span>
-                </button>
-                <button className="flex flex-col items-center justify-center gap-1 text-on-surface-variant p-2">
-                    <span className="material-symbols-outlined text-[24px]">bar_chart</span>
-                    <span className="text-[10px] font-semibold">Reports</span>
-                </button>
+                {navItems.map(item => (
+                    <button
+                        key={item.id}
+                        onClick={() => onNavigate(item.id)}
+                        className={`flex flex-col items-center justify-center gap-1 p-2 ${
+                            currentView === item.id ? 'text-primary' : 'text-on-surface-variant'
+                        }`}
+                    >
+                        <span className={`material-symbols-outlined text-[24px] ${currentView === item.id ? 'rounded-lg bg-primary/10 p-1' : ''}`}>
+                            {item.icon}
+                        </span>
+                        <span className="text-[10px] font-semibold">{item.label}</span>
+                    </button>
+                ))}
             </div>
         </>
     )
