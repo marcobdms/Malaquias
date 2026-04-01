@@ -403,6 +403,19 @@ def update_profile(data: ProfileUpdateRequest, db: Session = Depends(get_db), cu
     
     return {"message": "Perfil actualizado", "nombre": current_user.nombre}
 
+@app.delete("/reset-data")
+def reset_data(db: Session = Depends(get_db), current_user=Depends(get_current_user)):
+    """Borra todos los datos de análisis (ofertas y candidatos) del usuario actual."""
+    ofertas = db.query(models.Oferta).filter(models.Oferta.user_id == current_user.id).all()
+    oferta_ids = [o.id for o in ofertas]
+    
+    if oferta_ids:
+        db.query(models.Candidato).filter(models.Candidato.oferta_id.in_(oferta_ids)).delete(synchronize_session=False)
+        db.query(models.Oferta).filter(models.Oferta.user_id == current_user.id).delete(synchronize_session=False)
+    
+    db.commit()
+    return {"message": "Todos tus datos han sido eliminados correctamente"}
+
 @app.get("/health")
 def health():
     return {"status": "ok"}

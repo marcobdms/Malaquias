@@ -131,6 +131,41 @@ export default function Profile({ user, onProfileUpdate }) {
                         </button>
                     </div>
                 </form>
+
+                {/* Zona de Peligro */}
+                <div className="mt-12 pt-8 border-t border-red-500/10">
+                    <h3 className="text-sm font-bold text-red-400 mb-2 flex items-center gap-2 uppercase tracking-widest">
+                        <span className="material-symbols-outlined text-[18px]">warning</span>
+                        Zona de Peligro
+                    </h3>
+                    <p className="text-xs text-on-surface-variant mb-6">Esta acción borrará permanentemente todos tus análisis, ofertas y candidatos. No se puede deshacer.</p>
+                    
+                    <button 
+                        onClick={async () => {
+                            if (!confirm('¿ESTÁS ABSOLUTAMENTE SEGURO? Se borrarán TODOS tus datos de análisis (ofertas y candidatos). Tu usuario permanecerá.')) return
+                            setLoading(true)
+                            try {
+                                const token = localStorage.getItem('token')
+                                const res = await fetch(`${API}/reset-data`, {
+                                    method: 'DELETE',
+                                    headers: { 'Authorization': `Bearer ${token}` }
+                                })
+                                if (res.ok) {
+                                    alert('Todos tus datos han sido borrados. El dashboard ahora estará limpio.')
+                                    window.location.reload()
+                                }
+                            } catch (e) {
+                                console.error(e)
+                            } finally {
+                                setLoading(false)
+                            }
+                        }}
+                        className="w-full sm:w-auto px-6 py-3 bg-red-500/10 border border-red-500/20 text-red-400 rounded-2xl text-xs font-bold hover:bg-red-500/20 transition-all flex items-center justify-center gap-2"
+                    >
+                        <span className="material-symbols-outlined text-[18px]">delete_forever</span>
+                        Reiniciar todos mis datos
+                    </button>
+                </div>
             </div>
         </div>
     )
