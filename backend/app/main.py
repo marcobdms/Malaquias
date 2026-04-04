@@ -20,6 +20,7 @@ from .database import get_db, engine
 from . import models
 from .auth import hash_password, verify_password, create_access_token, get_current_user
 from .email_service import send_confirmation_email
+from fastapi.middleware.httpsredirect import HTTPSRedirectMiddleware
 
 models.Base.metadata.create_all(bind=engine)
 
