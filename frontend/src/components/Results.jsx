@@ -57,7 +57,7 @@ export default function Results({ candidates, onReset, ofertaId, onDownloadPDF, 
         if (saved) return;
         try {
             const token = localStorage.getItem('token')
-            const res = await fetch(`${API}/save-analysis`, {
+            const res = await fetch(`${API}/save-analysis/`, {
                 method: 'POST',
                 headers: { 
                     'Authorization': `Bearer ${token}`,
@@ -74,11 +74,13 @@ export default function Results({ candidates, onReset, ofertaId, onDownloadPDF, 
                 setSaved(true)
                 alert('Análisis guardado permanentemente en tu historial.')
             } else {
-                alert('Error al guardar el análisis.')
+                const errJson = await res.json().catch(() => ({}));
+                console.error('Server error:', errJson);
+                alert(`Error al guardar el análisis: ${errJson.detail || 'Error desconocido'}`);
             }
         } catch (e) {
             console.error('Save error:', e)
-            alert('Error de conexión al guardar.')
+            alert('Error de conexión al guardar. Revisa la consola para más detalles.')
         }
     }
 

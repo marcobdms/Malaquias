@@ -25,6 +25,7 @@ class SaveAnalysisSchema(BaseModel):
     descripcion: str
     categoria: Optional[str] = None
     stack: Optional[str] = None
+    balance: Optional[float] = 0.5
     candidatos: List[dict]
 from fastapi.middleware.httpsredirect import HTTPSRedirectMiddleware
 
@@ -131,7 +132,7 @@ async def analyze_cvs(
                 }
             else:
                 clean = clean_text(raw_text)
-                score = compare_cv_to_job(clean, job_description, strictness or "normal")
+                score = compare_cv_to_job(clean, job_description, strictness or "normal", balance=balance)
                 analysis = analyze_with_llm(
                     truncate_text(clean),
                     job_description,
@@ -157,7 +158,7 @@ async def analyze_cvs(
     return StreamingResponse(event_stream(), media_type="text/event-stream")
 
 
-@app.post("/save-analysis")
+@app.post("/save-analysis/")
 def save_analysis(data: SaveAnalysisSchema, db: Session = Depends(get_db), current_user=Depends(get_current_user)):
     """Guarda un análisis explícitamente."""
     oferta = models.Oferta(

@@ -25,6 +25,8 @@ function App() {
   const [currentOfertaId, setCurrentOfertaId] = useState(null)
   const [progress, setProgress] = useState({ status: 'idle', done: 0, total: 0 })
   const [error, setError] = useState(null)
+  const [abortController, setAbortController] = useState(null)
+  const [balanceValue, setBalanceValue] = useState(50)
 
   useEffect(() => {
     const token = localStorage.getItem('token')
@@ -51,14 +53,25 @@ function App() {
   const loading = progress.status === 'analyzing' || progress.status === 'waking'
 
   function handleReset() {
+    if (abortController) abortController.abort()
     setJobDesc('')
     setCategoria('')
     setStack('')
-    setFiles([])
-    setResults(null)
-    setCurrentOfertaId(null)
     setError(null)
+    setResults(null)
+    setFiles([])
+    setCurrentOfertaId(null)
     setProgress({ status: 'idle', done: 0, total: 0 })
+    setAbortController(null)
+  }
+
+  function handleCancel() {
+    if (abortController) {
+      abortController.abort()
+      setError('Análisis cancelado por el usuario.')
+      setProgress(p => ({ ...p, status: 'cancelled' }))
+      setAbortController(null)
+    }
   }
 
   async function handleAnalyze() {
@@ -81,12 +94,16 @@ function App() {
     formData.append('strictness', strictness)
     files.forEach(f => formData.append('cvs', f))
 
+    const controller = new AbortController()
+    setAbortController(controller)
+
     try {
       const token = localStorage.getItem('token')
       const res = await fetch(`${API_URL}/analyze`, {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${token}` },
-        body: formData
+        body: formData,
+        signal: controller.signal
       })
 
       if (res.status === 401) {
@@ -123,8 +140,14 @@ function App() {
         }
       }
     } catch (err) {
-      setError(err.message)
-      setProgress(p => ({ ...p, status: 'error' }))
+      if (err.name === 'AbortError') {
+        // Handled by handleCancel
+      } else {
+        setError(err.message)
+        setProgress(p => ({ ...p, status: 'error' }))
+      }
+    } finally {
+      setAbortController(null)
     }
   }
 
@@ -208,6 +231,11 @@ function App() {
                       </svg>
                       <span>Procesando...</span>
                     </>
+                  ) : progress.status === 'cancelled' ? (
+                    <>
+                      <span>Analizar de nuevo</span>
+                      <span className="material-symbols-outlined text-[18px]">bolt</span>
+                    </>
                   ) : (
                     <>
                       <span>Analizar candidatos</span>
@@ -215,6 +243,15 @@ function App() {
                     </>
                   )}
                 </button>
+
+                {loading && (
+                    <button 
+                        onClick={handleCancel}
+                        className="text-xs font-bold text-red-500 hover:text-red-400 uppercase tracking-widest mt-2 sm:mt-0 transition-colors"
+                    >
+                        Cancelar Proceso
+                    </button>
+                )}
               </div>
 
               {progress.status !== 'idle' && (
@@ -234,17 +271,9 @@ function App() {
             {/* Footer info stats - solo visible si no hay resultados en mobile */}
             <div className={`mt-auto pt-8 hidden ${results ? 'xl:flex' : 'sm:flex'} flex-col sm:flex-row items-start sm:items-center justify-between pointer-events-none shrink-0 border-t border-white/5 gap-4`}>
               <div className="flex gap-8 sm:gap-12">
-                <div>
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">Capacidad</p>
-                  <p className="text-lg font-bold text-on-surface">500 CV/mes</p>
-                </div>
-                <div>
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1">Precisión IA</p>
-                  <p className="text-lg font-bold text-on-surface">99.4%</p>
-                </div>
               </div>
               <p className="text-xs text-on-surface-variant italic">
-                Power by Malaquías v2.4
+                Powered by Malaquías v2.5
               </p>
             </div>
           </div>
