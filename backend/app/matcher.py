@@ -40,9 +40,9 @@ def compare_cv_to_job(cv_text: str, job_description: str, strictness: str = "nor
     hybrid = (balance * kw_score) + ((1 - balance) * sentence_score)
 
     if strictness == "estricto":
-        final = (hybrid - 0.5) / 0.5
+        final = (hybrid - 0.4) / 0.6
     elif strictness == "normal":
-        final = (hybrid - 0.3) / 0.7
+        final = (hybrid - 0.2) / 0.8
     else:
         final = hybrid
 
