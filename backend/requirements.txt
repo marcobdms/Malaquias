@@ -14,4 +14,3 @@ resend
 sentence-transformers
 torch
 reportlab
-rank-bm25

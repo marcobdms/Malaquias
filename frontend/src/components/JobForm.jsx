@@ -1,6 +1,7 @@
 const CATEGORIAS = [
     { value: '', label: 'Selecciona categoría' },
     { value: 'desarrollo', label: 'Desarrollo de Software' },
+    { value: 'it_sistemas', label: 'IT / Sistemas' },
     { value: 'diseño', label: 'Diseño UX/UI' },
     { value: 'marketing', label: 'Marketing Digital' },
     { value: 'ventas', label: 'Ventas y Business' },
@@ -35,8 +36,8 @@ const JobForm = memo(({
                         Categoría de la Oferta
                     </label>
                     <div className="relative">
-                        <select 
-                            value={categoria} 
+                        <select
+                            value={categoria}
                             onChange={handleCategoria}
                             className="w-full appearance-none bg-surface-container border border-white/5 rounded-2xl px-5 py-3.5 text-on-surface text-sm focus:outline-none focus:border-outline-variant cursor-pointer hover:bg-surface-container-high transition-colors"
                         >
