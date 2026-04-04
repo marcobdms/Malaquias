@@ -1,6 +1,6 @@
 from sentence_transformers import SentenceTransformer, util
-from rank_bm25 import BM25Okapi
 import re
+import math
 
 print("Cargando modelo SentenceTransformer...")
 try:
@@ -15,25 +15,29 @@ def tokenize(text: str) -> list:
     tokens = re.findall(r'\b\w+\b', text.lower())
     return [t for t in tokens if t not in STOPWORDS and len(t) > 2]
 
+def keyword_score(cv_text: str, job_description: str) -> float:
+    cv_tokens = set(tokenize(cv_text))
+    job_tokens = tokenize(job_description)
+    
+    if not job_tokens:
+        return 0.0
+    
+    job_unique = set(job_tokens)
+    matches = len(cv_tokens & job_unique)
+    score = matches / len(job_unique)
+    return min(1.0, score * 2.5)
+
 def compare_cv_to_job(cv_text: str, job_description: str, strictness: str = "normal", balance: float = 0.5) -> float:
     if model is None:
         return 0.0
 
-    # Sentence score
     cv_emb = model.encode([cv_text])
     job_emb = model.encode([job_description])
     sentence_score = float(util.cos_sim(cv_emb, job_emb)[0][0])
 
-    # BM25 score
-    cv_tokens = tokenize(cv_text)
-    job_tokens = tokenize(job_description)
-    bm25 = BM25Okapi([cv_tokens])
-    scores = bm25.get_scores(job_tokens)
-    raw_bm25 = scores[0]
-    bm25_score = float(min(1.0, raw_bm25 / 10.0))
+    kw_score = keyword_score(cv_text, job_description)
 
-    # Hybrid
-    hybrid = (balance * bm25_score) + ((1 - balance) * sentence_score)
+    hybrid = (balance * kw_score) + ((1 - balance) * sentence_score)
 
     if strictness == "estricto":
         final = (hybrid - 0.5) / 0.5
@@ -43,5 +47,5 @@ def compare_cv_to_job(cv_text: str, job_description: str, strictness: str = "nor
         final = hybrid
 
     result = round(max(0.0, min(1.0, final)), 2)
-    print(f"DEBUG sentence={sentence_score:.3f} bm25={bm25_score:.3f} hybrid={hybrid:.3f} final={result}")
+    print(f"DEBUG sentence={sentence_score:.3f} kw={kw_score:.3f} hybrid={hybrid:.3f} final={result}")
     return result
