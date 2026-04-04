@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-export default function Results({ candidates, onReset, ofertaId, onDownloadPDF, isSavedView, onNavigate }) {
+export default function Results({ candidates, onReset, ofertaId, onDownloadPDF, isSavedView, onNavigate, jobData }) {
     const [expanded, setExpanded] = useState({ 0: true })
     const [contactoVisible, setContactoVisible] = useState({})
     const [showAll, setShowAll] = useState(false)
@@ -53,9 +53,33 @@ export default function Results({ candidates, onReset, ofertaId, onDownloadPDF, 
         }
     }
 
-    function handleSave() {
-        setSaved(true)
-        alert('Análisis guardado. Búscalo en "Análisis Guardados" del menú principal.')
+    async function handleSave() {
+        if (saved) return;
+        try {
+            const token = localStorage.getItem('token')
+            const res = await fetch(`${API}/save-analysis`, {
+                method: 'POST',
+                headers: { 
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    descripcion: jobData.descripcion,
+                    categoria: jobData.categoria,
+                    stack: jobData.stack,
+                    candidatos: candidates
+                })
+            })
+            if (res.ok) {
+                setSaved(true)
+                alert('Análisis guardado permanentemente en tu historial.')
+            } else {
+                alert('Error al guardar el análisis.')
+            }
+        } catch (e) {
+            console.error('Save error:', e)
+            alert('Error de conexión al guardar.')
+        }
     }
 
     const getRecommendationBadge = (rec) => {
@@ -78,12 +102,12 @@ export default function Results({ candidates, onReset, ofertaId, onDownloadPDF, 
         <div className="flex flex-col gap-4">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 gap-4">
                 <div>
-                    <h3 className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-1 flex items-center gap-2">
-                        Análisis Activo
-                        <span className="text-on-surface font-bold">{candidates.length} Analizados</span>
+                    <h3 className="text-[10px] font-bold uppercase tracking-widest text-[#c6c6c6] mb-1 flex items-center gap-2">
+                        Cribado en curso
+                        <span className="text-zinc-500 font-bold ml-2">{candidates.length} Analizados</span>
                     </h3>
                     <p className="text-3xl font-black text-on-surface tracking-tight leading-tight">
-                        Candidato<br className="hidden sm:block" /> Intelligence
+                        Análisis de Talento
                     </p>
                 </div>
                 <div className="flex flex-col sm:flex-row items-center gap-3">
@@ -118,9 +142,7 @@ export default function Results({ candidates, onReset, ofertaId, onDownloadPDF, 
                 </div>
             </div>
             
-            <p className="text-sm text-on-surface-variant mb-4 lg:hidden">
-                Hemos procesado los perfiles disponibles para encontrar el ajuste perfecto con tu cultura y requisitos técnicos.
-            </p>
+
 
             {visibleCandidates.map((c, i) => {
                 const a = c.analysis || {}
@@ -152,18 +174,22 @@ export default function Results({ candidates, onReset, ofertaId, onDownloadPDF, 
                                     )}
                                 </div>
 
-                                <div className="min-w-0 flex-1">
+                                <div className="min-w-0 flex-1 overflow-hidden">
                                     {isTop && (
                                         <span className="text-white bg-white/10 border border-white/10 px-2 py-0.5 rounded-full text-[9px] font-black tracking-widest uppercase mb-2 inline-block">
                                             Mejor Candidato
                                         </span>
                                     )}
-                                    <h4 className="text-xl md:text-2xl font-bold text-white tracking-tight leading-tight mb-1 truncate pr-2">
-                                        {a.nombre_candidato || c.filename.replace('.pdf', '')}
-                                    </h4>
-                                    <p className="text-sm text-zinc-400 font-medium truncate">
-                                        {a.titulo_candidato || 'Perfil Analizado'}
-                                    </p>
+                                    <div className="scrolling-container" title={a.nombre_candidato || c.filename}>
+                                        <h4 className="scrolling-content text-xl md:text-2xl font-bold text-white tracking-tight leading-tight mb-1">
+                                            {a.nombre_candidato || c.filename.replace('.pdf', '')}
+                                        </h4>
+                                    </div>
+                                    <div className="scrolling-container" title={a.titulo_candidato || 'Perfil Analizado'}>
+                                        <p className="scrolling-content text-sm text-zinc-400 font-medium">
+                                            {a.titulo_candidato || 'Perfil Analizado'}
+                                        </p>
+                                    </div>
                                 </div>
                             </div>
 

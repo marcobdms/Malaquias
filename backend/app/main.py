@@ -20,6 +20,12 @@ from .database import get_db, engine
 from . import models
 from .auth import hash_password, verify_password, create_access_token, get_current_user
 from .email_service import send_confirmation_email
+
+class SaveAnalysisSchema(BaseModel):
+    descripcion: str
+    categoria: Optional[str] = None
+    stack: Optional[str] = None
+    candidatos: List[dict]
 from fastapi.middleware.httpsredirect import HTTPSRedirectMiddleware
 
 models.Base.metadata.create_all(bind=engine)
@@ -111,16 +117,6 @@ async def analyze_cvs(
     async def event_stream():
         yield f"data: {json.dumps({'event': 'start', 'total': total})}\n\n"
 
-        oferta = models.Oferta(
-            user_id=current_user.id,
-            descripcion=job_description,
-            categoria=categoria,
-            stack=stack
-        )
-        db.add(oferta)
-        db.commit()
-        db.refresh(oferta)
-
         results = []
 
         for i, cv in enumerate(cvs[:10]):
@@ -144,22 +140,6 @@ async def analyze_cvs(
                     match_score=score
                 )
 
-                candidato = models.Candidato(
-                    oferta_id=oferta.id,
-                    filename=cv.filename,
-                    match_score=round(score * 100, 2),
-                    fortalezas=json.dumps(analysis.get("fortalezas", [])),
-                    carencias=json.dumps(analysis.get("carencias", [])),
-                    valoracion=analysis.get("valoracion", ""),
-                    recomendacion=analysis.get("recomendacion", ""),
-                    nombre_candidato=analysis.get("nombre_candidato"),
-                    titulo_candidato=analysis.get("titulo_candidato"),
-                    email_candidato=analysis.get("email_candidato"),
-                    telefono_candidato=analysis.get("telefono_candidato")
-                )
-                db.add(candidato)
-                db.commit()
-
                 result = {
                     "filename": cv.filename,
                     "match_score": round(score * 100, 2),
@@ -171,9 +151,43 @@ async def analyze_cvs(
             await asyncio.sleep(1.5)
 
         results.sort(key=lambda x: x["match_score"], reverse=True)
-        yield f"data: {json.dumps({'event': 'complete', 'oferta_id': oferta.id, 'candidates': results})}\n\n"
+        yield f"data: {json.dumps({'event': 'complete', 'candidates': results})}\n\n"
 
     return StreamingResponse(event_stream(), media_type="text/event-stream")
+
+
+@app.post("/save-analysis")
+def save_analysis(data: SaveAnalysisSchema, db: Session = Depends(get_db), current_user=Depends(get_current_user)):
+    """Guarda un análisis explícitamente."""
+    oferta = models.Oferta(
+        user_id=current_user.id,
+        descripcion=data.descripcion,
+        categoria=data.categoria,
+        stack=data.stack
+    )
+    db.add(oferta)
+    db.commit()
+    db.refresh(oferta)
+
+    for c in data.candidatos:
+        analysis = c.get("analysis", {})
+        candidato = models.Candidato(
+            oferta_id=oferta.id,
+            filename=c.get("filename"),
+            match_score=c.get("match_score", 0),
+            fortalezas=json.dumps(analysis.get("fortalezas", [])),
+            carencias=json.dumps(analysis.get("carencias", [])),
+            valoracion=analysis.get("valoracion", ""),
+            recomendacion=analysis.get("recomendacion", ""),
+            nombre_candidato=analysis.get("nombre_candidato"),
+            titulo_candidato=analysis.get("titulo_candidato"),
+            email_candidato=analysis.get("email_candidato"),
+            telefono_candidato=analysis.get("telefono_candidato")
+        )
+        db.add(candidato)
+    
+    db.commit()
+    return {"status": "ok", "oferta_id": oferta.id}
 
 
 # ──────────────────────────────────────

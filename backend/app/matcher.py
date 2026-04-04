@@ -19,20 +19,22 @@ def compare_cv_to_job(cv_text: str, job_description: str, strictness: str = "nor
         return 0.0
 
     # Generamos los vectores (embeddings)
-    # convert_to_numpy=True para operaciones simples con arrays
     cv_emb = model.encode([cv_text])
     job_emb = model.encode([job_description])
 
-    # Calculamos la similitud del coseno (Cosine Similarity)
-    # util.cos_sim devuelve una matriz, tomamos el valor escalar
+    # Calculamos la similitud del coseno
     cosine_sim = util.cos_sim(cv_emb, job_emb)
     score = float(cosine_sim[0][0])
 
-    # El score de similitud semántica suele ser alto (0.4-0.9) incluso para perfiles no tan ideales
-    # Ajustamos el rango para que sea más reactivo en el Dashboard
+    print(f"DEBUG - CV (trunc): {cv_text[:100]}...")
+    print(f"DEBUG - JOB (trunc): {job_description[:100]}...")
+    print(f"DEBUG - RAW SCORE: {score}")
+
+    # Ajustamos el rango
     if strictness == "estricto":
-        final_score = (score - 0.5) / 0.5  # Escala 0.5-1.0 -> 0-1
+        final_score = (score - 0.5) / 0.5
     else:
-        final_score = (score - 0.3) / 0.7  # Escala 0.3-1.0 -> 0-1
+        # Menos estricto para evitar 0.0% en perfiles razonables
+        final_score = (score - 0.25) / 0.75
 
     return round(max(0.0, min(1.0, final_score)), 2)

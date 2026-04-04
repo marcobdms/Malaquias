@@ -10,7 +10,8 @@ const CATEGORIAS = [
     { value: 'administracion', label: 'Administración' },
 ]
 
-export default function JobForm({
+import { memo } from 'react'
+const JobForm = memo(({
     value,
     onChange,
     categoria,
@@ -18,7 +19,7 @@ export default function JobForm({
     setStack, // guardado en caso de usarlo luego
     strictness,
     setStrictness
-}) {
+}) => {
 
     function handleCategoria(e) {
         setCategoria(e.target.value)
@@ -93,4 +94,5 @@ export default function JobForm({
             </div>
         </div>
     )
-}
+})
+export default JobForm

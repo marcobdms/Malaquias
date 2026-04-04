@@ -1,6 +1,5 @@
-import { useRef, useState } from 'react'
-
-export default function DropZone({ files, setFiles }) {
+import { useRef, useState, memo } from 'react'
+const DropZone = memo(({ files, setFiles }) => {
     const inputRef = useRef()
     const [isDragging, setIsDragging] = useState(false)
 
@@ -83,4 +82,5 @@ export default function DropZone({ files, setFiles }) {
             )}
         </div>
     )
-}
+})
+export default DropZone

@@ -65,12 +65,12 @@ export default function Sidebar({ currentView, onNavigate }) {
                             currentView === item.id ? 'text-primary' : 'text-zinc-500'
                         }`}
                     >
-                        <div className={`w-12 h-12 flex items-center justify-center transition-all ${currentView === item.id ? 'bg-primary/10 rounded-2xl' : ''}`}>
-                            <span className="material-symbols-outlined text-[26px]">
+                        <div className={`w-10 h-10 flex items-center justify-center transition-all ${currentView === item.id ? 'bg-primary/10 rounded-2xl' : ''}`}>
+                            <span className="material-symbols-outlined text-[24px]">
                                 {item.icon}
                             </span>
                         </div>
-                        <span className="text-[10px] font-bold uppercase tracking-tight -mt-1">{item.label}</span>
+                        <span className="text-[10px] font-bold uppercase tracking-tight -mt-0.5">{item.label}</span>
                     </button>
                 ))}
             </div>
