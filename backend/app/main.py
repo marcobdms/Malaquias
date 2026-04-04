@@ -151,6 +151,8 @@ async def analyze_cvs(
                     carencias=json.dumps(analysis.get("carencias", [])),
                     valoracion=analysis.get("valoracion", ""),
                     recomendacion=analysis.get("recomendacion", ""),
+                    nombre_candidato=analysis.get("nombre_candidato"),
+                    titulo_candidato=analysis.get("titulo_candidato"),
                     email_candidato=analysis.get("email_candidato"),
                     telefono_candidato=analysis.get("telefono_candidato")
                 )
@@ -303,6 +305,8 @@ def get_oferta_candidatos(oferta_id: int, db: Session = Depends(get_db), current
             "recomendacion": c.recomendacion,
             "email_candidato": c.email_candidato,
             "telefono_candidato": c.telefono_candidato,
+            "nombre_candidato": c.nombre_candidato,
+            "titulo_candidato": c.titulo_candidato,
             "created_at": c.created_at.isoformat() if c.created_at else None
         } for c in candidatos]
     }
@@ -379,7 +383,9 @@ def talent_pool(db: Session = Depends(get_db), current_user=Depends(get_current_
             "oferta_categoria": oferta_map[c.oferta_id]["categoria"],
             "oferta_descripcion": oferta_map[c.oferta_id]["descripcion"],
             "fortalezas": json.loads(c.fortalezas) if c.fortalezas else [],
-            "carencias": json.loads(c.carencias) if c.carencias else []
+            "carencias": json.loads(c.carencias) if c.carencias else [],
+            "nombre_candidato": c.nombre_candidato,
+            "titulo_candidato": c.titulo_candidato
         })
 
     return result

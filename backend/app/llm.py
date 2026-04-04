@@ -44,8 +44,10 @@ OFERTA:
 CV:
 {cv_text}
 
-Responde ÚNICAMENTE con este JSON exacto, sin texto adicional:
+Responde ÚNICAMENTE con este JSON exacto, sin texto adicional ni markdown:
 {{
+  "nombre_candidato": "Nombre completo extraído del CV",
+  "titulo_candidato": "Cargo o perfil profesional en máximo 30 caracteres, conciso y profesional",
   "fortalezas": ["punto 1", "punto 2", "punto 3"],
   "carencias": ["punto 1", "punto 2"],
   "valoracion": "2-3 frases de valoración",
@@ -54,7 +56,8 @@ Responde ÚNICAMENTE con este JSON exacto, sin texto adicional:
   "telefono_candidato": "+34 600 000 000 o null"
 }}
 
-El campo recomendacion solo puede ser: "Entrevistar", "Considerar" o "Descartar"."""
+El campo "titulo_candidato" debe ser un cargo corto (ej: "Desarrollador React" en lugar de "Software Engineer con 5 años de experiencia").
+El campo "recomendacion" solo puede ser: "Entrevistar", "Considerar" o "Descartar"."""
 
     headers = {
         "Authorization": f"Bearer {GROQ_API_KEY}",

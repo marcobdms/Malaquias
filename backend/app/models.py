@@ -41,6 +41,8 @@ class Candidato(Base):
     carencias = Column(Text)
     valoracion = Column(Text)
     recomendacion = Column(String)
+    nombre_candidato = Column(String)
+    titulo_candidato = Column(String)
     email_candidato = Column(String)
     telefono_candidato = Column(String)
     created_at = Column(DateTime, default=datetime.utcnow)

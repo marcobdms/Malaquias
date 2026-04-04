@@ -7,6 +7,7 @@ export default function Positions() {
     const [selectedOferta, setSelectedOferta] = useState(null)
     const [candidatos, setCandidatos] = useState(null)
     const [loadingCandidatos, setLoadingCandidatos] = useState(false)
+    const [showFullDesc, setShowFullDesc] = useState(false)
     const API = import.meta.env.VITE_API_URL || 'http://localhost:8000'
 
     useEffect(() => {
@@ -66,7 +67,9 @@ export default function Positions() {
                         valoracion: c.valoracion,
                         recomendacion: c.recomendacion,
                         email_candidato: c.email_candidato,
-                        telefono_candidato: c.telefono_candidato
+                        telefono_candidato: c.telefono_candidato,
+                        nombre_candidato: c.nombre_candidato,
+                        titulo_candidato: c.titulo_candidato
                     }
                 })))
             }
@@ -124,21 +127,37 @@ export default function Positions() {
         return (
             <div className="p-4 md:p-8 max-w-5xl mx-auto w-full">
                 <button 
-                    onClick={() => { setSelectedOferta(null); setCandidatos(null) }}
-                    className="flex items-center gap-2 text-on-surface-variant hover:text-on-surface transition-colors mb-6 text-sm font-medium"
+                    onClick={() => { setSelectedOferta(null); setCandidatos(null); setShowFullDesc(false); }}
+                    className="flex items-center gap-2 text-zinc-400 hover:text-white transition-colors mb-8 text-sm font-bold uppercase tracking-widest"
                 >
                     <span className="material-symbols-outlined text-[18px]">arrow_back</span>
                     Volver a posiciones
                 </button>
 
-                <div className="mb-6">
-                    <div className="flex items-center gap-3 mb-2">
-                        <span className="bg-primary/10 text-primary px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest">
+                <div className="mb-10 p-5 crystal-card !rounded-2xl border border-white/5">
+                    <div className="flex items-center gap-3 mb-4">
+                        <span className="bg-zinc-800 text-zinc-300 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest border border-white/5">
                             {getCategoryLabel(selectedOferta.categoria)}
                         </span>
-                        <span className="text-xs text-on-surface-variant">{formatDate(selectedOferta.created_at)}</span>
+                        <span className="text-xs text-zinc-500 font-medium">{formatDate(selectedOferta.created_at)}</span>
                     </div>
-                    <p className="text-sm text-on-surface-variant line-clamp-2">{selectedOferta.descripcion}</p>
+                    
+                    <div className="relative">
+                        <p className={`text-sm text-zinc-400 leading-relaxed transition-all duration-300 ${showFullDesc ? '' : 'line-clamp-3'}`}>
+                            {selectedOferta.descripcion}
+                        </p>
+                        
+                        <button 
+                            onClick={() => setShowFullDesc(!showFullDesc)}
+                            className="mt-3 text-xs font-bold text-white hover:text-zinc-300 transition-colors flex items-center gap-1 uppercase tracking-widest"
+                        >
+                            {showFullDesc ? (
+                                <>Ocultar <span className="material-symbols-outlined text-[16px]">expand_less</span></>
+                            ) : (
+                                <>Ver oferta completa <span className="material-symbols-outlined text-[16px]">expand_more</span></>
+                            )}
+                        </button>
+                    </div>
                 </div>
 
                 {loadingCandidatos ? (

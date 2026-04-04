@@ -18,9 +18,10 @@ export default function Results({ candidates, onReset, ofertaId, onDownloadPDF, 
         setContactoVisible(prev => ({ ...prev, [i]: !prev[i] }))
     }
 
-    function getInitials(filename) {
-        const name = filename.replace('.pdf', '')
-        return name.substring(0, 2).toUpperCase()
+    function getInitials(name) {
+        if (!name) return '??'
+        const cleanName = name.replace('.pdf', '')
+        return cleanName.substring(0, 2).toUpperCase()
     }
 
     const truncate = (text) => {
@@ -86,27 +87,29 @@ export default function Results({ candidates, onReset, ofertaId, onDownloadPDF, 
                     </p>
                 </div>
                 <div className="flex flex-col sm:flex-row items-center gap-3">
-                    <button 
-                        onClick={handleNewSearchClick}
-                        className="btn-outline h-10 px-4 w-full sm:w-auto flex items-center justify-center gap-2 text-sm text-on-surface-variant hover:text-on-surface whitespace-nowrap"
-                    >
-                        <span className="material-symbols-outlined text-[18px]">refresh</span>
-                        {isSavedView ? 'Volver' : 'Nueva búsqueda'}
-                    </button>
+                    {!isSavedView && (
+                        <button 
+                            onClick={handleNewSearchClick}
+                            className="btn-outline h-10 px-4 w-full sm:w-auto flex items-center justify-center gap-2 text-sm text-on-surface-variant hover:text-on-surface whitespace-nowrap"
+                        >
+                            <span className="material-symbols-outlined text-[18px]">refresh</span>
+                            Nueva búsqueda
+                        </button>
+                    )}
                     
                     {isSavedView ? (
                         <button 
                             onClick={onDownloadPDF}
-                            className="bg-white text-black h-10 px-4 w-full sm:w-auto rounded-full font-bold text-sm shadow-crystal hover:scale-[1.02] active:scale-95 transition-transform flex items-center justify-center gap-2 whitespace-nowrap"
+                            className="bg-white text-black h-10 px-6 rounded-full font-bold text-sm shadow-crystal hover:scale-[1.02] active:scale-95 transition-transform flex items-center justify-center gap-2 whitespace-nowrap"
                         >
                             <span className="material-symbols-outlined text-[18px]">picture_as_pdf</span>
-                            Descargar PDF
+                            Descargar informe
                         </button>
                     ) : (
                         <button 
                             onClick={handleSave}
                             disabled={saved}
-                            className={`${saved ? 'bg-green-500/20 text-green-400' : 'bg-white text-black hover:scale-[1.02] active:scale-95 shadow-crystal'} h-10 px-4 w-full sm:w-auto rounded-full font-bold text-sm transition-transform flex items-center justify-center gap-2 whitespace-nowrap`}
+                            className={`${saved ? 'bg-zinc-800 text-zinc-400' : 'bg-white text-black hover:scale-[1.02] active:scale-95 shadow-crystal'} h-10 px-4 w-full sm:w-auto rounded-full font-bold text-sm transition-transform flex items-center justify-center gap-2 whitespace-nowrap`}
                         >
                             <span className="material-symbols-outlined text-[18px]">{saved ? 'check' : 'bookmark'}</span>
                             {saved ? 'Guardado' : 'Guardar análisis'}
@@ -133,12 +136,12 @@ export default function Results({ candidates, onReset, ofertaId, onDownloadPDF, 
                         onClick={() => !isTop && toggleExpand(i)}
                     >
                         {/* Cabecera de la Tarjeta (Siempre visible) */}
-                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 relative z-10">
-                            <div className="flex items-start gap-4">
+                        <div className="flex items-start justify-between gap-4 relative z-10">
+                            <div className="flex items-start gap-4 min-w-0 flex-1">
                                 {/* Avatar & Badge Placed Together */}
-                                <div className="flex flex-col items-center gap-2 relative mt-1">
+                                <div className="flex flex-col items-center gap-2 relative mt-1 shrink-0">
                                     <div className={`w-14 h-14 rounded-full flex items-center justify-center text-lg font-black shadow-crystal border ${isTop ? 'bg-surface-container-high text-white border-white/20' : 'bg-surface-container text-on-surface border-white/5'}`}>
-                                        {getInitials(c.filename)}
+                                        {getInitials(a.nombre_candidato || c.filename)}
                                     </div>
                                     {isTop && (
                                         <div className="absolute -bottom-3 top-[44px] left-1/2 -translate-x-1/2 bg-background rounded-full p-1 z-20">
@@ -149,35 +152,32 @@ export default function Results({ candidates, onReset, ofertaId, onDownloadPDF, 
                                     )}
                                 </div>
 
-                                <div>
+                                <div className="min-w-0 flex-1">
                                     {isTop && (
                                         <span className="text-white bg-white/10 border border-white/10 px-2 py-0.5 rounded-full text-[9px] font-black tracking-widest uppercase mb-2 inline-block">
                                             Mejor Candidato
                                         </span>
                                     )}
-                                    <h4 className="text-xl md:text-2xl font-bold text-white tracking-tight leading-none mb-1">
-                                        {c.filename.replace('.pdf', '')}
+                                    <h4 className="text-xl md:text-2xl font-bold text-white tracking-tight leading-tight mb-1 truncate pr-2">
+                                        {a.nombre_candidato || c.filename.replace('.pdf', '')}
                                     </h4>
-                                    <p className="text-sm text-on-surface-variant">
-                                        Perfil Analizado
+                                    <p className="text-sm text-zinc-400 font-medium truncate">
+                                        {a.titulo_candidato || 'Perfil Analizado'}
                                     </p>
                                 </div>
                             </div>
 
-                            <div className="flex items-center justify-between sm:justify-end gap-6 sm:gap-4 mt-2 sm:mt-0">
-                                <div className="text-right mr-2 hidden sm:block">
-                                    <p className="text-[9px] font-bold text-on-surface-variant uppercase tracking-widest mt-0.5">Match Score</p>
-                                </div>
-                                <div className={`flex items-center justify-center w-[60px] h-[60px] rounded-full border-4 ${isTop ? 'border-white/60' : 'border-white/10'} shrink-0`}>
-                                    <p className="text-[14px] font-black tracking-tighter text-white">{score}%</p>
+                            <div className="flex items-center gap-3 shrink-0">
+                                <div className={`flex items-center justify-center w-[54px] h-[54px] rounded-full border-2 ${isTop ? 'border-white/60 bg-white/5' : 'border-white/10 bg-surface-container-high'} shrink-0 shadow-crystal`}>
+                                    <p className="text-[13px] font-black tracking-tighter text-white">{score}%</p>
                                 </div>
 
                                 {!isTop && (
                                     <button 
-                                        className="sm:hidden btn-outline h-10 px-4 flex items-center justify-center whitespace-nowrap text-sm"
+                                        className="sm:hidden w-10 h-10 flex items-center justify-center rounded-xl bg-surface-container border border-white/5"
                                         onClick={(e) => { e.stopPropagation(); toggleExpand(i); }}
                                     >
-                                        {isExpanded ? 'Colapsar' : 'Ver'}
+                                        <span className={`material-symbols-outlined text-[20px] transition-transform ${isExpanded ? 'rotate-180' : ''}`}>expand_more</span>
                                     </button>
                                 )}
                             </div>

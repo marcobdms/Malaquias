@@ -26,8 +26,8 @@ export default function Dashboard({ onNavigate }) {
 
     if (loading) {
         return (
-            <div className="flex items-center justify-center h-64">
-                <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+            <div className="flex flex-col items-center justify-center h-[60dvh] w-full">
+                <div className="w-10 h-10 border-2 border-zinc-500 border-t-white rounded-full animate-spin" />
             </div>
         )
     }
@@ -68,8 +68,8 @@ export default function Dashboard({ onNavigate }) {
 
                 <div className="crystal-card !p-5 !rounded-2xl group hover:scale-[1.02] transition-transform">
                     <div className="flex items-center gap-3 mb-3">
-                        <div className="w-10 h-10 rounded-xl bg-[#0bdacb]/10 flex items-center justify-center">
-                            <span className="material-symbols-outlined text-[#0bdacb] text-[20px]">group</span>
+                        <div className="w-10 h-10 rounded-xl bg-zinc-500/10 flex items-center justify-center">
+                            <span className="material-symbols-outlined text-zinc-400 text-[20px]">group</span>
                         </div>
                     </div>
                     <p className="text-2xl font-black text-on-surface">{data.total_candidatos}</p>
