@@ -28,8 +28,9 @@ def compare_cv_to_job(cv_text: str, job_description: str, strictness: str = "nor
     cv_tokens = tokenize(cv_text)
     job_tokens = tokenize(job_description)
     bm25 = BM25Okapi([cv_tokens])
-    raw_bm25 = bm25.get_scores(job_tokens)[0]
-    bm25_score = float(raw_bm25 / (raw_bm25 + 1))
+    scores = bm25.get_scores(job_tokens)
+    raw_bm25 = scores[0]
+    bm25_score = float(min(1.0, raw_bm25 / 10.0))
 
     # Hybrid
     hybrid = (balance * bm25_score) + ((1 - balance) * sentence_score)
