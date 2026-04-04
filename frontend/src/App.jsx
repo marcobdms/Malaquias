@@ -138,7 +138,7 @@ function App() {
 
       {/* ── Dashboard View ── */}
       {currentView === 'dashboard' && (
-        <main className="md:ml-[240px] pt-14 pb-[70px] md:pb-0 min-h-screen">
+        <main className="flex-1 md:ml-[240px] pt-14 pb-[85px] md:pb-0 min-h-screen w-full">
           <Dashboard onNavigate={handleNavigate} />
         </main>
       )}
@@ -154,7 +154,7 @@ function App() {
 
       {/* ── Positions View ── */}
       {currentView === 'positions' && (
-        <main className="md:ml-[240px] pt-14 pb-[70px] md:pb-0 min-h-screen">
+        <main className="flex-1 md:ml-[240px] pt-14 pb-[85px] md:pb-0 min-h-screen w-full">
           <Positions />
         </main>
       )}
@@ -221,6 +221,7 @@ function App() {
                   <Progress total={progress.total} done={progress.done} status={progress.status} />
                 </div>
               )}
+
 
               {error && (
                 <div className="mt-4 p-4 bg-red-500/10 border border-red-500/20 rounded-2xl">

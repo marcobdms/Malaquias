@@ -26,8 +26,9 @@ export default function Dashboard({ onNavigate }) {
 
     if (loading) {
         return (
-            <div className="flex flex-col items-center justify-center h-[60dvh] w-full">
-                <div className="w-10 h-10 border-2 border-zinc-500 border-t-white rounded-full animate-spin" />
+            <div className="flex flex-col items-center justify-center h-[70dvh] w-full">
+                <div className="w-12 h-12 border-2 border-white/10 border-t-white rounded-full animate-spin" />
+                <p className="mt-4 text-zinc-500 text-[10px] font-bold uppercase tracking-widest leading-none">Cargando Dashboard</p>
             </div>
         )
     }
@@ -141,6 +142,11 @@ export default function Dashboard({ onNavigate }) {
                                     <div className="h-full bg-gradient-to-r from-red-500 to-red-400 rounded-full transition-all duration-700" style={{ width: `${pctDescartar}%` }} />
                                 </div>
                             </div>
+                        </div>
+                    )}
+                    {error && (
+                        <div className="mt-4 p-4 bg-red-500/10 border border-red-500/20 rounded-2xl">
+                            <p className="text-sm text-red-400 font-medium">{error}</p>
                         </div>
                     )}
                 </div>

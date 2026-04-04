@@ -2,7 +2,7 @@ export default function Sidebar({ currentView, onNavigate }) {
     const navItems = [
         { id: 'dashboard', icon: 'dashboard', label: 'Dashboard' },
         { id: 'screener', icon: 'group', label: 'CV Screener' },
-        { id: 'positions', icon: 'bookmarks', label: 'Análisis Guardados' },
+        { id: 'positions', icon: 'bookmarks', label: 'Análisis' },
     ]
 
     return (
@@ -56,19 +56,21 @@ export default function Sidebar({ currentView, onNavigate }) {
             </aside>
 
             {/* MOBILE BOTTOM NAV */}
-            <div className="md:hidden fixed bottom-0 left-0 right-0 h-[70px] bg-surface-container-lowest border-t border-white/5 z-50 flex items-center shadow-[0_-10px_40px_rgba(0,0,0,0.5)]">
+            <div className="md:hidden fixed bottom-0 left-0 right-0 h-[85px] bg-background border-t border-white/5 z-50 flex items-center justify-around px-2 pb-[15px] shadow-[0_-10px_40px_rgba(0,0,0,0.5)]">
                 {navItems.map(item => (
                     <button
                         key={item.id}
                         onClick={() => onNavigate(item.id)}
-                        className={`flex-1 flex flex-col items-center justify-center h-full transition-all ${
-                            currentView === item.id ? 'text-primary' : 'text-on-surface-variant'
+                        className={`flex-1 flex flex-col items-center justify-center h-full gap-0.5 transition-all ${
+                            currentView === item.id ? 'text-primary' : 'text-zinc-500'
                         }`}
                     >
-                        <span className={`material-symbols-outlined text-[24px] mb-0.5 ${currentView === item.id ? 'bg-primary/10 rounded-full w-10 h-10 flex items-center justify-center' : ''}`}>
-                            {item.icon}
-                        </span>
-                        <span className="text-[9px] font-bold uppercase tracking-tight">{item.label}</span>
+                        <div className={`w-12 h-12 flex items-center justify-center transition-all ${currentView === item.id ? 'bg-primary/10 rounded-2xl' : ''}`}>
+                            <span className="material-symbols-outlined text-[26px]">
+                                {item.icon}
+                            </span>
+                        </div>
+                        <span className="text-[10px] font-bold uppercase tracking-tight -mt-1">{item.label}</span>
                     </button>
                 ))}
             </div>
