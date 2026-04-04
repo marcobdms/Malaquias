@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react'
 export default function Dashboard({ onNavigate }) {
     const [data, setData] = useState(null)
     const [loading, setLoading] = useState(true)
+    const [error, setError] = useState(null)
     const API = import.meta.env.VITE_API_URL || 'http://localhost:8000'
 
     useEffect(() => {
@@ -14,9 +15,12 @@ export default function Dashboard({ onNavigate }) {
                 })
                 if (res.ok) {
                     setData(await res.json())
+                } else {
+                    setError('No se pudieron cargar las métricas.')
                 }
             } catch (e) {
                 console.error('Error fetching dashboard:', e)
+                setError('Error de conexión.')
             } finally {
                 setLoading(false)
             }
@@ -33,12 +37,22 @@ export default function Dashboard({ onNavigate }) {
         )
     }
 
+    if (error) {
+        return (
+            <div className="flex flex-col items-center justify-center h-[70dvh] w-full">
+                <span className="material-symbols-outlined text-red-500/50 text-5xl mb-4">error</span>
+                <p className="text-zinc-400 text-sm font-medium">{error}</p>
+                <button onClick={() => window.location.reload()} className="mt-6 text-white text-[10px] font-bold uppercase tracking-widest border border-white/10 px-4 py-2 rounded-full hover:bg-white/5 transition-colors">Reintentar</button>
+            </div>
+        )
+    }
+
     if (!data) return null
 
-    const total = data.distribucion.entrevistar + data.distribucion.considerar + data.distribucion.descartar
-    const pctEntrevistar = total > 0 ? Math.round((data.distribucion.entrevistar / total) * 100) : 0
-    const pctConsiderar = total > 0 ? Math.round((data.distribucion.considerar / total) * 100) : 0
-    const pctDescartar = total > 0 ? Math.round((data.distribucion.descartar / total) * 100) : 0
+    const total = (data.distribucion?.entrevistar || 0) + (data.distribucion?.considerar || 0) + (data.distribucion?.descartar || 0)
+    const pctEntrevistar = total > 0 ? Math.round(((data.distribucion?.entrevistar || 0) / total) * 100) : 0
+    const pctConsiderar = total > 0 ? Math.round(((data.distribucion?.considerar || 0) / total) * 100) : 0
+    const pctDescartar = total > 0 ? Math.round(((data.distribucion?.descartar || 0) / total) * 100) : 0
 
     const getRecBadge = (rec) => {
         const r = (rec || '').toLowerCase()

@@ -8,6 +8,8 @@ export default function Positions() {
     const [candidatos, setCandidatos] = useState(null)
     const [loadingCandidatos, setLoadingCandidatos] = useState(false)
     const [showFullDesc, setShowFullDesc] = useState(false)
+    const [data, setData] = useState(null)
+    const [error, setError] = useState(null)
     const API = import.meta.env.VITE_API_URL || 'http://localhost:8000'
 
     useEffect(() => {
@@ -56,28 +58,32 @@ export default function Positions() {
             const res = await fetch(`${API}/ofertas/${oferta.id}/candidatos`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             })
-            if (res.ok) {
-                const data = await res.json()
-                setCandidatos(data.candidatos.map(c => ({
-                    filename: c.filename,
-                    match_score: c.match_score,
-                    analysis: {
-                        fortalezas: c.fortalezas,
-                        carencias: c.carencias,
-                        valoracion: c.valoracion,
-                        recomendacion: c.recomendacion,
-                        email_candidato: c.email_candidato,
-                        telefono_candidato: c.telefono_candidato,
-                        nombre_candidato: c.nombre_candidato,
-                        titulo_candidato: c.titulo_candidato
-                    }
-                })))
+                if (res.ok) {
+                    const json = await res.json()
+                    setCandidatos((json.candidatos || []).map(c => ({
+                        filename: c.filename || 'Archivo',
+                        match_score: c.match_score || 0,
+                        analysis: {
+                            fortalezas: c.fortalezas || [],
+                            carencias: c.carencias || [],
+                            valoracion: c.valoracion || '',
+                            recomendacion: c.recomendacion || 'Considerar',
+                            email_candidato: c.email_candidato,
+                            telefono_candidato: c.telefono_candidato,
+                            nombre_candidato: c.nombre_candidato,
+                            titulo_candidato: c.titulo_candidato
+                        }
+                    })))
+                } else {
+                    console.error('API Error:', res.status)
+                    alert('No se pudieron cargar los candidatos.')
+                }
+            } catch (e) {
+                console.error('Error fetching candidatos:', e)
+                alert('Error de conexión.')
+            } finally {
+                setLoadingCandidatos(false)
             }
-        } catch (e) {
-            console.error('Error fetching candidatos:', e)
-        } finally {
-            setLoadingCandidatos(false)
-        }
     }
 
     function formatDate(iso) {
