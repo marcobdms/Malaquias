@@ -1,8 +1,7 @@
 from sentence_transformers import SentenceTransformer, util
-import numpy as np
+from rank_bm25 import BM25Okapi
+import re
 
-# Cargamos el modelo globalmente para que persista en el proceso de FastAPI
-# Usamos un modelo multilingüe balanceado (español/inglés)
 print("Cargando modelo SentenceTransformer...")
 try:
     model = SentenceTransformer('paraphrase-multilingual-MiniLM-L12-v2')
@@ -10,31 +9,38 @@ except Exception as e:
     print(f"Error cargando modelo: {e}")
     model = None
 
-def compare_cv_to_job(cv_text: str, job_description: str, strictness: str = "normal") -> float:
-    """
-    Calcula la similitud semántica entre el texto del CV y la descripción de la vacante.
-    Ignora las penalizaciones por palabras clave concretas en favor del contexto global.
-    """
+STOPWORDS = {"de","la","el","en","y","a","que","con","por","para","los","las","un","una","es","se","del","al","lo","su","sus","si","no","yo","mi"}
+
+def tokenize(text: str) -> list:
+    tokens = re.findall(r'\b\w+\b', text.lower())
+    return [t for t in tokens if t not in STOPWORDS and len(t) > 2]
+
+def compare_cv_to_job(cv_text: str, job_description: str, strictness: str = "normal", balance: float = 0.5) -> float:
     if model is None:
         return 0.0
 
-    # Generamos los vectores (embeddings)
+    # Sentence score
     cv_emb = model.encode([cv_text])
     job_emb = model.encode([job_description])
+    sentence_score = float(util.cos_sim(cv_emb, job_emb)[0][0])
 
-    # Calculamos la similitud del coseno
-    cosine_sim = util.cos_sim(cv_emb, job_emb)
-    score = float(cosine_sim[0][0])
+    # BM25 score
+    cv_tokens = tokenize(cv_text)
+    job_tokens = tokenize(job_description)
+    bm25 = BM25Okapi([cv_tokens])
+    raw_bm25 = bm25.get_scores(job_tokens)[0]
+    bm25_score = float(raw_bm25 / (raw_bm25 + 1))
 
-    print(f"DEBUG - CV (trunc): {cv_text[:100]}...")
-    print(f"DEBUG - JOB (trunc): {job_description[:100]}...")
-    print(f"DEBUG - RAW SCORE: {score}")
+    # Hybrid
+    hybrid = (balance * bm25_score) + ((1 - balance) * sentence_score)
 
-    # Ajustamos el rango
     if strictness == "estricto":
-        final_score = (score - 0.5) / 0.5
+        final = (hybrid - 0.5) / 0.5
+    elif strictness == "normal":
+        final = (hybrid - 0.3) / 0.7
     else:
-        # Menos estricto para evitar 0.0% en perfiles razonables
-        final_score = (score - 0.25) / 0.75
+        final = hybrid
 
-    return round(max(0.0, min(1.0, final_score)), 2)
+    result = round(max(0.0, min(1.0, final)), 2)
+    print(f"DEBUG sentence={sentence_score:.3f} bm25={bm25_score:.3f} hybrid={hybrid:.3f} final={result}")
+    return result

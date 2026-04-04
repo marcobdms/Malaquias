@@ -109,6 +109,7 @@ async def analyze_cvs(
     stack: Optional[str] = Form(None),
     strictness: Optional[str] = Form("normal"),
     cvs: List[UploadFile] = File(...),
+    balance: float = Form(0.5),
     db: Session = Depends(get_db),
     current_user=Depends(get_current_user)
 ):

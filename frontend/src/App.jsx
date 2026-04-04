@@ -74,6 +74,7 @@ function App() {
     setProgress({ status: 'analyzing', done: 0, total: files.length })
 
     const formData = new FormData()
+    formData.append('balance', balanceValue / 100)
     formData.append('job_description', jobDesc)
     if (categoria) formData.append('categoria', categoria)
     if (stack) formData.append('stack', stack)
