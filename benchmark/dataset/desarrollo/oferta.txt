@@ -1,0 +1,4 @@
+Backend Developer Python
+Buscamos desarrollador backend con experiencia en Python y APIs REST.
+Requisitos: Python, FastAPI o Django, SQL, PostgreSQL, Docker, Git.
+Experiencia mínima 2 años en desarrollo backend.

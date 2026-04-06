@@ -1,0 +1,32 @@
+{
+  "it_sistemas": {
+    "oferta": "dataset/it_sistemas/oferta.txt",
+    "descripcion": "Administrador de Sistemas IT",
+    "ranking_esperado": [
+      {"cv": "cv_sysadmin_senior.pdf", "relevancia": 3, "motivo": "Experiencia directa Windows/Linux/AD"},
+      {"cv": "cv_helpdesk_junior.pdf", "relevancia": 2, "motivo": "Soporte técnico, transferible"},
+      {"cv": "cv_developer_python.pdf", "relevancia": 1, "motivo": "Técnico pero diferente stack"},
+      {"cv": "cv_camara.pdf", "relevancia": 0, "motivo": "Sin relación"},
+      {"cv": "cv_psicologia.pdf", "relevancia": 0, "motivo": "Sin relación"}
+    ]
+  },
+  "ventas": {
+    "oferta": "dataset/ventas/oferta.txt",
+    "descripcion": "Sales Manager Internacional",
+    "ranking_esperado": [
+      {"cv": "cv_account_manager.pdf", "relevancia": 3, "motivo": "Ventas B2B directas"},
+      {"cv": "cv_rrhh_ingles.pdf", "relevancia": 1, "motivo": "Habilidades blandas, sin ventas"},
+      {"cv": "cv_tecnico_it.pdf", "relevancia": 0, "motivo": "Sin relación comercial"}
+    ]
+  },
+  "logistica": {
+    "oferta": "dataset/logistica/oferta.txt",
+    "descripcion": "Mozo Almacén con Montacargas",
+    "ranking_esperado": [
+      {"cv": "cv_mozo_montacargas.pdf", "relevancia": 3, "motivo": "Certificado + experiencia directa"},
+      {"cv": "cv_mozo_sin_certificado.pdf", "relevancia": 2, "motivo": "Experiencia pero sin certificado"},
+      {"cv": "cv_amazon_operaciones.pdf", "relevancia": 1, "motivo": "Entorno logístico, diferente rol"},
+      {"cv": "cv_camara.pdf", "relevancia": 0, "motivo": "Sin relación"}
+    ]
+  }
+}

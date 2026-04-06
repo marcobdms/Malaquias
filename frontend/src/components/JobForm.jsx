@@ -8,6 +8,11 @@ const CATEGORIAS = [
     { value: 'rrhh', label: 'RRHH' },
     { value: 'electromecanica', label: 'Electromecánica' },
     { value: 'administracion', label: 'Administración' },
+    { value: 'data', label: 'Data / Analytics' },
+    { value: 'devops', label: 'DevOps / Cloud' },
+    { value: 'ciberseguridad', label: 'Ciberseguridad' },
+    { value: 'finanzas', label: 'Finanzas' },
+    { value: 'atencion_cliente', label: 'Atención al Cliente' },
 ]
 
 const STACKS = {
@@ -28,14 +33,29 @@ export default function JobForm({
     setCategoria,
     setStack,
     strictness,
+<<<<<<< Updated upstream
     setStrictness
 }) {
     const stackOptions = STACKS[categoria] || []
+=======
+    setStrictness,
+    balance,
+    setBalance,
+}) => {
+>>>>>>> Stashed changes
 
     function handleCategoria(e) {
         setCategoria(e.target.value)
-        setStack('') // Reseteamos el stack al cambiar de categoría
+        setStack('')
     }
+
+    const balanceLabel =
+        balance <= 30 ? 'Prioriza perfil adaptable y potencial transferible'
+        : balance <= 70 ? 'Balance entre contexto y requisitos técnicos'
+        : 'Prioriza keywords exactas y requisitos duros'
+
+    const balanceLabelLeft = balance <= 30 ? 'font-bold text-on-surface' : 'text-on-surface-variant'
+    const balanceLabelRight = balance >= 70 ? 'font-bold text-on-surface' : 'text-on-surface-variant'
 
     return (
         <div className="card">
@@ -76,9 +96,44 @@ export default function JobForm({
                 )}
             </div>
 
+<<<<<<< Updated upstream
             {/* Área de Texto para la descripción */}
             <div style={{ display: 'flex', flexDirection: 'column', marginTop: '1rem' }}>
                 <label>Descripción del puesto</label>
+=======
+            {/* Slider Balance — visible cuando hay categoría seleccionada */}
+            {categoria && (
+                <div>
+                    <label className="block text-[11px] font-bold text-on-surface-variant uppercase tracking-widest mb-3">
+                        Balance del Motor
+                    </label>
+                    <div className="bg-surface-container border border-white/5 rounded-2xl px-5 py-4 flex flex-col gap-3">
+                        <div className="flex items-center gap-4">
+                            <span className={`text-xs shrink-0 transition-colors ${balanceLabelLeft}`}>Semántico</span>
+                            <input
+                                type="range"
+                                min={0}
+                                max={100}
+                                value={balance}
+                                onChange={e => setBalance(Number(e.target.value))}
+                                className="flex-1 h-1 appearance-none bg-white/10 rounded-full outline-none cursor-pointer accent-white"
+                                id="balance-slider"
+                            />
+                            <span className={`text-xs shrink-0 transition-colors ${balanceLabelRight}`}>Técnico</span>
+                        </div>
+                        <p className="text-[11px] text-on-surface-variant text-center leading-tight transition-all">
+                            {balanceLabel}
+                        </p>
+                    </div>
+                </div>
+            )}
+
+            {/* Área de Texto */}
+            <div>
+                <label className="block text-[11px] font-bold text-on-surface-variant uppercase tracking-widest mb-3">
+                    Descripción del puesto
+                </label>
+>>>>>>> Stashed changes
                 <textarea
                     value={value}
                     onChange={e => onChange(e.target.value)}
