@@ -16,3 +16,13 @@ __pycache__/
 # Base de datos local (si usas SQLite)
 *.db
 *.sqlite3
+.agents/
+rules/
+workflows/
+CLAUDE.md
+
+# Dependencias y Archivos de Agente
+node_modules/
+.agent/
+*.log
+frontend/node_modules/
