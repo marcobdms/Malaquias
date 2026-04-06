@@ -1,31 +1,77 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import DropZone from './components/DropZone'
 import JobForm from './components/JobForm'
 import Results from './components/Results'
 import Progress from './components/Progress'
+import Navbar from './components/Navbar'
+import Sidebar from './components/Sidebar'
+import Dashboard from './components/Dashboard'
+import Positions from './components/Positions'
+import TalentPool from './components/TalentPool'
+import Profile from './components/Profile'
+import Login from './pages/Login'
 import './App.css'
+import Confirm from './pages/Confirm'
 
 function App() {
+  const [user, setUser] = useState(null)
+  const [currentView, setCurrentView] = useState('dashboard')
   const [jobDesc, setJobDesc] = useState('')
   const [categoria, setCategoria] = useState('')
   const [stack, setStack] = useState('')
   const [strictness, setStrictness] = useState('normal')
   const [files, setFiles] = useState([])
   const [results, setResults] = useState(null)
+  const [currentOfertaId, setCurrentOfertaId] = useState(null)
   const [progress, setProgress] = useState({ status: 'idle', done: 0, total: 0 })
   const [error, setError] = useState(null)
+  const [abortController, setAbortController] = useState(null)
+  const [balanceValue, setBalanceValue] = useState(50)
+
+  useEffect(() => {
+    const token = localStorage.getItem('token')
+    const nombre = localStorage.getItem('nombre')
+    if (token && nombre) setUser(nombre)
+  }, [])
+
+  function handleLogin(nombre) {
+    setUser(nombre)
+  }
+
+  function handleLogout() {
+    localStorage.removeItem('token')
+    localStorage.removeItem('nombre')
+    setUser(null)
+    handleReset()
+  }
+
+  function handleNavigate(view) {
+    setCurrentView(view)
+  }
 
   const canAnalyze = jobDesc.trim().length > 20 && files.length > 0
-  const loading = progress.status === 'analyzing'
+  const loading = progress.status === 'analyzing' || progress.status === 'waking'
 
   function handleReset() {
+    if (abortController) abortController.abort()
     setJobDesc('')
     setCategoria('')
     setStack('')
-    setFiles([])
-    setResults(null)
     setError(null)
+    setResults(null)
+    setFiles([])
+    setCurrentOfertaId(null)
     setProgress({ status: 'idle', done: 0, total: 0 })
+    setAbortController(null)
+  }
+
+  function handleCancel() {
+    if (abortController) {
+      abortController.abort()
+      setError('Análisis cancelado por el usuario.')
+      setProgress(p => ({ ...p, status: 'cancelled' }))
+      setAbortController(null)
+    }
   }
 
   async function handleAnalyze() {
@@ -33,25 +79,37 @@ function App() {
     setResults(null)
     setProgress({ status: 'waking', done: 0, total: files.length })
 
+    const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
     try {
-      await fetch('https://malaquias.onrender.com/health')
-    } catch {
-      // servidor dormido, esperamos
-    }
+      await fetch(`${API_URL}/health`)
+    } catch { }
+
     setProgress({ status: 'analyzing', done: 0, total: files.length })
 
     const formData = new FormData()
+    formData.append('balance', balanceValue / 100)
     formData.append('job_description', jobDesc)
     if (categoria) formData.append('categoria', categoria)
     if (stack) formData.append('stack', stack)
     formData.append('strictness', strictness)
     files.forEach(f => formData.append('cvs', f))
 
+    const controller = new AbortController()
+    setAbortController(controller)
+
     try {
-      const res = await fetch('https://malaquias.onrender.com/analyze', {
+      const token = localStorage.getItem('token')
+      const res = await fetch(`${API_URL}/analyze`, {
         method: 'POST',
-        body: formData
+        headers: { 'Authorization': `Bearer ${token}` },
+        body: formData,
+        signal: controller.signal
       })
+
+      if (res.status === 401) {
+        handleLogout()
+        return
+      }
 
       if (!res.ok) throw new Error(`Error del servidor: ${res.status}`)
 
@@ -76,55 +134,38 @@ function App() {
           }
           if (payload.event === 'complete') {
             setResults(payload.candidates)
+            setCurrentOfertaId(payload.oferta_id)
             setProgress({ status: 'done', done: payload.candidates.length, total: payload.candidates.length })
           }
         }
       }
     } catch (err) {
-      setError(err.message)
-      setProgress(p => ({ ...p, status: 'error' }))
+      if (err.name === 'AbortError') {
+        // Handled by handleCancel
+      } else {
+        setError(err.message)
+        setProgress(p => ({ ...p, status: 'error' }))
+      }
+    } finally {
+      setAbortController(null)
     }
   }
 
+  if (window.location.pathname === '/confirm') return <Confirm />
+
+  if (!user) return <Login onLogin={handleLogin} />
+
   return (
-    <div className="app">
-      <div className="header">
-        <h1>Malaquías</h1>
-        <p>Screening de CVs con IA · hasta 10 candidatos</p>
-      </div>
+    <div className="min-h-screen bg-background text-on-surface font-sans selection:bg-primary/20 selection:text-primary relative flex">
+      <Sidebar currentView={currentView} onNavigate={handleNavigate} />
+      <Navbar user={user} onLogout={handleLogout} onNavigate={handleNavigate} />
 
-      <JobForm
-        value={jobDesc}
-        onChange={setJobDesc}
-        categoria={categoria}
-        setCategoria={setCategoria}
-        stack={stack}
-        setStack={setStack}
-        strictness={strictness}
-        setStrictness={setStrictness}
-      />
-      <DropZone files={files} setFiles={setFiles} />
-
-      <button className="btn-analyze" disabled={!canAnalyze || loading} onClick={handleAnalyze}>
-        {loading ? 'Analizando...' : 'Analizar candidatos'}
-      </button>
-
-      <button className="btn-reset" onClick={handleReset}>
-        Nueva búsqueda
-      </button>
-
-      {progress.status !== 'idle' && (
-        <Progress
-          total={progress.total}
-          done={progress.done}
-          status={progress.status}
-        />
+      {/* ── Dashboard View ── */}
+      {currentView === 'dashboard' && (
+        <main className="flex-1 md:ml-[240px] pt-14 pb-[85px] md:pb-0 min-h-screen w-full">
+          <Dashboard onNavigate={handleNavigate} />
+        </main>
       )}
-
-      {error && <div className="error-box">{error}</div>}
-      {results && <Results candidates={results} />}
-
-
 
       {/* ── Profile View ── */}
       {currentView === 'profile' && (
@@ -163,8 +204,6 @@ function App() {
                 setStack={setStack}
                 strictness={strictness}
                 setStrictness={setStrictness}
-                balance={balanceValue}
-                setBalance={setBalanceValue}
               />
 
               <DropZone files={files} setFiles={setFiles} />
@@ -219,7 +258,6 @@ function App() {
                 </div>
               )}
 
-
               {error && (
                 <div className="mt-4 p-4 bg-red-500/10 border border-red-500/20 rounded-2xl">
                   <p className="text-sm text-red-400 font-medium">{error}</p>
@@ -227,7 +265,7 @@ function App() {
               )}
             </div>
 
-            {/* Footer info stats - solo visible si no hay resultados en mobile */}
+            {/* Footer */}
             <div className={`mt-auto pt-8 hidden ${results ? 'xl:flex' : 'sm:flex'} flex-col sm:flex-row items-start sm:items-center justify-between pointer-events-none shrink-0 border-t border-white/5 gap-4`}>
               <div className="flex gap-8 sm:gap-12">
               </div>
@@ -237,7 +275,7 @@ function App() {
             </div>
           </div>
 
-          {/* PANEL DERECHO (Resultados) — En móvil fluye como continuación del scroll, en xl es un panel separado */}
+          {/* PANEL DERECHO (Resultados) */}
           {results ? (
             <div className="xl:flex-1 xl:border-l border-t xl:border-t-0 border-white/5 bg-surface-container-lowest/50 relative xl:overflow-y-auto w-full xl:h-full">
               <div className="p-4 md:p-8 animate-[fade-in_0.5s_ease-out] w-full">
