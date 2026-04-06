@@ -121,10 +121,9 @@ function App() {
         />
       )}
 
-<<<<<<< Updated upstream
       {error && <div className="error-box">{error}</div>}
       {results && <Results candidates={results} />}
-=======
+
 
 
       {/* ── Profile View ── */}
@@ -205,12 +204,12 @@ function App() {
                 </button>
 
                 {loading && (
-                    <button 
-                        onClick={handleCancel}
-                        className="text-xs font-bold text-red-500 hover:text-red-400 uppercase tracking-widest mt-2 sm:mt-0 transition-colors"
-                    >
-                        Cancelar Proceso
-                    </button>
+                  <button
+                    onClick={handleCancel}
+                    className="text-xs font-bold text-red-500 hover:text-red-400 uppercase tracking-widest mt-2 sm:mt-0 transition-colors"
+                  >
+                    Cancelar Proceso
+                  </button>
                 )}
               </div>
 
@@ -256,7 +255,6 @@ function App() {
           )}
         </main>
       )}
->>>>>>> Stashed changes
     </div>
   )
 }
