@@ -15,10 +15,6 @@ def tokenize(text: str) -> list:
     tokens = re.findall(r'\b\w+\b', text.lower())
     return [t for t in tokens if t not in STOPWORDS and len(t) > 2]
 
-def get_ngrams(tokens: list, n: int = 2) -> list:
-    """Genera n-gramas a partir de una lista de tokens."""
-    return [' '.join(tokens[i:i+n]) for i in range(len(tokens) - n + 1)]
-
 def keyword_score(cv_text: str, job_description: str) -> float:
     cv_tokens = set(tokenize(cv_text))
     job_tokens = tokenize(job_description)

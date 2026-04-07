@@ -16,3 +16,8 @@ __pycache__/
 # Base de datos local (si usas SQLite)
 *.db
 *.sqlite3
+
+.env
+.env.local
+backend/.env
+backend/.env.local

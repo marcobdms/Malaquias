@@ -1,5 +1,7 @@
 import os
 from dotenv import load_dotenv
+if os.path.exists(".env.local"):
+    load_dotenv(".env.local")
 load_dotenv()
 
 from fastapi import FastAPI, UploadFile, File, Form, Depends, HTTPException
@@ -27,6 +29,7 @@ class SaveAnalysisSchema(BaseModel):
     stack: Optional[str] = None
     balance: Optional[float] = 0.5
     candidatos: List[dict]
+from fastapi.middleware.httpsredirect import HTTPSRedirectMiddleware
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -223,6 +226,7 @@ def dashboard(db: Session = Depends(get_db), current_user=Depends(get_current_us
         models.Candidato.match_score > 0
     ).scalar() or 0
 
+    # Distribución de recomendaciones
     all_candidatos = db.query(models.Candidato).filter(
         models.Candidato.oferta_id.in_(oferta_ids),
         models.Candidato.recomendacion != None,
@@ -239,6 +243,7 @@ def dashboard(db: Session = Depends(get_db), current_user=Depends(get_current_us
         elif "descartar" in rec:
             dist["descartar"] += 1
 
+    # Últimos 5 candidatos
     ultimos = db.query(models.Candidato).filter(
         models.Candidato.oferta_id.in_(oferta_ids)
     ).order_by(models.Candidato.created_at.desc()).limit(5).all()
@@ -357,6 +362,7 @@ def delete_oferta(oferta_id: int, db: Session = Depends(get_db), current_user=De
     if not oferta:
         raise HTTPException(status_code=404, detail="Oferta no encontrada")
 
+    # Borrar candidatos en cascada manualmente para asegurar
     db.query(models.Candidato).filter(models.Candidato.oferta_id == oferta_id).delete()
     db.delete(oferta)
     db.commit()
@@ -366,6 +372,7 @@ def delete_oferta(oferta_id: int, db: Session = Depends(get_db), current_user=De
 @app.get("/talent-pool")
 def talent_pool(db: Session = Depends(get_db), current_user=Depends(get_current_user)):
     """Devuelve todo el pool de talentos (candidatos) de todas las ofertas del usuario."""
+    # Obtenemos los IDs de las ofertas del usuario
     user_ofertas = db.query(models.Oferta.id, models.Oferta.descripcion, models.Oferta.categoria).filter(
         models.Oferta.user_id == current_user.id
     ).all()
@@ -376,6 +383,7 @@ def talent_pool(db: Session = Depends(get_db), current_user=Depends(get_current_
     oferta_map = {o.id: {"descripcion": o.descripcion, "categoria": o.categoria} for o in user_ofertas}
     oferta_ids = list(oferta_map.keys())
 
+    # Obtenemos todos los candidatos de esas ofertas
     candidatos = db.query(models.Candidato).filter(
         models.Candidato.oferta_id.in_(oferta_ids)
     ).order_by(models.Candidato.created_at.desc()).all()
@@ -409,6 +417,7 @@ class ProfileUpdateRequest(BaseModel):
 @app.put("/profile")
 def update_profile(data: ProfileUpdateRequest, db: Session = Depends(get_db), current_user=Depends(get_current_user)):
     """Actualiza la información del perfil del usuario."""
+    # Si se envía nueva contraseña, validar y actualizar
     if data.new_password:
         if not data.current_password or not verify_password(data.current_password, current_user.password_hash):
             raise HTTPException(status_code=400, detail="Contraseña actual incorrecta")

@@ -4,6 +4,8 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from dotenv import load_dotenv
 
+if os.path.exists(".env.local"):
+    load_dotenv(".env.local")
 load_dotenv()
 
 DATABASE_URL = os.getenv("DATABASE_URL")

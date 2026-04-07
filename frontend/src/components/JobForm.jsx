@@ -1,84 +1,70 @@
 const CATEGORIAS = [
     { value: '', label: 'Selecciona categoría' },
-    { value: 'desarrollo', label: 'Desarrollo' },
-    { value: 'diseño', label: 'Diseño' },
-    { value: 'marketing', label: 'Marketing' },
-    { value: 'ventas', label: 'Ventas' },
-    { value: 'logistica', label: 'Logística' },
-    { value: 'rrhh', label: 'RRHH' },
+    { value: 'desarrollo', label: 'Desarrollo de Software' },
+    { value: 'it_sistemas', label: 'IT / Sistemas' },
+    { value: 'diseño', label: 'Diseño UX/UI' },
+    { value: 'marketing', label: 'Marketing Digital' },
+    { value: 'ventas', label: 'Ventas y Business' },
+    { value: 'logistica', label: 'Logística y Operaciones' },
+    { value: 'rrhh', label: 'Recursos Humanos' },
     { value: 'electromecanica', label: 'Electromecánica' },
     { value: 'administracion', label: 'Administración' },
-    { value: 'data', label: 'Data / Analytics' },
-    { value: 'devops', label: 'DevOps / Cloud' },
-    { value: 'ciberseguridad', label: 'Ciberseguridad' },
-    { value: 'finanzas', label: 'Finanzas' },
-    { value: 'atencion_cliente', label: 'Atención al Cliente' },
 ]
 
-const STACKS = {
-    desarrollo: ['Python', 'JavaScript', 'React', 'Node.js', 'SQL', 'Java', 'TypeScript', 'FastAPI'],
-    diseño: ['Figma', 'Adobe XD', 'Illustrator', 'Photoshop', 'UI/UX', 'Sketch'],
-    marketing: ['SEO', 'SEM', 'Google Ads', 'Meta Ads', 'Email marketing', 'Analytics'],
-    ventas: ['CRM', 'Salesforce', 'HubSpot', 'Negociación', 'B2B', 'B2C'],
-    logistica: ['ERP', 'SAP', 'MRP', 'Gestión de almacén', 'Supply chain'],
-    rrhh: ['ATS', 'Selección', 'Nóminas', 'Formación', 'HRBP'],
-    electromecanica: ['PLC', 'Soldadura', 'Mantenimiento industrial', 'Neumática', 'Hidráulica'],
-    administracion: ['Excel', 'Contabilidad', 'Facturación', 'Office', 'ERP'],
-}
-
-export default function JobForm({
+import { memo } from 'react'
+const JobForm = memo(({
     value,
     onChange,
     categoria,
     setCategoria,
-    setStack,
+    setStack, // guardado en caso de usarlo luego
     strictness,
-<<<<<<< Updated upstream
-    setStrictness
-}) {
-    const stackOptions = STACKS[categoria] || []
-=======
     setStrictness,
     balance,
-    setBalance,
+    setBalance
 }) => {
->>>>>>> Stashed changes
 
     function handleCategoria(e) {
         setCategoria(e.target.value)
-        setStack('')
+        setStack('') // Reseteamos el stack al cambiar de categoría
     }
 
-    const balanceLabel =
-        balance <= 30 ? 'Prioriza perfil adaptable y potencial transferible'
-        : balance <= 70 ? 'Balance entre contexto y requisitos técnicos'
-        : 'Prioriza keywords exactas y requisitos duros'
-
-    const balanceLabelLeft = balance <= 30 ? 'font-bold text-on-surface' : 'text-on-surface-variant'
-    const balanceLabelRight = balance >= 70 ? 'font-bold text-on-surface' : 'text-on-surface-variant'
-
     return (
-        <div className="card">
-            <div className="filtros-row">
+        <div className="flex flex-col gap-6 w-full">
+            <div className="flex flex-wrap gap-6 w-full">
                 {/* Selector de Categoría */}
-                <div className="filtro-group">
-                    <label>Categoría</label>
-                    <select value={categoria} onChange={handleCategoria}>
-                        {CATEGORIAS.map(c => (
-                            <option key={c.value} value={c.value}>{c.label}</option>
-                        ))}
-                    </select>
+                <div className="flex-1 min-w-[200px]">
+                    <label className="block text-[11px] font-bold text-on-surface-variant uppercase tracking-widest mb-3">
+                        Categoría de la Oferta
+                    </label>
+                    <div className="relative border border-white/5 bg-surface-container rounded-2xl">
+                        <select
+                            value={categoria}
+                            onChange={handleCategoria}
+                            className="w-full appearance-none bg-transparent px-5 py-3.5 text-on-surface text-sm focus:outline-none focus:border-outline-variant cursor-pointer hover:bg-surface-container-high transition-colors rounded-2xl"
+                        >
+                            {CATEGORIAS.map(c => (
+                                <option key={c.value} value={c.value}>{c.label}</option>
+                            ))}
+                        </select>
+                        <span className="absolute right-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-on-surface-variant pointer-events-none">
+                            keyboard_arrow_down
+                        </span>
+                    </div>
                 </div>
 
-                {/* Selector de Severidad (Solo si hay una categoría seleccionada) */}
+                {/* Selector de Severidad */}
                 {categoria && (
-                    <div className="filtro-group">
-                        <label>Severidad</label>
-                        <div className="switcher">
+                    <>
+                    <div className="flex-1 min-w-[200px]">
+                        <label className="block text-[11px] font-bold text-on-surface-variant uppercase tracking-widest mb-3">
+                            Severidad de Evaluación
+                        </label>
+                        <div className="switcher h-[52px]">
                             {['ligero', 'normal', 'estricto'].map(opt => (
                                 <button
                                     key={opt}
-                                    className={`switcher-btn ${strictness === opt ? 'active' : ''}`}
+                                    className={`switcher-btn h-full flex items-center justify-center !text-[13px] ${strictness === opt ? 'active font-bold' : ''}`}
                                     onClick={() => setStrictness(opt)}
                                     type="button"
                                 >
@@ -88,59 +74,48 @@ export default function JobForm({
                             <div
                                 className="switcher-thumb"
                                 style={{
-                                    transform: `translateX(${['ligero', 'normal', 'estricto'].indexOf(strictness) * 100}%)`
+                                    transform: `translateX(${['ligero', 'normal', 'estricto'].indexOf(strictness) * 100}%)`,
+                                    width: '33.333%'
                                 }}
                             />
                         </div>
                     </div>
+                    {/* Slider de balance */}
+                    <div className="flex-[2] min-w-[280px]">
+                        <label className="block text-[11px] font-bold text-on-surface-variant uppercase tracking-widest mb-3 text-center">
+                            Afinidad (Keywords vs Semántico)
+                        </label>
+                        <div className="flex items-center gap-3 h-[52px] bg-surface-container border border-white/5 rounded-2xl px-4 sm:px-5">
+                            <span className="text-[9px] sm:text-[10px] text-on-surface-variant uppercase tracking-widest font-bold">Semántico</span>
+                            <input 
+                                type="range" 
+                                min="0" 
+                                max="100" 
+                                value={balance} 
+                                onChange={(e) => setBalance(parseInt(e.target.value))} 
+                                className="flex-1 h-1 bg-outline-variant rounded-lg appearance-none cursor-pointer accent-white"
+                            />
+                            <span className="text-[9px] sm:text-[10px] text-on-surface-variant uppercase tracking-widest font-bold">Keywords</span>
+                        </div>
+                    </div>
+                    </>
                 )}
             </div>
-
-<<<<<<< Updated upstream
-            {/* Área de Texto para la descripción */}
-            <div style={{ display: 'flex', flexDirection: 'column', marginTop: '1rem' }}>
-                <label>Descripción del puesto</label>
-=======
-            {/* Slider Balance — visible cuando hay categoría seleccionada */}
-            {categoria && (
-                <div>
-                    <label className="block text-[11px] font-bold text-on-surface-variant uppercase tracking-widest mb-3">
-                        Balance del Motor
-                    </label>
-                    <div className="bg-surface-container border border-white/5 rounded-2xl px-5 py-4 flex flex-col gap-3">
-                        <div className="flex items-center gap-4">
-                            <span className={`text-xs shrink-0 transition-colors ${balanceLabelLeft}`}>Semántico</span>
-                            <input
-                                type="range"
-                                min={0}
-                                max={100}
-                                value={balance}
-                                onChange={e => setBalance(Number(e.target.value))}
-                                className="flex-1 h-1 appearance-none bg-white/10 rounded-full outline-none cursor-pointer accent-white"
-                                id="balance-slider"
-                            />
-                            <span className={`text-xs shrink-0 transition-colors ${balanceLabelRight}`}>Técnico</span>
-                        </div>
-                        <p className="text-[11px] text-on-surface-variant text-center leading-tight transition-all">
-                            {balanceLabel}
-                        </p>
-                    </div>
-                </div>
-            )}
 
             {/* Área de Texto */}
             <div>
                 <label className="block text-[11px] font-bold text-on-surface-variant uppercase tracking-widest mb-3">
                     Descripción del puesto
                 </label>
->>>>>>> Stashed changes
                 <textarea
                     value={value}
                     onChange={e => onChange(e.target.value)}
-                    placeholder="Pega aquí la oferta de trabajo completa..."
-                    rows={6}
+                    placeholder="Pega aquí la oferta de trabajo completa (responsabilidades, requisitos, beneficios)..."
+                    rows={8}
+                    className="w-full bg-surface-container border border-white/5 rounded-[2rem] p-6 text-on-surface text-[15px] focus:outline-none focus:border-outline-variant transition-colors resize-y shadow-inner placeholder:text-on-surface-variant/50 leading-relaxed"
                 />
             </div>
         </div>
     )
-}
+})
+export default JobForm

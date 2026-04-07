@@ -167,6 +167,8 @@ function App() {
         </main>
       )}
 
+
+
       {/* ── Profile View ── */}
       {currentView === 'profile' && (
         <main className="md:ml-[240px] pt-14 pb-[70px] md:pb-0 min-h-screen">
@@ -204,6 +206,8 @@ function App() {
                 setStack={setStack}
                 strictness={strictness}
                 setStrictness={setStrictness}
+                balance={balanceValue}
+                setBalance={setBalanceValue}
               />
 
               <DropZone files={files} setFiles={setFiles} />
@@ -243,12 +247,12 @@ function App() {
                 </button>
 
                 {loading && (
-                  <button
-                    onClick={handleCancel}
-                    className="text-xs font-bold text-red-500 hover:text-red-400 uppercase tracking-widest mt-2 sm:mt-0 transition-colors"
-                  >
-                    Cancelar Proceso
-                  </button>
+                    <button 
+                        onClick={handleCancel}
+                        className="text-xs font-bold text-red-500 hover:text-red-400 uppercase tracking-widest mt-2 sm:mt-0 transition-colors"
+                    >
+                        Cancelar Proceso
+                    </button>
                 )}
               </div>
 
@@ -258,6 +262,7 @@ function App() {
                 </div>
               )}
 
+
               {error && (
                 <div className="mt-4 p-4 bg-red-500/10 border border-red-500/20 rounded-2xl">
                   <p className="text-sm text-red-400 font-medium">{error}</p>
@@ -265,7 +270,7 @@ function App() {
               )}
             </div>
 
-            {/* Footer */}
+            {/* Footer info stats - solo visible si no hay resultados en mobile */}
             <div className={`mt-auto pt-8 hidden ${results ? 'xl:flex' : 'sm:flex'} flex-col sm:flex-row items-start sm:items-center justify-between pointer-events-none shrink-0 border-t border-white/5 gap-4`}>
               <div className="flex gap-8 sm:gap-12">
               </div>
@@ -275,7 +280,7 @@ function App() {
             </div>
           </div>
 
-          {/* PANEL DERECHO (Resultados) */}
+          {/* PANEL DERECHO (Resultados) — En móvil fluye como continuación del scroll, en xl es un panel separado */}
           {results ? (
             <div className="xl:flex-1 xl:border-l border-t xl:border-t-0 border-white/5 bg-surface-container-lowest/50 relative xl:overflow-y-auto w-full xl:h-full">
               <div className="p-4 md:p-8 animate-[fade-in_0.5s_ease-out] w-full">

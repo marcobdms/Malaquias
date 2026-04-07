@@ -10,7 +10,3 @@ def clean_text(text: str) -> str:
 
 def validate_pdf_text(text: str) -> bool:
     return len(text.strip()) > 100
-
-def is_valid_pdf(content_type: str, file_size: int, max_mb: int = 10) -> bool:
-    """Valida que sea un PDF y no exceda el tamaño máximo de MB."""
-    return content_type == "application/pdf" and file_size <= max_mb * 1024 * 1024
