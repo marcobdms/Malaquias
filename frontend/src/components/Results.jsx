@@ -1,11 +1,13 @@
 import { useState } from 'react'
+import CVModal from './CVModal'
 
-export default function Results({ candidates, onReset, ofertaId, onDownloadPDF, isSavedView, onNavigate, jobData }) {
+export default function Results({ candidates, onReset, ofertaId, onDownloadPDF, isSavedView, onNavigate, jobData, uploadedFiles }) {
     const [expanded, setExpanded] = useState({ 0: true })
     const [contactoVisible, setContactoVisible] = useState({})
     const [showAll, setShowAll] = useState(false)
     const [saved, setSaved] = useState(false)
     const [discardPopup, setDiscardPopup] = useState(false)
+    const [viewerData, setViewerData] = useState(null)
 
     const API = import.meta.env.VITE_API_URL || 'http://localhost:8000'
 
@@ -167,13 +169,20 @@ export default function Results({ candidates, onReset, ofertaId, onDownloadPDF, 
                                     <div className={`w-14 h-14 rounded-full flex items-center justify-center text-lg font-black shadow-crystal border ${isTop ? 'bg-surface-container-high text-white border-white/20' : 'bg-surface-container text-on-surface border-white/5'}`}>
                                         {getInitials(a.nombre_candidato || c.filename)}
                                     </div>
-                                    {isTop && (
-                                        <div className="absolute -bottom-3 top-[44px] left-1/2 -translate-x-1/2 bg-background rounded-full p-1 z-20">
-                                            <div className="w-5 h-5 bg-white rounded-full flex items-center justify-center">
-                                                <span className="material-symbols-outlined text-[12px] text-black font-black">star</span>
-                                            </div>
+                                    <div 
+                                        className="absolute -bottom-3 top-[44px] left-1/2 -translate-x-1/2 bg-background rounded-full p-1 z-20 cursor-pointer hover:scale-110 transition-transform shadow-[0_4px_15px_rgba(255,255,255,0.15)] ring-1 ring-white/10"
+                                        onClick={(e) => { 
+                                            e.stopPropagation(); 
+                                            const fileObj = uploadedFiles?.find(f => f.name === c.filename);
+                                            const pdfUrl = fileObj ? URL.createObjectURL(fileObj) : null;
+                                            setViewerData({ text: c.cv_text, filename: c.filename, name: a.nombre_candidato || c.filename.replace('.pdf', ''), pdfUrl }); 
+                                        }}
+                                        title="Ver Currículum Original"
+                                    >
+                                        <div className="w-6 h-6 bg-white rounded-full flex items-center justify-center text-black hover:bg-zinc-200 transition-colors">
+                                            <span className="material-symbols-outlined text-[13px] font-bold">visibility</span>
                                         </div>
-                                    )}
+                                    </div>
                                 </div>
 
                                 <div className="min-w-0 flex-1 overflow-hidden">
@@ -182,20 +191,17 @@ export default function Results({ candidates, onReset, ofertaId, onDownloadPDF, 
                                             Mejor Candidato
                                         </span>
                                     )}
-                                    <div className="scrolling-container group">
-                                        <h4 className="scrolling-content text-xl md:text-2xl font-bold text-white tracking-tight leading-tight mb-1 relative inline-block cursor-help">
+                                    <div className="scrolling-container" title={a.nombre_candidato && a.nombre_candidato !== c.filename ? `Documento original: ${c.filename}` : undefined}>
+                                        <h4 className="scrolling-content text-xl md:text-2xl font-bold text-white tracking-tight leading-tight mb-1">
                                             {a.nombre_candidato || c.filename.replace('.pdf', '')}
-                                            {a.nombre_candidato && a.nombre_candidato !== c.filename && (
-                                                <span className="absolute -top-7 left-0 bg-[#333] border border-white/10 text-white text-[11px] px-3 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-[100] shadow-xl pointer-events-none font-medium">
-                                                    📄 {c.filename}
-                                                </span>
-                                            )}
                                         </h4>
                                     </div>
-                                    <div className="scrolling-container">
-                                        <p className="scrolling-content text-sm text-zinc-400 font-medium">
-                                            {a.titulo_candidato || 'Perfil Analizado'}
-                                        </p>
+                                    <div className="flex items-center justify-start gap-3 mt-1">
+                                        <div className="scrolling-container relative max-w-[80%]">
+                                            <p className="scrolling-content text-sm text-zinc-400 font-medium truncate">
+                                                {a.titulo_candidato || 'Perfil Analizado'}
+                                            </p>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -367,6 +373,16 @@ export default function Results({ candidates, onReset, ofertaId, onDownloadPDF, 
                     </div>
                 </div>
             )}
+
+            {/* Modal de Visor de CV de Texto (A4) o PDF Nativo */}
+            <CVModal 
+                isOpen={!!viewerData} 
+                onClose={() => setViewerData(null)}
+                cvText={viewerData?.text}
+                filename={viewerData?.filename}
+                candidateName={viewerData?.name}
+                pdfUrl={viewerData?.pdfUrl}
+            />
         </div>
     )
 }

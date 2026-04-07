@@ -82,24 +82,13 @@ body {
   }
 }
 
-/* Marquee Animation */
-@keyframes scrolling-text {
-  0% { transform: translateX(0); }
-  15% { transform: translateX(0); } /* Delay at start */
-  85% { transform: translateX(calc(-100% + 180px)); } /* Scroll to end */
-  100% { transform: translateX(0); } /* Return to start */
-}
-
+/* Marquee Animation eliminada por ellipsis estático */
 .scrolling-container {
-  @apply overflow-hidden whitespace-nowrap relative w-full cursor-help;
+  @apply overflow-hidden text-ellipsis whitespace-nowrap relative w-full;
 }
 
 .scrolling-content {
-  @apply inline-block transition-transform duration-[3000ms] ease-linear;
-}
-
-.scrolling-container:hover .scrolling-content {
-  animation: scrolling-text 10s linear infinite;
+  @apply inline-block;
 }
 
 /* Base scrollbar styling already present */

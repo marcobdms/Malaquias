@@ -147,7 +147,8 @@ async def analyze_cvs(
                 result = {
                     "filename": cv.filename,
                     "match_score": round(score * 100, 2),
-                    "analysis": analysis
+                    "analysis": analysis,
+                    "cv_text": clean  # Pasar el texto extraído al frontend aquí temporalmente
                 }
 
             results.append(result)
@@ -186,7 +187,8 @@ def save_analysis(data: SaveAnalysisSchema, db: Session = Depends(get_db), curre
             nombre_candidato=analysis.get("nombre_candidato"),
             titulo_candidato=analysis.get("titulo_candidato"),
             email_candidato=analysis.get("email_candidato"),
-            telefono_candidato=analysis.get("telefono_candidato")
+            telefono_candidato=analysis.get("telefono_candidato"),
+            cv_text=c.get("cv_text", "")
         )
         db.add(candidato)
     
@@ -326,6 +328,7 @@ def get_oferta_candidatos(oferta_id: int, db: Session = Depends(get_db), current
             "telefono_candidato": c.telefono_candidato,
             "nombre_candidato": c.nombre_candidato,
             "titulo_candidato": c.titulo_candidato,
+            "cv_text": c.cv_text,
             "created_at": c.created_at.isoformat() if c.created_at else None
         } for c in candidatos]
     }

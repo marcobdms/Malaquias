@@ -3,12 +3,14 @@ import json
 import os
 import time
 
+LLM_PROVIDER = os.getenv("LLM_PROVIDER", "groq") # 'groq' o 'ollama'
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
+OLLAMA_URL = os.getenv("OLLAMA_URL", "http://localhost:11434/v1/chat/completions")
+LLM_MODEL = os.getenv("LLM_MODEL", "llama3.2") # por defecto en Ollama
 GROQ_URL = "https://api.groq.com/openai/v1/chat/completions"
-MODEL = "llama-3.1-8b-instant"
 
 def analyze_with_llm(cv_text: str, job_description: str, categoria: str = "", stack: str = "", strictness: str = "normal", match_score: float = 0.0) -> dict:
-    if not GROQ_API_KEY:
+    if LLM_PROVIDER == "groq" and not GROQ_API_KEY:
         return {"error": "GROQ_API_KEY no configurada"}
 
     # Mitigacion HTTP 429 (Límite de Tokens por Minuto de Groq)
@@ -65,12 +67,17 @@ El campo "titulo_candidato" debe ser un cargo corto (ej: "Desarrollador React" e
 El campo "recomendacion" solo puede ser: "Entrevistar", "Considerar" o "Descartar"."""
 
     headers = {
-        "Authorization": f"Bearer {GROQ_API_KEY}",
         "Content-Type": "application/json"
     }
 
+    target_url = OLLAMA_URL if LLM_PROVIDER == "ollama" else GROQ_URL
+    target_model = LLM_MODEL if LLM_PROVIDER == "ollama" else "llama-3.1-8b-instant"
+
+    if LLM_PROVIDER == "groq":
+        headers["Authorization"] = f"Bearer {GROQ_API_KEY}"
+
     body = {
-        "model": MODEL,
+        "model": target_model,
         "messages": [
             {
                 "role": "system",
@@ -85,10 +92,12 @@ El campo "recomendacion" solo puede ser: "Entrevistar", "Considerar" o "Descarta
         "max_tokens": 600
     }
 
-    max_retries = 3
+    max_retries = 3 if LLM_PROVIDER == "groq" else 1  # Ollama no necesita retry por rate limit
+
     for attempt in range(max_retries):
         try:
-            response = requests.post(GROQ_URL, headers=headers, json=body, timeout=30)
+            # En Ollama local podemos esperar mucho sin timeout
+            response = requests.post(target_url, headers=headers, json=body, timeout=120)
             response.raise_for_status()
             raw = response.json()["choices"][0]["message"]["content"].strip()
 

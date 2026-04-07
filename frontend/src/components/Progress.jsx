@@ -1,7 +1,5 @@
 export default function Progress({ total, done, status }) {
-    const pct = status === 'waking' ? 20
-        : total > 0 ? Math.round((done / total) * 100)
-            : 0
+    const pct = total > 0 ? Math.round((done / total) * 100) : 0
 
     return (
         <div className="bg-surface-container rounded-[1.5rem] p-5 shadow-crystal border border-white/5">

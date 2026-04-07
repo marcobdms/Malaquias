@@ -45,6 +45,7 @@ class Candidato(Base):
     titulo_candidato = Column(String)
     email_candidato = Column(String)
     telefono_candidato = Column(String)
+    cv_text = Column(Text)
     created_at = Column(DateTime, default=datetime.utcnow)
 
     oferta = relationship("Oferta", back_populates="candidatos")
