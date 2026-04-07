@@ -57,7 +57,7 @@ export default function CVModal({ isOpen, onClose, cvText, filename, candidateNa
                 {/* Área del Documento (A4 Simulation en desktop o iFrame PDF) */}
                 <div className={`flex-1 w-full flex justify-center bg-[#151515] ${pdfUrl ? 'p-0' : 'p-0 sm:p-8 overflow-y-auto'}`}>
                     {pdfUrl ? (
-                        <iframe src={pdfUrl} className="w-full h-full border-0" title="CV Original PDF" />
+                        <iframe src={`${pdfUrl}#view=FitH`} className="w-full h-full border-0" title="CV Original PDF" />
                     ) : !cvText ? (
                         <div className="flex flex-col items-center justify-center h-full gap-4">
                             <span className="material-symbols-outlined text-4xl text-on-surface-variant animate-spin">refresh</span>

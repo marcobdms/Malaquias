@@ -170,7 +170,7 @@ export default function Results({ candidates, onReset, ofertaId, onDownloadPDF, 
                                         {getInitials(a.nombre_candidato || c.filename)}
                                     </div>
                                     <div 
-                                        className="absolute -bottom-3 top-[44px] left-1/2 -translate-x-1/2 bg-background rounded-full p-1 z-20 cursor-pointer hover:scale-110 transition-transform shadow-[0_4px_15px_rgba(255,255,255,0.15)] ring-1 ring-white/10"
+                                        className="absolute -bottom-3 top-[44px] left-1/2 -translate-x-1/2 rounded-full p-1 z-20 cursor-pointer hover:scale-110 transition-transform"
                                         onClick={(e) => { 
                                             e.stopPropagation(); 
                                             const fileObj = uploadedFiles?.find(f => f.name === c.filename);
@@ -179,7 +179,7 @@ export default function Results({ candidates, onReset, ofertaId, onDownloadPDF, 
                                         }}
                                         title="Ver Currículum Original"
                                     >
-                                        <div className="w-6 h-6 bg-white rounded-full flex items-center justify-center text-black hover:bg-zinc-200 transition-colors">
+                                        <div className="w-6 h-6 bg-white rounded-full flex items-center justify-center text-black hover:bg-zinc-200 transition-colors shadow-[0_0_15px_rgba(255,255,255,0.4)]">
                                             <span className="material-symbols-outlined text-[13px] font-bold">visibility</span>
                                         </div>
                                     </div>
