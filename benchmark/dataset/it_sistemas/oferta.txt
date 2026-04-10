@@ -1,4 +1,0 @@
-Administrador de Sistemas IT
-Buscamos administrador de sistemas responsable de servidores, redes y seguridad informática.
-Requisitos: Windows Server, Linux, Active Directory, VPN, Firewall, VMware, soporte técnico usuarios.
-Experiencia mínima 2-3 años en administración de sistemas y redes TCP/IP.

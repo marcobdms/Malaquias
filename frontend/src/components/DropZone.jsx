@@ -4,7 +4,7 @@ const DropZone = memo(({ files, setFiles }) => {
     const [isDragging, setIsDragging] = useState(false)
 
     function addFiles(newFiles) {
-        const xliffFiles = Array.from(newFiles).filter(f => f.name.endsWith('.pdf'))
+        const xliffFiles = Array.from(newFiles).filter(f => f.name.endsWith('.pdf') || f.name.endsWith('.docx'))
         setFiles(prev => [...prev, ...xliffFiles].slice(0, 20)) // permitiremos 20 para hacer match con ref
     }
 
@@ -46,11 +46,11 @@ const DropZone = memo(({ files, setFiles }) => {
                         <span className="material-symbols-outlined text-[28px] text-on-surface">cloud_upload</span>
                     </div>
                     
-                    <h3 className="text-xl font-bold text-on-surface mb-2 tracking-tight">Arrastra los PDFs aquí</h3>
+                    <h3 className="text-xl font-bold text-on-surface mb-2 tracking-tight">Arrastra los CVs aquí</h3>
                     <p className="text-sm text-on-surface-variant mb-6">o haz clic para seleccionar archivos desde tu equipo</p>
                     
                     <span className="inline-block bg-surface-container rounded-full px-4 py-1.5 text-xs text-on-surface-variant border border-white/5">
-                        Máximo 20 archivos (PDF)
+                        Máximo 20 archivos (PDF / DOCX)
                     </span>
                 </div>
 
@@ -58,9 +58,12 @@ const DropZone = memo(({ files, setFiles }) => {
                     ref={inputRef}
                     type="file"
                     multiple
-                    accept=".pdf"
+                    accept=".pdf,.docx"
                     className="hidden"
-                    onChange={e => addFiles(e.target.files)}
+                    onChange={e => {
+                        addFiles(e.target.files)
+                        e.target.value = '' // Limpiar el input para permitir subir el mismo archivo después de borrarlo
+                    }}
                 />
             </div>
 
@@ -69,7 +72,7 @@ const DropZone = memo(({ files, setFiles }) => {
                     {files.map((f, i) => (
                         <div key={i} className="flex items-center gap-2 bg-surface-container rounded-full py-1.5 pl-4 pr-1.5 text-sm border border-white/5 shadow-sm group">
                             <span className="material-symbols-outlined text-[16px] text-on-surface-variant">description</span>
-                            <span className="text-on-surface max-w-[200px] truncate">{f.name}</span>
+                            <span className="text-on-surface max-w-[200px] truncate" title={f.name}>{f.name}</span>
                             <button 
                                 onClick={(e) => { e.stopPropagation(); removeFile(i); }}
                                 className="w-6 h-6 rounded-full flex items-center justify-center hover:bg-surface-container-high hover:text-red-400 text-on-surface-variant transition-colors ml-1"

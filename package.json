@@ -1,0 +1,11 @@
+{
+    "name": "malaquias-root",
+    "version": "1.0.0",
+    "scripts": {
+        "dev": "concurrently -n \"BACKEND,FRONTEND\" -c \"magenta,blue\" \"cd backend && .venv\\Scripts\\activate && python -m uvicorn app.main:app --reload --port 8000\" \"cd frontend && npm run dev\"",
+        "install-all": "npm install && cd frontend && npm install && cd ../backend && pip install -r requirements.txt"
+    },
+    "devDependencies": {
+        "concurrently": "^8.2.2"
+    }
+}

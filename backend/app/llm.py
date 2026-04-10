@@ -3,118 +3,86 @@ import json
 import os
 import time
 
-LLM_PROVIDER = os.getenv("LLM_PROVIDER", "groq") # 'groq' o 'ollama'
+# Configuración desde variables de entorno
+LLM_PROVIDER = os.getenv("LLM_PROVIDER", "groq") 
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 OLLAMA_URL = os.getenv("OLLAMA_URL", "http://localhost:11434/v1/chat/completions")
-LLM_MODEL = os.getenv("LLM_MODEL", "llama3.2") # por defecto en Ollama
+LLM_MODEL_LOCAL = os.getenv("LLM_MODEL", "llama3.1") # Cambiado a llama3.1 según tu setup
 GROQ_URL = "https://api.groq.com/openai/v1/chat/completions"
 
 def analyze_with_llm(cv_text: str, job_description: str, categoria: str = "", stack: str = "", strictness: str = "normal", match_score: float = 0.0) -> dict:
     if LLM_PROVIDER == "groq" and not GROQ_API_KEY:
         return {"error": "GROQ_API_KEY no configurada"}
 
-    # Mitigacion HTTP 429 (Límite de Tokens por Minuto de Groq)
-    # Recortamos drásticamente el CV y el Job Description a lo más importante
+    # Recorte preventivo para evitar 429 y optimizar contexto
     cv_text = cv_text[:1500] 
     job_description = job_description[:1000]
-
-    filtros = ""
-    if categoria:
-        filtros += f"\nCategoría del puesto: {categoria}"
-    if stack:
-        filtros += f"\nRequisitos técnicos clave: {stack}"
-
     score_pct = round(match_score * 100, 1)
 
-    if strictness == "estricto":
-        criterio = f"""Sé exigente pero justo. El score de similitud semántica es {score_pct}%.
-Guía orientativa (no absoluta):
-- Score < 10%: probablemente "Descartar", salvo que detectes potencial muy claro
-- Score 10-25%: "Considerar" si hay señales positivas
-- Score > 25%: evalúa libremente, "Entrevistar" si cumple requisitos principales
-Penaliza la ausencia de experiencia directa en los requisitos clave."""
-    else:
-        criterio = f"""Sé equilibrado y valora el potencial. El score de similitud semántica es {score_pct}%.
-Guía orientativa (no absoluta, usa tu criterio):
-- Score < 10%: inclínate por "Descartar" o "Considerar"
-- Score 10-20%: "Considerar" es lo más habitual
-- Score > 20%: evalúa libremente, "Entrevistar" si hay buenas señales
-Valora habilidades transferibles además de la experiencia directa."""
+    # Definición de la dureza del reclutador
+    estricto_txt = "Sé implacable. Si no hay experiencia directa, descarta." if strictness == "estricto" else "Valora habilidades transferibles, pero mantente objetivo."
 
-    prompt = f"""Analiza este CV frente a la oferta de trabajo.{filtros}
+    system_prompt = f"""Eres un reclutador experto y analítico de la agencia 'Malaquías'. 
+Tu misión es evaluar la afinidad real entre un CV y una oferta.
+REGLA CRÍTICA: Eres un profesional objetivo, no un coach. Si el candidato NO es compatible, di 'Descartar'. 
+No busques justificaciones forzadas para perfiles irrelevantes.
+{estricto_txt}
+Responde ÚNICAMENTE en formato JSON."""
 
-{criterio}
-
-OFERTA:
+    user_prompt = f"""OFERTA ({categoria}):
 {job_description}
+Requisitos técnicos clave: {stack}
 
-CV:
+CV DEL CANDIDATO:
 {cv_text}
 
-Responde ÚNICAMENTE con este JSON exacto, sin texto adicional ni markdown:
+Score matemático previo: {score_pct}%
+
+Genera un JSON con esta estructura:
 {{
-  "nombre_candidato": "Nombre completo extraído del CV",
-  "titulo_candidato": "Cargo o perfil profesional en máximo 30 caracteres, conciso y profesional",
-  "fortalezas": ["punto 1", "punto 2", "punto 3"],
-  "carencias": ["punto 1", "punto 2"],
-  "valoracion": "2-3 frases de valoración",
-  "recomendacion": "Entrevistar",
-  "email_candidato": "email@ejemplo.com o null",
-  "telefono_candidato": "+34 600 000 000 o null"
-}}
-
-El campo "titulo_candidato" debe ser un cargo corto (ej: "Desarrollador React" en lugar de "Software Engineer con 5 años de experiencia").
-El campo "recomendacion" solo puede ser: "Entrevistar", "Considerar" o "Descartar"."""
-
-    headers = {
-        "Content-Type": "application/json"
-    }
+  "nombre_candidato": "Nombre completo",
+  "titulo_candidato": "Cargo corto (max 30 carac.)",
+  "llm_score": (int 0-100 basado en tu análisis),
+  "fortalezas": ["Max 3 puntos clave"],
+  "carencias": ["Puntos críticos faltantes (Siempre incluye al menos uno)"],
+  "valoracion": "Máximo 2 frases directas.",
+  "recomendacion": "Entrevistar|Considerar|Descartar",
+  "email_candidato": "email o null",
+  "telefono_candidato": "teléfono o null"
+}}"""
 
     target_url = OLLAMA_URL if LLM_PROVIDER == "ollama" else GROQ_URL
-    target_model = LLM_MODEL if LLM_PROVIDER == "ollama" else "llama-3.1-8b-instant"
+    target_model = LLM_MODEL_LOCAL if LLM_PROVIDER == "ollama" else "llama-3.1-8b-instant"
 
+    payload = {
+        "model": target_model,
+        "messages": [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_prompt}
+        ],
+        "temperature": 0.1, # Bajamos temperatura para mayor consistencia JSON
+        "max_tokens": 600,
+        "response_format": {"type": "json_object"} if LLM_PROVIDER == "groq" else None
+    }
+
+    headers = {"Content-Type": "application/json"}
     if LLM_PROVIDER == "groq":
         headers["Authorization"] = f"Bearer {GROQ_API_KEY}"
 
-    body = {
-        "model": target_model,
-        "messages": [
-            {
-                "role": "system",
-                "content": "Eres un asistente de reclutamiento experto. Responde ÚNICAMENTE con JSON válido, sin texto adicional ni markdown."
-            },
-            {
-                "role": "user",
-                "content": prompt
-            }
-        ],
-        "temperature": 0.3,
-        "max_tokens": 600
-    }
-
-    max_retries = 3 if LLM_PROVIDER == "groq" else 1  # Ollama no necesita retry por rate limit
-
-    for attempt in range(max_retries):
+    # Ejecutamos sin reintentos automáticos
+    for attempt in range(1):
         try:
-            # En Ollama local podemos esperar mucho sin timeout
-            response = requests.post(target_url, headers=headers, json=body, timeout=120)
+            response = requests.post(target_url, headers=headers, json=payload, timeout=60)
             response.raise_for_status()
-            raw = response.json()["choices"][0]["message"]["content"].strip()
+            content = response.json()["choices"][0]["message"]["content"].strip()
+            
+            # Limpieza básica de markdown si el modelo se olvida del system prompt
+            if "```json" in content:
+                content = content.split("```json")[1].split("```")[0]
+            elif "```" in content:
+                content = content.split("```")[1].split("```")[0]
 
-            if raw.startswith("```"):
-                raw = raw.split("```")[1]
-                if raw.startswith("json"):
-                    raw = raw[4:]
-            raw = raw.strip()
+            return json.loads(content)
 
-            return json.loads(raw)
-
-        except requests.exceptions.HTTPError as e:
-            if e.response.status_code == 429 and attempt < max_retries - 1:
-                time.sleep(15 * (attempt + 1))  # Backoff más agresivo (15s, 30s)
-                continue
-            return {"error": f"Error Groq API: {e.response.status_code}", "detail": e.response.text}
-        except json.JSONDecodeError:
-            return {"error": "El LLM no devolvió JSON válido", "raw": raw}
         except Exception as e:
-            return {"error": str(e)}
+            return {"error": f"Error en LLM: {str(e)}", "recomendacion": "Descartar", "valoracion": "Error técnico en el análisis."}

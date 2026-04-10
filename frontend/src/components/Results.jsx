@@ -57,6 +57,7 @@ export default function Results({ candidates, onReset, ofertaId, onDownloadPDF, 
 
     async function handleSave() {
         if (saved) return;
+        console.log('[DEBUG] jobData al guardar:', JSON.stringify({ descripcion_length: jobData?.descripcion?.length, descripcion_preview: jobData?.descripcion?.substring(0, 100) }))
         try {
             const token = localStorage.getItem('token')
             const res = await fetch(`${API}/save-analysis/`, {
@@ -74,11 +75,9 @@ export default function Results({ candidates, onReset, ofertaId, onDownloadPDF, 
             })
             if (res.ok) {
                 setSaved(true)
-                alert('Análisis guardado permanentemente en tu historial.')
             } else {
                 const errJson = await res.json().catch(() => ({}));
                 console.error('Server error:', errJson);
-                alert(`Error al guardar el análisis: ${errJson.detail || 'Error desconocido'}`);
             }
         } catch (e) {
             console.error('Save error:', e)
@@ -179,7 +178,7 @@ export default function Results({ candidates, onReset, ofertaId, onDownloadPDF, 
                                         }}
                                         title="Ver Currículum Original"
                                     >
-                                        <div className="w-6 h-6 bg-white rounded-full flex items-center justify-center text-black hover:bg-zinc-200 transition-colors shadow-[0_0_15px_rgba(255,255,255,0.4)]">
+                                        <div className="w-6 h-6 bg-white rounded-full flex items-center justify-center text-black hover:bg-zinc-200 transition-colors shadow-[0_4px_10px_rgba(0,0,0,0.5)]">
                                             <span className="material-symbols-outlined text-[13px] font-bold">visibility</span>
                                         </div>
                                     </div>
@@ -207,8 +206,19 @@ export default function Results({ candidates, onReset, ofertaId, onDownloadPDF, 
                             </div>
 
                             <div className="flex items-center gap-3 shrink-0">
-                                <div className={`flex items-center justify-center w-[54px] h-[54px] rounded-full border-2 ${isTop ? 'border-white/60 bg-white/5' : 'border-white/10 bg-surface-container-high'} shrink-0 shadow-crystal`}>
-                                    <p className="text-[13px] font-black tracking-tighter text-white">{score}%</p>
+                                {((c.llm_score || a?.llm_score) > 0) && (
+                                    <div className="flex flex-col items-center justify-center shrink-0 mr-1" title="Afinidad Evaluada Semánticamente (LLM)">
+                                        <p className="text-[8px] font-bold text-zinc-500 uppercase tracking-widest mb-1">Semántica</p>
+                                        <div className={`flex items-center justify-center w-[40px] h-[40px] rounded-full border border-white/5 bg-surface-container-lowest shrink-0`}>
+                                            <p className="text-[11px] font-black tracking-tighter text-zinc-300">{c.llm_score || a?.llm_score}</p>
+                                        </div>
+                                    </div>
+                                )}
+                                <div className="flex flex-col items-center justify-center shrink-0">
+                                    <p className="text-[8px] font-bold text-zinc-500 uppercase tracking-widest mb-1">Keyword Match</p>
+                                    <div className={`flex items-center justify-center w-[54px] h-[54px] rounded-full border-2 ${isTop ? 'border-white/60 bg-white/5' : 'border-white/10 bg-surface-container-high'} shrink-0 shadow-crystal`}>
+                                        <p className="text-[13px] font-black tracking-tighter text-white">{score}%</p>
+                                    </div>
                                 </div>
 
                                 {!isTop && (

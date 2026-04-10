@@ -10,11 +10,12 @@ from fastapi.responses import StreamingResponse
 from fastapi.security import OAuth2PasswordRequestForm
 from typing import List, Optional
 from sqlalchemy.orm import Session
+from sqlalchemy import text
 from pydantic import BaseModel, EmailStr
 import json
 import asyncio
 
-from .cv_parser import extract_text_from_pdf
+from .cv_parser import extract_text_from_cv
 from .matcher import compare_cv_to_job
 from .llm import analyze_with_llm
 from .utils import clean_text, truncate_text, validate_pdf_text
@@ -32,6 +33,18 @@ class SaveAnalysisSchema(BaseModel):
 from fastapi.middleware.httpsredirect import HTTPSRedirectMiddleware
 
 models.Base.metadata.create_all(bind=engine)
+
+with engine.connect() as conn:
+    try:
+        conn.execute(text("ALTER TABLE candidatos ADD COLUMN cv_text TEXT"))
+        conn.commit()
+    except Exception:
+        pass
+    try:
+        conn.execute(text("ALTER TABLE candidatos ADD COLUMN llm_score INTEGER DEFAULT 0"))
+        conn.commit()
+    except Exception:
+        pass
 
 app = FastAPI(title="Malaquías CV Screener")
 
@@ -119,44 +132,67 @@ async def analyze_cvs(
     total = min(len(cvs), 10)
 
     async def event_stream():
-        yield f"data: {json.dumps({'event': 'start', 'total': total})}\n\n"
+        yield f"data: {json.dumps({'event': 'start', 'total': total}, ensure_ascii=False)}\n\n"
 
-        results = []
-
-        for i, cv in enumerate(cvs[:10]):
-            raw_text = extract_text_from_pdf(cv.file)
-
+        # --- FASE 1: Scoring Matemático Local ---
+        resultados_preliminares = []
+        for i, cv in enumerate(cvs[:total]):
+            raw_text = extract_text_from_cv(cv.filename, cv.file)
+            
             if not validate_pdf_text(raw_text):
-                result = {
+                resultados_preliminares.append({
                     "filename": cv.filename,
-                    "match_score": 0,
-                    "analysis": {"error": "PDF sin texto extraíble"}
-                }
+                    "cv_text": "",
+                    "match_score": 0.0,
+                    "valid": False
+                })
             else:
                 clean = clean_text(raw_text)
                 score = compare_cv_to_job(clean, job_description, strictness or "normal", balance=balance)
+                resultados_preliminares.append({
+                    "filename": cv.filename,
+                    "cv_text": clean,
+                    "match_score": score,
+                    "valid": True
+                })
+            
+            # Emitir evento falso de "procesamiento" para que la UI se mueva
+            yield f"data: {json.dumps({'event': 'math_done', 'index': i + 1, 'filename': cv.filename}, ensure_ascii=False)}\n\n"
+            await asyncio.sleep(0.1)
+
+        # Ordenar de mejor a peor antes del LLM
+        resultados_preliminares.sort(key=lambda x: x["match_score"], reverse=True)
+
+        # --- FASE 2: LLM para TODOS los candidatos ---
+        results = []
+        for i, item in enumerate(resultados_preliminares):
+            score_pct = round(item["match_score"] * 100, 2)
+            
+            if not item["valid"]:
+                analysis = {"error": "Archivo sin texto extraíble"}
+            else:
                 analysis = analyze_with_llm(
-                    truncate_text(clean),
+                    truncate_text(item["cv_text"]),
                     job_description,
                     categoria or "",
                     stack or "",
                     strictness or "normal",
-                    match_score=score
+                    match_score=item["match_score"]
                 )
 
-                result = {
-                    "filename": cv.filename,
-                    "match_score": round(score * 100, 2),
-                    "analysis": analysis,
-                    "cv_text": clean  # Pasar el texto extraído al frontend aquí temporalmente
-                }
-
+            result = {
+                "filename": item["filename"],
+                "match_score": score_pct,
+                "analysis": analysis,
+                "cv_text": item["cv_text"]
+            }
             results.append(result)
-            yield f"data: {json.dumps({'event': 'cv_done', 'index': i + 1, 'total': total, 'result': result})}\n\n"
-            await asyncio.sleep(1.5)
+            
+            # Reutilizamos tu evento 'cv_done' para no romper tu Frontend (Progress.jsx)
+            yield f"data: {json.dumps({'event': 'cv_done', 'index': i + 1, 'total': total, 'result': result}, ensure_ascii=False)}\n\n"
 
-        results.sort(key=lambda x: x["match_score"], reverse=True)
-        yield f"data: {json.dumps({'event': 'complete', 'candidates': results})}\n\n"
+        # Devolver array final (ya está ordenado)
+        yield f"data: {json.dumps({'event': 'complete', 'candidates': results}, ensure_ascii=False)}\n\n"
 
     return StreamingResponse(event_stream(), media_type="text/event-stream")
 
@@ -188,7 +224,8 @@ def save_analysis(data: SaveAnalysisSchema, db: Session = Depends(get_db), curre
             titulo_candidato=analysis.get("titulo_candidato"),
             email_candidato=analysis.get("email_candidato"),
             telefono_candidato=analysis.get("telefono_candidato"),
-            cv_text=c.get("cv_text", "")
+            cv_text=c.get("cv_text", ""),
+            llm_score=analysis.get("llm_score", 0)
         )
         db.add(candidato)
     
@@ -283,7 +320,8 @@ def list_ofertas(db: Session = Depends(get_db), current_user=Depends(get_current
 
         result.append({
             "id": o.id,
-            "descripcion": o.descripcion[:120] + "..." if len(o.descripcion) > 120 else o.descripcion,
+            "descripcion": o.descripcion,
+            "descripcion_preview": o.descripcion[:120] + "..." if len(o.descripcion) > 120 else o.descripcion,
             "categoria": o.categoria,
             "stack": o.stack,
             "total_candidatos": count,
@@ -329,6 +367,7 @@ def get_oferta_candidatos(oferta_id: int, db: Session = Depends(get_db), current
             "nombre_candidato": c.nombre_candidato,
             "titulo_candidato": c.titulo_candidato,
             "cv_text": c.cv_text,
+            "llm_score": getattr(c, 'llm_score', 0) or 0,
             "created_at": c.created_at.isoformat() if c.created_at else None
         } for c in candidatos]
     }
