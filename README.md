@@ -82,50 +82,30 @@ Malaquias/
 
 - Python 3.10+
 - Node.js 18+
-- Cuenta en Supabase
-- API key de Groq
-- API key de Resend
+- API key de Groq para activar el análisis LLM
 
-### Backend
+El desarrollo local usa SQLite por defecto y no necesita conectarse a Supabase ni a una base de producción.
 
-```bash
-cd backend
-pip install -r requirements.txt
-```
-
-Crea un archivo `.env` en `backend/`:
-
-```env
-GROQ_API_KEY=tu_key
-DATABASE_URL=postgresql://usuario:password@host:5432/postgres
-SECRET_KEY=clave_secreta_larga_aleatoria
-RESEND_API_KEY=tu_key
-FRONTEND_URL=http://localhost:5173
-```
-
-Genera un SECRET_KEY seguro con:
+### Preparación
 
 ```bash
-python -c "import secrets; print(secrets.token_hex(32))"
-```
-
-Arranca el backend:
-
-```bash
-uvicorn app.main:app --reload
-```
-
-API disponible en `http://localhost:8000/docs`
-
-### Frontend
-
-```bash
-cd frontend
+python -m venv .venv
+pip install -r backend/requirements.txt
 npm install
+npm --prefix frontend install
+```
+
+Copia `.env.local.example` como `.env.local` y utiliza una clave exclusivamente local. Para Vite, copia también `frontend/.env.local.example` como `frontend/.env.local`.
+
+### Frontend y backend juntos
+
+```bash
 npm run dev
 ```
 
-App disponible en `http://localhost:5173`
+La terminal identifica los procesos como `[FRONT]` y `[BACK]`. La app queda en `http://localhost:5173` y la API en `http://localhost:8000/docs`.
+
+Los despliegues deben inyectar las variables documentadas en `.env.example`. No reutilices `.env.local` en producción. Los futuros cambios estructurales de base de datos se publicarán como migraciones.
 
 -----
 
@@ -138,6 +118,21 @@ App disponible en `http://localhost:5173`
 |`SECRET_KEY`    |Clave para firmar JWT       |Generar localmente            |
 |`RESEND_API_KEY`|API key de Resend           |resend.com                    |
 |`FRONTEND_URL`  |URL del frontend            |Tu dominio de Vercel          |
+
+El frontend utiliza además `VITE_API_URL`, documentada en `frontend/.env.example`.
+
+-----
+
+## Benchmark v2
+
+El laboratorio público vive en [`benchmark/`](benchmark/README.md) y empieza desde cero. Separa lectura de documentos, interpretación de criterios y ranking, y mantiene fuera de Git los datasets descargados, los CV privados y los resultados locales.
+
+```bash
+python benchmark/scripts/fetch_sources.py --list
+python benchmark/scripts/fetch_sources.py ecyl_open_jobs
+```
+
+Los contratos JSON de vacante, candidato y evaluación están versionados en `benchmark/schemas/`. Consulta también [`DESIGN.md`](DESIGN.md) para el sistema visual y el vocabulario de producto.
 
 -----
 
@@ -184,6 +179,4 @@ El parámetro `balance` (0.0–1.0) controla el peso de cada componente. Por def
 
 ## Licencia
 
-Copyright © 2025 Marco Perero Borges. Todos los derechos reservados.
-
-Este software está protegido. No se permite su uso, copia, modificación o distribución sin autorización expresa del autor.
+Malaquías está dedicado al dominio público mediante CC0 1.0. Puede usarse, copiarse, modificarse y redistribuirse libremente. Consulta [`LICENSE`](LICENSE).

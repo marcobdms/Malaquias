@@ -4,7 +4,12 @@ export default function Progress({ total, done, status }) {
             : 0
 
     return (
-        <div className="bg-surface-container rounded-[1.5rem] p-5 shadow-crystal border border-white/5">
+        <div
+            className="bg-surface-container rounded-[1.5rem] p-5 shadow-crystal border border-white/5"
+            role="status"
+            aria-live="polite"
+            aria-busy={status === 'waking' || status === 'analyzing'}
+        >
             <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-3">
                     {status === 'analyzing' && (
@@ -13,7 +18,7 @@ export default function Progress({ total, done, status }) {
                                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"></circle>
                                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                             </svg>
-                            <span className="text-sm font-semibold text-on-surface tracking-wide">Analizando {done} de {total}...</span>
+                            <span className="text-sm font-semibold text-on-surface tracking-wide">Evaluando criterios: {done} de {total} CV...</span>
                         </>
                     )}
                     {status === 'waking' && (
@@ -22,7 +27,7 @@ export default function Progress({ total, done, status }) {
                                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"></circle>
                                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                             </svg>
-                            <span className="text-sm text-on-surface-variant tracking-wide">Despertando motor neuronal...</span>
+                            <span className="text-sm text-on-surface-variant tracking-wide">Preparando documentos y análisis...</span>
                         </>
                     )}
                     {status === 'done' && (

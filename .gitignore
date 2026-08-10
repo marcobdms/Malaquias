@@ -10,8 +10,25 @@ __pycache__/
 
 # Configuración y Secretos (¡IMPORTANTE! No subir tus llaves de Supabase)
 .env
+.env.*
+!.env.example
+!**/.env.example
+!.env.local.example
+!**/.env.local.example
 .pytest_cache
 .vscode/
+
+# Dependencias locales
+node_modules/
+frontend/node_modules/
+
+# Datos y resultados del benchmark (se generan localmente)
+benchmark/data/downloaded/
+benchmark/data/private/
+benchmark/results/
+
+# Archivos temporales de Microsoft Office
+~$*
 
 # Base de datos local (si usas SQLite)
 *.db
