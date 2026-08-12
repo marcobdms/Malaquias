@@ -57,6 +57,11 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+:focus-visible {
+  outline: 2px solid theme('colors.primary');
+  outline-offset: 3px;
+}
+
 /* Animations */
 @keyframes spin {
   to { transform: rotate(360deg); }
@@ -100,6 +105,17 @@ body {
 
 .scrolling-container:hover .scrolling-content {
   animation: scrolling-text 10s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
 }
 
 /* Base scrollbar styling already present */

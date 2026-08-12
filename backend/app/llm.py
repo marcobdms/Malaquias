@@ -2,6 +2,9 @@ import requests
 import json
 import os
 import time
+from .config import load_environment
+
+load_environment()
 
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 GROQ_URL = "https://api.groq.com/openai/v1/chat/completions"

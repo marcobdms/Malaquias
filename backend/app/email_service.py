@@ -1,5 +1,8 @@
 import resend
 import os
+from .config import load_environment
+
+load_environment()
 
 resend.api_key = os.getenv("RESEND_API_KEY")
 FROM_EMAIL = "Malaquías <onboarding@resend.dev>"

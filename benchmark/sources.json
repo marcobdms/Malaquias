@@ -1,0 +1,73 @@
+{
+  "schema_version": "1.0",
+  "sources": [
+    {
+      "id": "ecyl_open_jobs",
+      "name": "Ofertas de empleo de Castilla y León",
+      "url": "https://datosabiertos.jcyl.es/web/jcyl/risp/es/empleo/ofertas-empleo/1284354353012.json",
+      "license": "CC BY 4.0",
+      "language": ["es"],
+      "market": "ES",
+      "task": ["job_input"],
+      "format": "json",
+      "automatic_download": true
+    },
+    {
+      "id": "galicia_open_jobs",
+      "name": "Ofertas de empleo de Galicia",
+      "url": "https://abertos.xunta.gal/catalogo/economia-empresa-emprego/-/dataset/0042/ofertas-emprego/001/descarga-directa-ficheiro.rss",
+      "license": "CC BY-SA 4.0",
+      "language": ["es", "gl"],
+      "market": "ES",
+      "task": ["job_input"],
+      "format": "rss",
+      "automatic_download": true
+    },
+    {
+      "id": "feina_activa_open_jobs",
+      "name": "Feina Activa",
+      "url": "https://feinaactiva.gencat.cat/api/offers/offers-xml",
+      "license": "Datos abiertos de la Generalitat de Catalunya",
+      "language": ["ca", "es"],
+      "market": "ES",
+      "task": ["job_input"],
+      "format": "xml",
+      "automatic_download": true
+    },
+    {
+      "id": "lorca_open_jobs",
+      "name": "Empleo privado de Lorca",
+      "url": "https://datos.lorca.es/catalogo/empleo-privado/empleo-privado.json",
+      "license": "Datos abiertos del Ayuntamiento de Lorca",
+      "language": ["es"],
+      "market": "ES",
+      "task": ["job_input"],
+      "format": "json",
+      "automatic_download": true
+    },
+    {
+      "id": "talentclef_2026_task_a",
+      "name": "TalentCLEF 2026 Task A",
+      "url": "https://zenodo.org/records/19652670/files/TaskA.zip?download=1",
+      "license": "CC BY 4.0",
+      "language": ["es", "en"],
+      "market": "multilingual",
+      "task": ["ranking"],
+      "format": "zip",
+      "automatic_download": true,
+      "notes": "Corpus auxiliar sintetizado a partir de datos reales y revisado por personas; no representa específicamente España."
+    },
+    {
+      "id": "livecareer_resume_dataset",
+      "name": "Resume Dataset / LiveCareer",
+      "url": "https://www.kaggle.com/datasets/snehaanbhawal/resume-dataset",
+      "license": "CC0 declarada por el recopilador; procedencia en revisión",
+      "language": ["en"],
+      "market": "unknown",
+      "task": ["parser"],
+      "format": "kaggle",
+      "automatic_download": false,
+      "risk_status": "quarantine"
+    }
+  ]
+}

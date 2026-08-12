@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://malaquias.local/schemas/candidate.schema.json",
+  "title": "Documento y perfil de candidato anonimizados",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "id", "document", "parse_status", "facts"],
+  "properties": {
+    "schema_version": { "const": "1.0" },
+    "id": { "type": "string", "minLength": 1 },
+    "professional_family": { "type": ["string", "null"] },
+    "document": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["format", "sha256"],
+      "properties": {
+        "format": { "enum": ["pdf", "docx", "text", "json"] },
+        "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "language": { "type": ["string", "null"] },
+        "pages": { "type": ["integer", "null"], "minimum": 1 },
+        "is_scanned": { "type": ["boolean", "null"] }
+      }
+    },
+    "parse_status": {
+      "enum": ["ready", "warning", "needs_ocr", "protected", "empty", "duplicate", "error"]
+    },
+    "parse_warnings": {
+      "type": "array",
+      "items": { "type": "string" },
+      "default": []
+    },
+    "facts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["kind", "value", "evidence"],
+        "properties": {
+          "kind": { "type": "string", "minLength": 1 },
+          "value": {},
+          "normalized_value": {},
+          "confidence": { "enum": ["low", "medium", "high"] },
+          "evidence": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["text"],
+            "properties": {
+              "text": { "type": "string", "minLength": 1 },
+              "page": { "type": ["integer", "null"], "minimum": 1 },
+              "section": { "type": ["string", "null"] }
+            }
+          }
+        }
+      }
+    }
+  }
+}

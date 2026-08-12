@@ -1,61 +1,44 @@
-# Entornos virtuales (Muy pesado, no se sube)
+# Entornos virtuales
 venv/
 .venv/
 env/
-
-# Archivos de Python (Temporales)
-__pycache__/
-*.py[cod]
-*$py.class
-
-# Configuración y Secretos (¡IMPORTANTE! No subir tus llaves de Supabase)
-.env
-.pytest_cache
-.vscode/
-
-# Base de datos local (si usas SQLite)
-*.db
-*.sqlite3
-.agents/
-rules/
-workflows/
-CLAUDE.md
-
-# Dependencias y Archivos de Agente
-node_modules/
-.agent/
-*.log
-frontend/node_modules/
-
-# Dependencias de Python
-.venv/
-venv/
 
 # Archivos de Python
 __pycache__/
 *.py[cod]
 *$py.class
 
-# Base de datos local (si usas SQLite)
-*.db
-*.sqlite3
-
 # Configuración y Secretos
 .env
-.env.local
-.env.production
+.env.*
+!.env.example
+!**/.env.example
+!.env.local.example
+!**/.env.local.example
 .vscode/
 .idea/
 
-# Archivos de Agente
+# Dependencias locales
+node_modules/
+frontend/node_modules/
+
+# Datos y resultados del benchmark
+benchmark/data/
+benchmark/results/
+*.zip
+
+# Base de datos local (SQLite)
+*.db
+*.sqlite3
+
+# Logs y Cachés temporales
+*.log
+.pytest_cache
+~$*
+
+# Archivos de Agentes AI
 .agents/
 .agent/
 rules/
 workflows/
 CLAUDE.md
-
-# Dependencias y Archivos de Agente
-node_modules/
-.agent/
-*.log
-frontend/node_modules/

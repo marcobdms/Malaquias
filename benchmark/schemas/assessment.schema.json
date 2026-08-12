@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://malaquias.local/schemas/assessment.schema.json",
+  "title": "Evaluación de un candidato para una vacante",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "job_id", "candidate_id", "split", "label", "confidence", "criteria"],
+  "properties": {
+    "schema_version": { "const": "1.0" },
+    "job_id": { "type": "string", "minLength": 1 },
+    "candidate_id": { "type": "string", "minLength": 1 },
+    "split": { "enum": ["calibration", "holdout"] },
+    "label": { "enum": [0, 1, 2, "unknown"] },
+    "confidence": { "enum": ["low", "medium", "high"] },
+    "reviewer_id": { "type": ["string", "null"] },
+    "notes": { "type": ["string", "null"] },
+    "criteria": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["criterion_id", "status", "evidence"],
+        "properties": {
+          "criterion_id": { "type": "string", "minLength": 1 },
+          "status": {
+            "enum": ["confirmed", "partial", "not_found", "contradictory", "unknown", "not_evaluable"]
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["text"],
+              "properties": {
+                "text": { "type": "string", "minLength": 1 },
+                "page": { "type": ["integer", "null"], "minimum": 1 },
+                "section": { "type": ["string", "null"] }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

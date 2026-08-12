@@ -1,6 +1,7 @@
 import os
-from dotenv import load_dotenv
-load_dotenv()
+from .config import load_environment
+
+load_environment()
 
 from fastapi import FastAPI, UploadFile, File, Form, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -13,13 +14,14 @@ import json
 import asyncio
 
 from .cv_parser import extract_text_from_pdf
-from .matcher import compare_cv_to_job
+from .matcher import compare_cv_to_criteria, compare_cv_to_job
 from .llm import analyze_with_llm
 from .utils import clean_text, truncate_text, validate_pdf_text
 from .database import get_db, engine
 from . import models
 from .auth import hash_password, verify_password, create_access_token, get_current_user
 from .email_service import send_confirmation_email
+from .job_criteria import build_job_descriptions, build_scoring_criteria, parse_job_criteria
 
 class SaveAnalysisSchema(BaseModel):
     descripcion: str
@@ -109,12 +111,22 @@ async def analyze_cvs(
     categoria: Optional[str] = Form(None),
     stack: Optional[str] = Form(None),
     strictness: Optional[str] = Form("normal"),
+    criteria_json: Optional[str] = Form(None),
     cvs: List[UploadFile] = File(...),
     balance: float = Form(0.5),
     db: Session = Depends(get_db),
     current_user=Depends(get_current_user)
 ):
     total = min(len(cvs), 10)
+    try:
+        criteria = parse_job_criteria(criteria_json)
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+
+    matching_job_description, explanation_job_description = build_job_descriptions(
+        job_description, criteria
+    )
+    scoring_criteria = build_scoring_criteria(criteria)
 
     async def event_stream():
         yield f"data: {json.dumps({'event': 'start', 'total': total})}\n\n"
@@ -132,10 +144,23 @@ async def analyze_cvs(
                 }
             else:
                 clean = clean_text(raw_text)
-                score = compare_cv_to_job(clean, job_description, strictness or "normal", balance=balance)
+                if scoring_criteria:
+                    score = compare_cv_to_criteria(
+                        clean,
+                        [(criterion_text, weight) for _, criterion_text, weight in scoring_criteria],
+                        strictness or "normal",
+                        balance=balance,
+                    )
+                else:
+                    score = compare_cv_to_job(
+                        clean,
+                        matching_job_description,
+                        strictness or "normal",
+                        balance=balance,
+                    )
                 analysis = analyze_with_llm(
                     truncate_text(clean),
-                    job_description,
+                    explanation_job_description,
                     categoria or "",
                     stack or "",
                     strictness or "normal",
