@@ -1,35 +1,44 @@
-# Entornos virtuales (Muy pesado, no se sube)
+# Entornos virtuales
 venv/
 .venv/
 env/
 
-# Archivos de Python (Temporales)
+# Archivos de Python
 __pycache__/
 *.py[cod]
 *$py.class
 
-# Configuración y Secretos (¡IMPORTANTE! No subir tus llaves de Supabase)
+# Configuración y Secretos
 .env
 .env.*
 !.env.example
 !**/.env.example
 !.env.local.example
 !**/.env.local.example
-.pytest_cache
 .vscode/
+.idea/
 
 # Dependencias locales
 node_modules/
 frontend/node_modules/
 
-# Datos y resultados del benchmark (se generan localmente)
-benchmark/data/downloaded/
-benchmark/data/private/
+# Datos y resultados del benchmark
+benchmark/data/
 benchmark/results/
+*.zip
 
-# Archivos temporales de Microsoft Office
-~$*
-
-# Base de datos local (si usas SQLite)
+# Base de datos local (SQLite)
 *.db
 *.sqlite3
+
+# Logs y Cachés temporales
+*.log
+.pytest_cache
+~$*
+
+# Archivos de Agentes AI
+.agents/
+.agent/
+rules/
+workflows/
+CLAUDE.md
