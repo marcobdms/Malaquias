@@ -1,0 +1,11 @@
+{
+  "schema_version": "1.0",
+  "id": "REQUIRED_JOB_ID",
+  "title": "REQUIRED_SOURCE_TITLE",
+  "language": "es",
+  "location": null,
+  "professional_family": null,
+  "source": { "source_id": "REQUIRED_SOURCE_RECORD_ID", "source_url": null, "captured_at": null, "license": null },
+  "raw_text": "REQUIRED_VERBATIM_JOB_TEXT_MINIMUM_20_CHARACTERS",
+  "criteria": []
+}

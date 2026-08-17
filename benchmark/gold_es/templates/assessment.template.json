@@ -1,0 +1,11 @@
+{
+  "schema_version": "1.0",
+  "job_id": "REQUIRED_JOB_ID",
+  "candidate_id": "REQUIRED_CANDIDATE_ID",
+  "split": "calibration",
+  "label": "unknown",
+  "confidence": "low",
+  "reviewer_id": "REQUIRED_REVIEWER_ID",
+  "notes": null,
+  "criteria": []
+}

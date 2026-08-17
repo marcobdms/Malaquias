@@ -10,8 +10,19 @@ import Positions from './components/Positions'
 import TalentPool from './components/TalentPool'
 import Profile from './components/Profile'
 import Login from './pages/Login'
-import './App.css'
 import Confirm from './pages/Confirm'
+import './App.css'
+
+const eligibilityOrder = { eligible: 2, needs_review: 1, extraction_failed: 0, pending: 0 }
+
+function compareCandidates(a, b) {
+  const eligibilityDelta = (eligibilityOrder[b.eligibility_state] || 0) - (eligibilityOrder[a.eligibility_state] || 0)
+  if (eligibilityDelta !== 0) return eligibilityDelta
+  const coverageA = a.required_coverage ?? 1
+  const coverageB = b.required_coverage ?? 1
+  if (coverageA !== coverageB) return coverageB - coverageA
+  return (b.ranking_score ?? b.match_score ?? 0) - (a.ranking_score ?? a.match_score ?? 0)
+}
 
 function App() {
   const [user, setUser] = useState(null)
@@ -140,8 +151,25 @@ function App() {
           if (!line.startsWith('data: ')) continue
           const payload = JSON.parse(line.slice(6))
 
-          if (payload.event === 'cv_done') {
+          if (payload.event === 'llm_done') {
             setProgress(p => ({ ...p, done: payload.index }))
+          }
+          if (payload.event === 'cv_scored') {
+            setResults(prev => {
+              const current = prev || []
+              const next = current.some(c => c.candidate_id === payload.result.candidate_id)
+                ? current.map(c => c.candidate_id === payload.result.candidate_id ? payload.result : c)
+                : [...current, payload.result]
+              return next.sort(compareCandidates)
+            })
+          }
+          if (payload.event === 'llm_done') {
+            setResults(prev => {
+              const current = prev || []
+              return current
+                .map(c => c.candidate_id === payload.result.candidate_id ? payload.result : c)
+                .sort(compareCandidates)
+            })
           }
           if (payload.event === 'complete') {
             setResults(payload.candidates)
@@ -293,7 +321,13 @@ function App() {
           {results ? (
             <div className="xl:flex-1 xl:border-l border-t xl:border-t-0 border-white/5 bg-surface-container-lowest/50 relative xl:overflow-y-auto w-full xl:h-full">
               <div className="p-4 md:p-8 animate-[fade-in_0.5s_ease-out] w-full">
-                <Results candidates={results} onReset={handleReset} ofertaId={currentOfertaId} onNavigate={handleNavigate} />
+                <Results
+                  candidates={results}
+                  onReset={handleReset}
+                  ofertaId={currentOfertaId}
+                  onNavigate={handleNavigate}
+                  jobData={{ descripcion: jobDesc, categoria, stack }}
+                />
               </div>
             </div>
           ) : (

@@ -96,7 +96,7 @@ export default function TalentPool({ onNavigate }) {
                                     </p>
                                 </div>
                                 <div className="text-right">
-                                    <span className="text-xl font-black text-on-surface">{c.match_score?.toFixed(1)}%</span>
+                                    <span className="text-xl font-black text-on-surface">{c.match_score?.toFixed(1)}/100</span>
                                     <div className="mt-1">{getRecBadge(c.recomendacion)}</div>
                                 </div>
                             </div>

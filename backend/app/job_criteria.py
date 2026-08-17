@@ -60,14 +60,16 @@ def parse_job_criteria(raw: str | None) -> list[dict[str, Any]]:
 
 def build_scoring_criteria(
     criteria: list[dict[str, Any]],
-) -> list[tuple[dict[str, Any], str, float]]:
-    weighted: list[tuple[dict[str, Any], str, float]] = []
+) -> list[tuple[dict[str, Any], list[str], float]]:
+    """Mantiene las equivalencias como alternativas OR auditables."""
+
+    weighted: list[tuple[dict[str, Any], list[str], float]] = []
     for criterion in criteria:
         if not criterion["evaluable_in_cv"]:
             continue
         aliases = criterion.get("equivalences") or []
-        text = ". ".join([criterion["label"], *aliases])
-        weighted.append((criterion, text, PRIORITY_WEIGHTS[criterion["priority"]]))
+        alternatives = [criterion["label"], *aliases]
+        weighted.append((criterion, alternatives, PRIORITY_WEIGHTS[criterion["priority"]]))
     return weighted
 
 

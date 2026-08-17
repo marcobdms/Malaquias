@@ -1,0 +1,18 @@
+{
+  "schema_version": "1.0",
+  "id": "REQUIRED_SOURCE_RECORD_ID",
+  "asset_type": "job",
+  "origin_type": "other",
+  "source_name": null,
+  "source_url": null,
+  "captured_at": "REQUIRED_ISO_8601_TIMESTAMP",
+  "sha256": "REQUIRED_64_CHARACTER_LOWERCASE_SHA256",
+  "license_status": "unknown",
+  "license_name": null,
+  "license_url": null,
+  "permission_reference": null,
+  "usage_status": "quarantine",
+  "redistribution_allowed": false,
+  "local_document_ref": null,
+  "notes": null
+}

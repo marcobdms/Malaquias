@@ -1,8 +1,8 @@
 import os
+import hashlib
 from datetime import datetime, timedelta
-from typing import Optional
 from jose import JWTError, jwt
-from passlib.context import CryptContext
+import bcrypt
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
@@ -16,14 +16,31 @@ SECRET_KEY = os.getenv("SECRET_KEY", "cambia_esto_por_algo_seguro")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24 * 7  # 7 días
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+PASSWORD_HASH_PREFIX = "malaquias-bcrypt-sha256$"
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
+def _password_digest(password: str) -> bytes:
+    return hashlib.sha256(password.encode("utf-8")).digest()
+
 def hash_password(password: str) -> str:
-    return pwd_context.hash(password)
+    hashed = bcrypt.hashpw(_password_digest(password), bcrypt.gensalt())
+    return PASSWORD_HASH_PREFIX + hashed.decode("utf-8")
 
 def verify_password(plain: str, hashed: str) -> bool:
-    return pwd_context.verify(plain, hashed)
+    if not hashed:
+        return False
+
+    try:
+        if hashed.startswith(PASSWORD_HASH_PREFIX):
+            stored = hashed.removeprefix(PASSWORD_HASH_PREFIX).encode("utf-8")
+            return bcrypt.checkpw(_password_digest(plain), stored)
+
+        legacy_password = plain.encode("utf-8")
+        if len(legacy_password) > 72:
+            return False
+        return bcrypt.checkpw(legacy_password, hashed.encode("utf-8"))
+    except (TypeError, ValueError):
+        return False
 
 def create_access_token(data: dict) -> str:
     to_encode = data.copy()

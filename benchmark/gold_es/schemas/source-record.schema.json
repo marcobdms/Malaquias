@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://malaquias.local/schemas/gold-es/source-record.schema.json",
+  "title": "Procedencia y permiso de uso",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "id", "asset_type", "origin_type", "captured_at", "sha256", "license_status", "usage_status", "redistribution_allowed"],
+  "properties": {
+    "schema_version": { "const": "1.0" },
+    "id": { "type": "string", "minLength": 1 },
+    "asset_type": { "enum": ["job", "candidate_document"] },
+    "origin_type": { "enum": ["public_dataset", "public_web", "partner_contribution", "user_contribution", "other"] },
+    "source_name": { "type": ["string", "null"] },
+    "source_url": { "type": ["string", "null"], "format": "uri" },
+    "captured_at": { "type": "string", "format": "date-time" },
+    "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "license_status": { "enum": ["confirmed", "permission_recorded", "unknown", "restricted"] },
+    "license_name": { "type": ["string", "null"] },
+    "license_url": { "type": ["string", "null"], "format": "uri" },
+    "permission_reference": { "type": ["string", "null"] },
+    "usage_status": { "enum": ["approved", "quarantine", "withdrawn"] },
+    "redistribution_allowed": { "type": "boolean" },
+    "local_document_ref": { "type": ["string", "null"] },
+    "notes": { "type": ["string", "null"] }
+  }
+}

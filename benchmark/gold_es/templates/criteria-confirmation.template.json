@@ -1,0 +1,11 @@
+{
+  "schema_version": "1.0",
+  "job_id": "REQUIRED_JOB_ID",
+  "job_text_sha256": "REQUIRED_64_CHARACTER_LOWERCASE_SHA256",
+  "criteria_version": "1.0",
+  "confirmed_by": "REQUIRED_REVIEWER_ID",
+  "confirmed_at": "REQUIRED_ISO_8601_TIMESTAMP",
+  "blind_to_model_output": true,
+  "notes": null,
+  "criteria": []
+}

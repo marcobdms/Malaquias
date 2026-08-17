@@ -1,0 +1,11 @@
+{
+  "schema_version": "1.0",
+  "name": "baseline-hybrid-v1",
+  "seed": 20260810,
+  "model_id": "paraphrase-multilingual-MiniLM-L12-v2",
+  "balance": 0.5,
+  "strictness": "normal",
+  "keyword_multiplier": 2.5,
+  "batch_size": 32,
+  "cutoffs": [5, 10, 20]
+}

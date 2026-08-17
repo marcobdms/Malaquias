@@ -1,0 +1,20 @@
+{
+  "schema_version": "1.0",
+  "id": "talentclef-2026-task-a-hard-negatives-es",
+  "description": "Stress pool congelado: positivos y 20 negativos mejor puntuados por baseline v1.",
+  "license": "CC BY 4.0",
+  "source": {
+    "type": "talentclef",
+    "source_id": "talentclef_2026_task_a",
+    "root": "../data/downloaded/talentclef_2026_task_a/extracted/TaskA/development/es",
+    "queries_dir": "queries",
+    "corpus_dir": "corpus",
+    "qrels_file": "qrels.tsv"
+  },
+  "split": "calibration_stress",
+  "pool": {
+    "strategy": "fixed",
+    "ids_file": "../pools/talentclef-hard-negatives-es.json"
+  },
+  "queries": {"exclude": []}
+}

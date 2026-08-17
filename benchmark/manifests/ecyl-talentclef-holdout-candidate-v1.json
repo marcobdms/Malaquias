@@ -1,0 +1,25 @@
+{
+  "schema_version": "1.0",
+  "id": "ecyl-talentclef-holdout-candidate-v1",
+  "split": "candidate_holdout",
+  "status": "incoming_unjudged",
+  "gold_set": false,
+  "sealed_for_scoring": true,
+  "pool_path": "benchmark/pools/ecyl-talentclef-unjudged-20-v1.json",
+  "pool_sha256": "ee6ed7286f9b7265f3ef8772823c8f4422aa1a382e50ef1bd5e4557031bb6b20",
+  "pool_count": 9,
+  "candidates_per_pool": 20,
+  "priority_review_tracks": [
+    "ciberseguridad_it",
+    "comercial_ventas",
+    "logistica_carretilla"
+  ],
+  "allowed_next_action": "human_adjudication",
+  "prohibited_until_adjudicated": [
+    "calibration",
+    "metric_reporting",
+    "experimental_variant_execution",
+    "gold_set_claim"
+  ],
+  "identity_sha256": "d38ea8f73ace528ca39076dd84db5185ca32386485acc3322b42b9119aeb9d79"
+}

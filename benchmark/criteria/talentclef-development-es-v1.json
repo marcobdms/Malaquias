@@ -1,0 +1,624 @@
+{
+  "schema_version": "1.0",
+  "catalog_id": "talentclef-development-es",
+  "criteria_version": "1.0",
+  "language": "es",
+  "source": {
+    "dataset": "TalentCLEF 2026 Task A development/es",
+    "query_root": "benchmark/data/downloaded/talentclef_2026_task_a/extracted/TaskA/development/es/queries",
+    "derivation": "Revisión manual de cada oferta completa; los criterios no son etiquetas gold de relevancia."
+  },
+  "priority_semantics": {
+    "required": "Capacidad que la oferta presenta de forma explícita como necesaria para desempeñar el puesto.",
+    "important": "Responsabilidad central que debe influir mucho en el ranking, sin tratarse como descarte automático.",
+    "preferred": "Mérito expresamente ventajoso o complementario.",
+    "not_evaluable": "Condición que no debe inferirse ni penalizarse usando solamente el CV."
+  },
+  "jobs": [
+    {
+      "query_id": "75767",
+      "title": "Ingeniero/a Mecánico/a Sénior (Calefacción, Ventilación y Aire Acondicionado)",
+      "job_text_sha256": "8c3bdfb295a9403f0ec1ef65ae40cabf9d835169823930adf2079f7882a825da",
+      "review_note": "La experiencia en centros de datos figura primero entre habilidades requeridas, pero después se declara ventajosa; se conserva como preferida.",
+      "criteria": [
+        {
+          "id": "75767-hvac-design",
+          "label": "Diseño y optimización de sistemas HVAC",
+          "priority": "required",
+          "equivalences": ["diseño de climatización", "diseño de calefacción, ventilación y aire acondicionado", "HVAC design"],
+          "expected_evidence": "Proyectos o funciones de cálculo, dimensionamiento, diseño u optimización de sistemas HVAC."
+        },
+        {
+          "id": "75767-mechanical-building-services",
+          "label": "Ingeniería mecánica aplicada a servicios de edificación",
+          "priority": "required",
+          "equivalences": ["ingeniería de instalaciones mecánicas", "building services engineering", "MEP mecánico"],
+          "expected_evidence": "Experiencia o formación aplicada a instalaciones y sistemas mecánicos de edificios."
+        },
+        {
+          "id": "75767-detailed-deliverables",
+          "label": "Cálculos y entregables de diseño mecánico detallado",
+          "priority": "important",
+          "equivalences": ["memorias de cálculo", "planos y especificaciones mecánicas", "documentación de diseño"],
+          "expected_evidence": "Responsabilidad sobre cálculos, planos, especificaciones o revisión de documentación técnica."
+        },
+        {
+          "id": "75767-codes-compliance",
+          "label": "Cumplimiento de códigos, normas y requisitos de proyecto",
+          "priority": "required",
+          "equivalences": ["cumplimiento normativo de instalaciones", "aplicación de estándares técnicos", "code compliance"],
+          "expected_evidence": "Mención de normativa, códigos técnicos, estándares o verificación de conformidad en proyectos."
+        },
+        {
+          "id": "75767-coordination-leadership",
+          "label": "Liderazgo y coordinación multidisciplinar de proyectos",
+          "priority": "important",
+          "equivalences": ["coordinación con arquitectura e ingenierías", "dirección técnica de proyectos", "multidisciplinary coordination"],
+          "expected_evidence": "Liderazgo técnico y coordinación demostrable con clientes, arquitectura u otras disciplinas."
+        },
+        {
+          "id": "75767-risk-quality-delivery",
+          "label": "Gestión de riesgos, calidad y entrega de sistemas mecánicos",
+          "priority": "important",
+          "equivalences": ["evaluación y mitigación de riesgos", "aseguramiento de calidad", "puesta en servicio"],
+          "expected_evidence": "Participación en evaluaciones de riesgo, QA/QC, commissioning o entrega de instalaciones."
+        },
+        {
+          "id": "75767-data-centres",
+          "label": "Experiencia en centros de datos o entornos críticos",
+          "priority": "preferred",
+          "equivalences": ["data centers", "critical facilities", "instalaciones de misión crítica"],
+          "expected_evidence": "Proyectos HVAC o de instalaciones realizados en centros de datos u otros entornos críticos."
+        },
+        {
+          "id": "75767-degree-license",
+          "label": "Titulación superior o licencia profesional en ingeniería mecánica",
+          "priority": "preferred",
+          "equivalences": ["grado en ingeniería mecánica", "máster en ingeniería mecánica", "colegiación o habilitación profesional equivalente"],
+          "expected_evidence": "Formación universitaria relacionada o licencia/habilitación profesional indicada en el CV."
+        }
+      ]
+    },
+    {
+      "query_id": "76474",
+      "title": "Cajero/a",
+      "job_text_sha256": "7c2205558574fee30233706bf88feff8a81037718b59a83448f9bafdaad76a05",
+      "review_note": null,
+      "criteria": [
+        {
+          "id": "76474-pos-payments",
+          "label": "Operación de caja o sistema de punto de venta",
+          "priority": "required",
+          "equivalences": ["manejo de TPV", "caja registradora", "POS"],
+          "expected_evidence": "Experiencia procesando ventas, escaneando artículos o utilizando caja/TPV."
+        },
+        {
+          "id": "76474-cash-card",
+          "label": "Manejo de efectivo y pagos con tarjeta",
+          "priority": "required",
+          "equivalences": ["cobros en efectivo", "medios de pago", "cash handling"],
+          "expected_evidence": "Funciones de cobro, arqueo o gestión de efectivo y tarjetas."
+        },
+        {
+          "id": "76474-customer-service",
+          "label": "Atención y servicio al cliente",
+          "priority": "required",
+          "equivalences": ["atención al público", "resolución de consultas de clientes", "customer service"],
+          "expected_evidence": "Experiencia de atención directa, resolución de incidencias o asistencia a clientes."
+        },
+        {
+          "id": "76474-register-reconciliation",
+          "label": "Arqueo de caja y gestión de devoluciones o cambios",
+          "priority": "important",
+          "equivalences": ["cuadre de caja", "cierre de caja", "reembolsos y devoluciones"],
+          "expected_evidence": "Responsabilidad sobre cierres/arqueos, discrepancias, cambios o devoluciones."
+        },
+        {
+          "id": "76474-restocking",
+          "label": "Reposición de mercancía y mantenimiento de expositores",
+          "priority": "required",
+          "equivalences": ["reabastecimiento de estantes", "reposición de producto", "stocking shelves"],
+          "expected_evidence": "Tareas de reposición, organización de producto o apoyo operativo en tienda."
+        },
+        {
+          "id": "76474-team-communication",
+          "label": "Comunicación profesional y trabajo en equipo",
+          "priority": "important",
+          "equivalences": ["coordinación con el equipo", "comunicación con clientes y compañeros", "team communication"],
+          "expected_evidence": "Funciones que impliquen coordinación de equipo o comunicación habitual con público."
+        }
+      ]
+    },
+    {
+      "query_id": "85803",
+      "title": "Especialista en Cierre de Préstamos Hipotecarios Minoristas",
+      "job_text_sha256": "14b75492121364aef4cd5e4284866736e66dc0cade3a6189fdbc1fa5c9ac2519",
+      "review_note": "La regulación citada es estadounidense; se conserva literalmente y no se sustituye por normativa española.",
+      "criteria": [
+        {
+          "id": "85803-mortgage-closing",
+          "label": "Cierre y procesamiento de préstamos hipotecarios minoristas",
+          "priority": "required",
+          "equivalences": ["mortgage closing", "procesamiento hipotecario", "retail mortgage loans"],
+          "expected_evidence": "Funciones directas en preparación, coordinación o cierre de expedientes hipotecarios."
+        },
+        {
+          "id": "85803-loan-documents",
+          "label": "Preparación y revisión de documentación de préstamo",
+          "priority": "required",
+          "equivalences": ["documentos de cierre", "loan documentation", "estados de liquidación y divulgaciones"],
+          "expected_evidence": "Experiencia verificando precisión e integridad de contratos, disclosures o documentos de cierre."
+        },
+        {
+          "id": "85803-escrow-settlement-funding",
+          "label": "Coordinación de depósito en garantía, liquidación y financiamiento",
+          "priority": "required",
+          "equivalences": ["escrow", "settlement", "mortgage funding"],
+          "expected_evidence": "Coordinación documentada con escrow, equipos de liquidación o financiación de préstamos."
+        },
+        {
+          "id": "85803-regulatory-compliance",
+          "label": "Cumplimiento de normativa hipotecaria federal y estatal",
+          "priority": "required",
+          "equivalences": ["Ley de Veracidad en los Préstamos", "Truth in Lending Act", "directrices FHA"],
+          "expected_evidence": "Responsabilidades de compliance hipotecario o conocimiento aplicado de TILA/FHA y normativa estatal."
+        },
+        {
+          "id": "85803-origination-underwriting",
+          "label": "Apoyo a originación y suscripción de préstamos",
+          "priority": "important",
+          "equivalences": ["loan origination", "underwriting support", "apoyo a suscriptores"],
+          "expected_evidence": "Experiencia colaborando con originadores o suscriptores durante el ciclo del préstamo."
+        },
+        {
+          "id": "85803-stakeholder-communication",
+          "label": "Comunicación con prestatarios y profesionales inmobiliarios",
+          "priority": "important",
+          "equivalences": ["coordinación con borrowers", "comunicación con real estate", "gestión de partes del cierre"],
+          "expected_evidence": "Interacción profesional con prestatarios, prestamistas, inmobiliarias o equipos internos."
+        },
+        {
+          "id": "85803-detail-orientation",
+          "label": "Orientación al detalle",
+          "priority": "not_evaluable",
+          "equivalences": ["precisión", "atención al detalle", "detail-oriented"],
+          "expected_evidence": "Debe comprobarse con ejercicio, referencias o entrevista; no inferirla por estilo del CV."
+        }
+      ]
+    },
+    {
+      "query_id": "86302",
+      "title": "Profesor/a de IELTS",
+      "job_text_sha256": "a6f0bafe5c6e0b87756296fb63b3a2070f8d00341f4db000767481bc23f46cda",
+      "review_note": "TOEFL y trabajo con niños aparecen en la lista de habilidades, pero no son el núcleo inequívoco del puesto IELTS; se clasifican como complementarios.",
+      "criteria": [
+        {
+          "id": "86302-ielts-teaching",
+          "label": "Enseñanza y preparación específica para IELTS",
+          "priority": "required",
+          "equivalences": ["profesor IELTS", "IELTS preparation", "International English Language Testing System"],
+          "expected_evidence": "Experiencia impartiendo preparación IELTS o formación directamente alineada con ese examen."
+        },
+        {
+          "id": "86302-english-esl-tefl",
+          "label": "Enseñanza de inglés como segunda lengua o lengua extranjera",
+          "priority": "required",
+          "equivalences": ["ESL", "EFL", "TEFL", "English as a Second Language"],
+          "expected_evidence": "Experiencia docente de inglés para hablantes no nativos o cualificación ESL/EFL/TEFL."
+        },
+        {
+          "id": "86302-four-skills",
+          "label": "Preparación de comprensión auditiva, lectura, escritura y expresión oral",
+          "priority": "required",
+          "equivalences": ["listening, reading, writing and speaking", "cuatro destrezas lingüísticas", "competencias del examen IELTS"],
+          "expected_evidence": "Docencia o materiales que cubran las cuatro competencias evaluadas por IELTS."
+        },
+        {
+          "id": "86302-assessment-feedback",
+          "label": "Evaluación educativa y retroalimentación al alumnado",
+          "priority": "important",
+          "equivalences": ["seguimiento del progreso", "educational assessment", "feedback formativo"],
+          "expected_evidence": "Uso de criterios de evaluación, corrección y seguimiento individual del progreso."
+        },
+        {
+          "id": "86302-curriculum-lessons",
+          "label": "Diseño curricular y adaptación de planes de clase",
+          "priority": "important",
+          "equivalences": ["desarrollo curricular", "lesson planning", "adaptación de materiales didácticos"],
+          "expected_evidence": "Creación o adaptación de lecciones, actividades y materiales para distintos niveles."
+        },
+        {
+          "id": "86302-classroom-management",
+          "label": "Gestión del aula y estrategias pedagógicas",
+          "priority": "required",
+          "equivalences": ["classroom management", "pedagogía", "metodologías de enseñanza"],
+          "expected_evidence": "Responsabilidad docente de aula y aplicación de estrategias de enseñanza."
+        },
+        {
+          "id": "86302-related-exams",
+          "label": "Experiencia con TOEFL u otros exámenes de inglés",
+          "priority": "preferred",
+          "equivalences": ["TOEFL", "exámenes oficiales de inglés", "English proficiency tests"],
+          "expected_evidence": "Preparación o evaluación de TOEFL u otras pruebas estandarizadas de inglés."
+        },
+        {
+          "id": "86302-teaching-qualification",
+          "label": "Certificación o cualificación docente relevante",
+          "priority": "preferred",
+          "equivalences": ["certificación TEFL", "CELTA", "titulación docente"],
+          "expected_evidence": "Certificado o formación reglada relacionada con la enseñanza de inglés."
+        }
+      ]
+    },
+    {
+      "query_id": "87280",
+      "title": "Limpiador/a de Mantenimiento",
+      "job_text_sha256": "f856e07146055837eb7c0a801fc007bd75112ae8ab77c68abe0110792a66006c",
+      "review_note": "La capacidad física y la confiabilidad se reservan para verificación humana y no deben deducirse del CV.",
+      "criteria": [
+        {
+          "id": "87280-professional-cleaning",
+          "label": "Limpieza profesional o mantenimiento doméstico",
+          "priority": "required",
+          "equivalences": ["housekeeping", "limpieza de instalaciones", "operario/a de limpieza"],
+          "expected_evidence": "Experiencia en limpieza profesional, housekeeping o mantenimiento de instalaciones."
+        },
+        {
+          "id": "87280-hygiene-disinfection",
+          "label": "Limpieza, desinfección y estándares de higiene",
+          "priority": "required",
+          "equivalences": ["higienización", "sanitización", "protocolos de higiene"],
+          "expected_evidence": "Tareas de desinfección o aplicación de procedimientos de higiene."
+        },
+        {
+          "id": "87280-surfaces-floors-furniture",
+          "label": "Limpieza de suelos, superficies y mobiliario",
+          "priority": "required",
+          "equivalences": ["barrido y fregado", "limpieza de muebles", "limpieza de zonas comunes"],
+          "expected_evidence": "Funciones de barrer, fregar, quitar polvo o cuidar superficies y mobiliario."
+        },
+        {
+          "id": "87280-waste-bathrooms",
+          "label": "Gestión de residuos y limpieza de baños",
+          "priority": "important",
+          "equivalences": ["recogida de basura", "reposición de aseos", "waste disposal"],
+          "expected_evidence": "Responsabilidad sobre retirada de residuos, aseos o reposición de consumibles."
+        },
+        {
+          "id": "87280-linen",
+          "label": "Manejo y cuidado de ropa de cama",
+          "priority": "important",
+          "equivalences": ["lencería", "lavandería", "linen handling"],
+          "expected_evidence": "Tareas de recogida, lavado, preparación o distribución de ropa de cama."
+        },
+        {
+          "id": "87280-safety-procedures",
+          "label": "Seguimiento de procedimientos de seguridad y reporte de incidencias",
+          "priority": "important",
+          "equivalences": ["protocolos de seguridad", "comunicación de averías", "health and safety procedures"],
+          "expected_evidence": "Formación o funciones documentadas relacionadas con seguridad y reporte de mantenimiento."
+        },
+        {
+          "id": "87280-physical-capacity",
+          "label": "Capacidad para realizar las tareas físicas del puesto",
+          "priority": "not_evaluable",
+          "equivalences": ["aptitud física para limpieza", "physical capability", "capacidad de esfuerzo"],
+          "expected_evidence": "Debe confirmarse de forma accesible y no discriminatoria; el CV no permite comprobarla."
+        },
+        {
+          "id": "87280-reliability",
+          "label": "Confiabilidad y atención al detalle",
+          "priority": "not_evaluable",
+          "equivalences": ["responsabilidad", "detail-oriented", "fiabilidad"],
+          "expected_evidence": "Debe comprobarse mediante entrevista, ejercicio o referencias; no inferir por el CV."
+        }
+      ]
+    },
+    {
+      "query_id": "88540",
+      "title": "Director/a de Ventas",
+      "job_text_sha256": "7319d883440a296a959f2fe53c7997cffe9f03f7bfb22a3282f687fd4bd83a12",
+      "review_note": null,
+      "criteria": [
+        {
+          "id": "88540-sales-strategy",
+          "label": "Definición y ejecución de estrategia de ventas",
+          "priority": "required",
+          "equivalences": ["sales strategy", "plan comercial", "estrategia comercial"],
+          "expected_evidence": "Dirección de planes comerciales o estrategias que hayan impulsado mercado o ingresos."
+        },
+        {
+          "id": "88540-sales-leadership",
+          "label": "Liderazgo y gestión de equipos de ventas",
+          "priority": "required",
+          "equivalences": ["sales management", "dirección de equipo comercial", "coaching de ventas"],
+          "expected_evidence": "Responsabilidad sobre selección, dirección, formación u objetivos de un equipo comercial."
+        },
+        {
+          "id": "88540-distribution-channels",
+          "label": "Desarrollo y optimización de canales de distribución",
+          "priority": "required",
+          "equivalences": ["redes de distribución", "channel sales", "canales comerciales"],
+          "expected_evidence": "Creación, gestión u optimización de distribuidores, partners o canales de venta."
+        },
+        {
+          "id": "88540-revenue-forecasting",
+          "label": "Gestión de objetivos de ingresos y previsión de ventas",
+          "priority": "required",
+          "equivalences": ["sales forecasting", "forecast comercial", "revenue targets"],
+          "expected_evidence": "Responsabilidad por cuotas, previsiones, crecimiento de ingresos o seguimiento de KPIs."
+        },
+        {
+          "id": "88540-customer-success",
+          "label": "Colaboración con Customer Success durante el ciclo del cliente",
+          "priority": "important",
+          "equivalences": ["éxito del cliente", "customer lifecycle", "alineación ventas-posventa"],
+          "expected_evidence": "Trabajo coordinado con Customer Success, cuentas, servicio o posventa."
+        },
+        {
+          "id": "88540-go-to-market",
+          "label": "Alineación multifuncional de producto y go-to-market",
+          "priority": "important",
+          "equivalences": ["GTM", "estrategia de salida al mercado", "alineación ventas y producto"],
+          "expected_evidence": "Proyectos conjuntos con producto, marketing u operaciones para lanzar o posicionar ofertas."
+        }
+      ]
+    },
+    {
+      "query_id": "90596",
+      "title": "Gerente/a Regional de Instalaciones",
+      "job_text_sha256": "e5fdecd3531dc577a77f3356d17faef2e787f010fb6e1119a3b0ee7c0d989f98",
+      "review_note": "Vivienda multifamiliar y plomería aparecen como habilidades requeridas, aunque su alcance no se desarrolla; se mantienen como importantes y no como filtros excluyentes.",
+      "criteria": [
+        {
+          "id": "90596-multisite-facilities",
+          "label": "Gestión regional o multisitio de instalaciones",
+          "priority": "required",
+          "equivalences": ["facility management multisitio", "regional facilities management", "gestión de múltiples propiedades"],
+          "expected_evidence": "Responsabilidad sobre operaciones de instalaciones en varias sedes, edificios o propiedades."
+        },
+        {
+          "id": "90596-preventive-maintenance",
+          "label": "Programas de mantenimiento preventivo",
+          "priority": "required",
+          "equivalences": ["plan de mantenimiento preventivo", "preventive maintenance", "mantenimiento planificado"],
+          "expected_evidence": "Diseño, implantación o supervisión de programas preventivos para edificios/equipos."
+        },
+        {
+          "id": "90596-vendors-contracts-teams",
+          "label": "Gestión de proveedores, contratos y equipos internos",
+          "priority": "required",
+          "equivalences": ["gestión de contratas", "vendor management", "dirección de equipos de mantenimiento"],
+          "expected_evidence": "Responsabilidad sobre servicios externalizados, contratos o personal de instalaciones."
+        },
+        {
+          "id": "90596-safety-compliance",
+          "label": "Seguridad y cumplimiento normativo de instalaciones",
+          "priority": "required",
+          "equivalences": ["gestión de seguridad", "facility compliance", "cumplimiento de protección y normativa"],
+          "expected_evidence": "Auditorías, planes de seguridad o cumplimiento regulatorio en edificios y operaciones."
+        },
+        {
+          "id": "90596-assets-bms-lifecycle",
+          "label": "Gestión de activos, BMS y ciclo de vida de equipos",
+          "priority": "important",
+          "equivalences": ["Building Management Systems", "administración de activos", "planificación de ciclo de vida"],
+          "expected_evidence": "Uso o supervisión de BMS e inventario, renovación o ciclo de vida de activos técnicos."
+        },
+        {
+          "id": "90596-budget-procurement",
+          "label": "Presupuestos, control de costes y adquisiciones",
+          "priority": "important",
+          "equivalences": ["facility budgeting", "procurement", "control de costes de mantenimiento"],
+          "expected_evidence": "Gestión de presupuesto operativo, compras, licitaciones o costes de instalaciones."
+        },
+        {
+          "id": "90596-capital-projects",
+          "label": "Gestión de proyectos de mejoras y renovaciones",
+          "priority": "important",
+          "equivalences": ["proyectos de capital", "facility renovations", "project management de instalaciones"],
+          "expected_evidence": "Dirección o coordinación de reformas, renovaciones o mejoras técnicas de edificios."
+        },
+        {
+          "id": "90596-environmental-energy",
+          "label": "Eficiencia energética y sistemas de gestión ambiental",
+          "priority": "important",
+          "equivalences": ["Environmental Management Systems", "EMS ambiental", "gestión de energía y sostenibilidad"],
+          "expected_evidence": "Seguimiento energético, sostenibilidad o implantación de sistemas de gestión ambiental."
+        },
+        {
+          "id": "90596-multifamily-plumbing",
+          "label": "Instalaciones de vivienda multifamiliar o plomería",
+          "priority": "important",
+          "equivalences": ["multifamily housing", "fontanería", "plumbing systems"],
+          "expected_evidence": "Experiencia en edificios multifamiliares o mantenimiento de sistemas de fontanería."
+        }
+      ]
+    },
+    {
+      "query_id": "91821",
+      "title": "Asistente legal de Privacidad y Gestión de Información",
+      "job_text_sha256": "afe7d24de4007abc5419ccc6d68383ac99ac413b7109ed99fc97a4de7366ea9c",
+      "review_note": "La oferta se refiere a leyes federales sin especificar jurisdicción; el criterio no presupone una normativa concreta.",
+      "criteria": [
+        {
+          "id": "91821-data-privacy",
+          "label": "Programas de privacidad y protección de datos",
+          "priority": "required",
+          "equivalences": ["data privacy", "privacy operations", "cumplimiento de privacidad"],
+          "expected_evidence": "Experiencia jurídica, de compliance o de operaciones en programas de privacidad."
+        },
+        {
+          "id": "91821-information-governance",
+          "label": "Gobernanza y ciclo de vida de la información",
+          "priority": "required",
+          "equivalences": ["information governance", "gestión de información", "data lifecycle management"],
+          "expected_evidence": "Funciones de gobierno, clasificación, retención o gestión del ciclo de vida de información."
+        },
+        {
+          "id": "91821-legal-research-regulation",
+          "label": "Investigación jurídica y seguimiento regulatorio",
+          "priority": "required",
+          "equivalences": ["legal research", "requisitos regulatorios", "seguimiento de legislación"],
+          "expected_evidence": "Investigación de leyes, preparación de notas jurídicas o apoyo a cumplimiento regulatorio."
+        },
+        {
+          "id": "91821-legal-assistance",
+          "label": "Asistencia legal o apoyo a un departamento jurídico",
+          "priority": "required",
+          "equivalences": ["legal assistant", "paralegal", "legal department support"],
+          "expected_evidence": "Experiencia de soporte jurídico, paralegal o coordinación dentro de equipos legales."
+        },
+        {
+          "id": "91821-information-security-risk",
+          "label": "Seguridad de información y evaluación de riesgos",
+          "priority": "important",
+          "equivalences": ["information security", "protección de datos", "privacy risk assessment"],
+          "expected_evidence": "Colaboración en seguridad de información, análisis de riesgo o controles de protección."
+        },
+        {
+          "id": "91821-audit-incident-records",
+          "label": "Documentación para auditorías, incidentes y gestión de registros",
+          "priority": "important",
+          "equivalences": ["records management", "incident response documentation", "soporte de auditoría"],
+          "expected_evidence": "Preparación de evidencias de auditoría, expedientes, registros o documentación de incidentes."
+        },
+        {
+          "id": "91821-data-glossary",
+          "label": "Desarrollo y mantenimiento de glosarios de datos",
+          "priority": "important",
+          "equivalences": ["data glossary", "diccionario de datos", "definiciones estandarizadas de información"],
+          "expected_evidence": "Creación o mantenimiento de catálogos, glosarios o definiciones de datos."
+        },
+        {
+          "id": "91821-cross-functional-governance",
+          "label": "Coordinación de flujos de gobernanza entre legal, seguridad y negocio",
+          "priority": "important",
+          "equivalences": ["governance workflows", "coordinación multifuncional", "legal-security-business coordination"],
+          "expected_evidence": "Proyectos de gobernanza coordinados entre funciones jurídicas, técnicas y de negocio."
+        }
+      ]
+    },
+    {
+      "query_id": "96027",
+      "title": "Ingeniero/a de Análisis de Fallas",
+      "job_text_sha256": "cc8217f13cb9854658dbbaea54f1cba7cf081cf5a40d9eea934988a5f3fe2800",
+      "review_note": null,
+      "criteria": [
+        {
+          "id": "96027-failure-root-cause",
+          "label": "Análisis de fallas y determinación de causa raíz",
+          "priority": "required",
+          "equivalences": ["failure analysis", "root cause analysis", "RCA"],
+          "expected_evidence": "Investigaciones técnicas de fallas con identificación documentada de causas raíz."
+        },
+        {
+          "id": "96027-test-plans",
+          "label": "Diseño y ejecución de planes de prueba",
+          "priority": "required",
+          "equivalences": ["test planning", "pruebas de reproducción de fallas", "validación de causa raíz"],
+          "expected_evidence": "Diseño, supervisión o ejecución de pruebas para reproducir problemas y validar hipótesis."
+        },
+        {
+          "id": "96027-data-interpretation-reporting",
+          "label": "Interpretación de datos e informes técnicos",
+          "priority": "required",
+          "equivalences": ["technical reporting", "análisis de resultados", "presentación de hallazgos técnicos"],
+          "expected_evidence": "Análisis de datos experimentales y elaboración o presentación de informes técnicos."
+        },
+        {
+          "id": "96027-corrective-actions",
+          "label": "Implantación de acciones correctivas con diseño, fabricación y calidad",
+          "priority": "important",
+          "equivalences": ["corrective actions", "CAPA", "prevención de recurrencias"],
+          "expected_evidence": "Acciones correctivas implementadas con equipos de diseño, manufactura o calidad."
+        },
+        {
+          "id": "96027-sustaining-design-review",
+          "label": "Ingeniería de sostenimiento y revisiones de diseño",
+          "priority": "important",
+          "equivalences": ["sustaining engineering", "design review", "soporte de producto"],
+          "expected_evidence": "Participación en sostenimiento de producto, revisiones técnicas o mejora de diseños."
+        },
+        {
+          "id": "96027-traceability",
+          "label": "Documentación y trazabilidad de análisis",
+          "priority": "important",
+          "equivalences": ["traceability", "registro de investigaciones", "documentación de calidad"],
+          "expected_evidence": "Mantenimiento de expedientes, trazabilidad o registros auditables de análisis."
+        },
+        {
+          "id": "96027-problem-solving",
+          "label": "Pensamiento analítico, precisión y resolución de problemas",
+          "priority": "not_evaluable",
+          "equivalences": ["analytical thinking", "problem solving", "atención al detalle"],
+          "expected_evidence": "Debe contrastarse mediante casos, entrevista o referencias; no inferir por la redacción del CV."
+        }
+      ]
+    },
+    {
+      "query_id": "96356",
+      "title": "Analista de Datos de Salud",
+      "job_text_sha256": "5834668ac62492c93fd6648535f9a068407acd1e0493eb1054c9ac7fbfe6b355",
+      "review_note": null,
+      "criteria": [
+        {
+          "id": "96356-health-data-analysis",
+          "label": "Análisis de datos en el dominio de salud",
+          "priority": "required",
+          "equivalences": ["healthcare analytics", "analítica sanitaria", "health data analysis"],
+          "expected_evidence": "Proyectos o puestos que combinen análisis de datos con contexto clínico, sanitario o healthcare."
+        },
+        {
+          "id": "96356-data-preparation",
+          "label": "Recopilación, limpieza y armonización de datos",
+          "priority": "required",
+          "equivalences": ["data cleaning", "data wrangling", "integración de fuentes de datos"],
+          "expected_evidence": "Preparación de datos de múltiples fuentes, controles de limpieza o procesos de armonización."
+        },
+        {
+          "id": "96356-models-pipelines-etl",
+          "label": "Modelado de datos, pipelines y procesos ETL",
+          "priority": "required",
+          "equivalences": ["data pipelines", "Extract Transform Load", "productos de datos"],
+          "expected_evidence": "Construcción o mantenimiento de modelos, pipelines, ETL o productos de datos."
+        },
+        {
+          "id": "96356-bi-visualization",
+          "label": "Business Intelligence, tableros y visualización de datos",
+          "priority": "required",
+          "equivalences": ["BI dashboards", "cuadros de mando", "data visualization"],
+          "expected_evidence": "Creación de dashboards, reportes de métricas o visualizaciones para decisión."
+        },
+        {
+          "id": "96356-statistics",
+          "label": "Análisis estadístico aplicado",
+          "priority": "required",
+          "equivalences": ["estadística", "statistical analysis", "analytics cuantitativo"],
+          "expected_evidence": "Uso de métodos estadísticos para responder preguntas clínicas u operativas."
+        },
+        {
+          "id": "96356-quality-governance",
+          "label": "Calidad, gobernanza y cumplimiento de estándares de datos",
+          "priority": "required",
+          "equivalences": ["data quality", "data governance", "cumplimiento de estándares"],
+          "expected_evidence": "Controles de calidad, reglas de gobierno o estándares aplicados a conjuntos de datos."
+        },
+        {
+          "id": "96356-security-privacy",
+          "label": "Seguridad y privacidad de datos",
+          "priority": "important",
+          "equivalences": ["data security", "protección de información sanitaria", "health data privacy"],
+          "expected_evidence": "Aplicación de controles de seguridad, privacidad o acceso a datos sensibles."
+        },
+        {
+          "id": "96356-stakeholder-projects",
+          "label": "Traducción de casos de uso y liderazgo de proyectos de datos",
+          "priority": "important",
+          "equivalences": ["business requirements to analytics", "gestión de proyectos de datos", "stakeholder management"],
+          "expected_evidence": "Trabajo con partes interesadas para convertir necesidades en análisis y coordinar entregas."
+        }
+      ]
+    }
+  ]
+}
