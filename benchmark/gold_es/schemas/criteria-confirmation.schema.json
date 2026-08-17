@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://malaquias.local/schemas/gold-es/criteria-confirmation.schema.json",
+  "title": "Confirmación humana de criterios de una vacante",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "job_id", "job_text_sha256", "criteria_version", "confirmed_by", "confirmed_at", "blind_to_model_output", "criteria"],
+  "properties": {
+    "schema_version": { "const": "1.0" },
+    "job_id": { "type": "string", "minLength": 1 },
+    "job_text_sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "criteria_version": { "type": "string", "minLength": 1 },
+    "confirmed_by": { "type": "string", "minLength": 1 },
+    "confirmed_at": { "type": "string", "format": "date-time" },
+    "blind_to_model_output": { "const": true },
+    "notes": { "type": ["string", "null"] },
+    "criteria": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["criterion_id", "decision", "priority_reviewed", "evidence_rule_reviewed", "equivalences_reviewed", "rationale"],
+        "properties": {
+          "criterion_id": { "type": "string", "minLength": 1 },
+          "decision": { "enum": ["confirmed", "revised", "rejected"] },
+          "priority_reviewed": { "type": "boolean" },
+          "evidence_rule_reviewed": { "type": "boolean" },
+          "equivalences_reviewed": { "type": "boolean" },
+          "rationale": { "type": "string", "minLength": 1 }
+        }
+      }
+    }
+  }
+}

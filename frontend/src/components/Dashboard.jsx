@@ -97,8 +97,8 @@ export default function Dashboard({ onNavigate }) {
                             <span className="material-symbols-outlined text-yellow-500 text-[20px]">speed</span>
                         </div>
                     </div>
-                    <p className="text-2xl font-black text-on-surface">{data.score_promedio}%</p>
-                    <p className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mt-1">Score Promedio</p>
+                    <p className="text-2xl font-black text-on-surface">{data.score_promedio}/100</p>
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mt-1">Índice medio</p>
                 </div>
 
                 <div className="crystal-card !p-5 !rounded-2xl group hover:scale-[1.02] transition-transform cursor-pointer" onClick={() => onNavigate('screener')}>
@@ -188,7 +188,7 @@ export default function Dashboard({ onNavigate }) {
                                         </div>
                                     </div>
                                     <div className="text-right shrink-0">
-                                        <p className="text-sm font-bold text-on-surface">{c.match_score?.toFixed(1)}%</p>
+                                        <p className="text-sm font-bold text-on-surface">{c.match_score?.toFixed(1)}/100</p>
                                     </div>
                                 </div>
                             ))}

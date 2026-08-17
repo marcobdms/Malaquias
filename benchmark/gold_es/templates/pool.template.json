@@ -1,0 +1,8 @@
+{
+  "schema_version": "1.0",
+  "job_id": "REQUIRED_JOB_ID",
+  "split": "calibration",
+  "frozen_at": "REQUIRED_ISO_8601_TIMESTAMP",
+  "pool_version": "1.0",
+  "candidates": []
+}

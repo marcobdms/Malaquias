@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://malaquias.local/schemas/gold-es/adjudication.schema.json",
+  "title": "Adjudicación de una relación vacante-candidato",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "job_id", "candidate_id", "split", "review_files", "final_label", "adjudicator_id", "adjudicated_at", "reason"],
+  "properties": {
+    "schema_version": { "const": "1.0" },
+    "job_id": { "type": "string", "minLength": 1 },
+    "candidate_id": { "type": "string", "minLength": 1 },
+    "split": { "enum": ["calibration", "holdout"] },
+    "review_files": { "type": "array", "minItems": 2, "uniqueItems": true, "items": { "type": "string", "minLength": 1 } },
+    "final_label": { "enum": [0, 1, 2, "unknown"] },
+    "adjudicator_id": { "type": "string", "minLength": 1 },
+    "adjudicated_at": { "type": "string", "format": "date-time" },
+    "reason": { "type": "string", "minLength": 1 },
+    "guideline_version": { "type": "string", "minLength": 1 },
+    "requires_reannotation": { "type": "boolean", "default": false }
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "schema_version": "1.0",
+  "overlay_id": "external-review-91821-96027-v1",
+  "status": "provisional",
+  "created_at": "2026-08-16T00:00:00+02:00",
+  "purpose": "Registrar hipótesis de una revisión externa sin convertirlas en gold humano.",
+  "source_note": "Opinión de otra IA suministrada por el propietario; pendiente de validación humana.",
+  "judgments": [
+    {
+      "query_id": "96027",
+      "candidate_id": "66203",
+      "anonymous_review_id": "C-D249AFBD4B",
+      "original_label": 0,
+      "label": 0,
+      "status": "provisional",
+      "confidence": "medium",
+      "source": "external_ai_review",
+      "reason": "Perfil de negocio/BI sin evidencia específica de ingeniería de fallas; se mantiene como no relevante y se marca como falso positivo del motor."
+    },
+    {
+      "query_id": "96027",
+      "candidate_id": "51488",
+      "anonymous_review_id": "C-A1BEC2D511",
+      "original_label": 1,
+      "label": 2,
+      "status": "provisional",
+      "confidence": "medium",
+      "source": "external_ai_review",
+      "reason": "Contiene evidencia explícita de FMEA/análisis de modo de falla y efectos; hipótesis de ajuste fuerte, pendiente de revisión humana."
+    },
+    {
+      "query_id": "91821",
+      "candidate_id": "56566",
+      "anonymous_review_id": "C-192363DFF7",
+      "original_label": 0,
+      "label": 1,
+      "status": "provisional",
+      "confidence": "low",
+      "source": "external_ai_review",
+      "reason": "Privacidad y cumplimiento parecen alineados, pero falta decidir si la posible diferencia de seniority invalida el encaje."
+    },
+    {
+      "query_id": "91821",
+      "candidate_id": "61544",
+      "anonymous_review_id": "C-83AECBE9FC",
+      "original_label": 0,
+      "label": 1,
+      "status": "provisional",
+      "confidence": "low",
+      "source": "external_ai_review",
+      "reason": "Experiencia en privacidad GDPR/CCPA/HIPAA parece relevante; pendiente de verificar función y seniority frente a la vacante de asistente."
+    }
+  ]
+}

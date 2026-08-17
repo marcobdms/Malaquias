@@ -1,6 +1,7 @@
 import os
-from dotenv import load_dotenv
-load_dotenv()
+from .config import load_environment
+
+load_environment()
 
 from fastapi import FastAPI, UploadFile, File, Form, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -13,13 +14,14 @@ import json
 import asyncio
 
 from .cv_parser import extract_text_from_pdf
-from .matcher import compare_cv_to_job
+from .matcher import score_cvs_to_criteria, score_cvs_to_job
+from .scoring_core import rank_candidate_results
 from .llm import analyze_with_llm
 from .utils import clean_text, truncate_text, validate_pdf_text
 from .database import get_db, engine
 from . import models
 from .auth import hash_password, verify_password, create_access_token, get_current_user
-from .email_service import send_confirmation_email
+from .job_criteria import build_job_descriptions, build_scoring_criteria, parse_job_criteria
 
 class SaveAnalysisSchema(BaseModel):
     descripcion: str
@@ -31,7 +33,8 @@ from fastapi.middleware.httpsredirect import HTTPSRedirectMiddleware
 
 models.Base.metadata.create_all(bind=engine)
 
-app = FastAPI(title="Malaquías CV Screener")
+app = FastAPI(title="MalaquÃ­as CV Screener")
+MAX_CVS_PER_ANALYSIS = 20
 
 app.add_middleware(
     CORSMiddleware,
@@ -58,12 +61,12 @@ def register(data: RegisterRequest, db: Session = Depends(get_db)):
         email=data.email,
         nombre=data.nombre,
         password_hash=hash_password(data.password),
-        confirmed=True  # Confirmación automática
+        confirmed=True  # ConfirmaciÃ³n automÃ¡tica
     )
     db.add(user)
     db.commit()
 
-    return {"message": "Cuenta creada exitosamente. Ya puedes iniciar sesión."}
+    return {"message": "Cuenta creada exitosamente. Ya puedes iniciar sesiÃ³n."}
 
 
 @app.get("/confirm")
@@ -75,9 +78,9 @@ def confirm_email(token: str, db: Session = Depends(get_db)):
         email = payload.get("sub")
         tipo = payload.get("type")
         if tipo != "confirm":
-            raise HTTPException(status_code=400, detail="Token inválido")
+            raise HTTPException(status_code=400, detail="Token invÃ¡lido")
     except JWTError:
-        raise HTTPException(status_code=400, detail="Token expirado o inválido")
+        raise HTTPException(status_code=400, detail="Token expirado o invÃ¡lido")
 
     user = db.query(models.User).filter(models.User.email == email).first()
     if not user:
@@ -85,7 +88,7 @@ def confirm_email(token: str, db: Session = Depends(get_db)):
 
     user.confirmed = True
     db.commit()
-    return {"message": "Cuenta confirmada. Ya puedes iniciar sesión."}
+    return {"message": "Cuenta confirmada. Ya puedes iniciar sesiÃ³n."}
 
 
 @app.post("/login")
@@ -109,58 +112,125 @@ async def analyze_cvs(
     categoria: Optional[str] = Form(None),
     stack: Optional[str] = Form(None),
     strictness: Optional[str] = Form("normal"),
+    criteria_json: Optional[str] = Form(None),
     cvs: List[UploadFile] = File(...),
     balance: float = Form(0.5),
     db: Session = Depends(get_db),
     current_user=Depends(get_current_user)
 ):
-    total = min(len(cvs), 10)
+    total = min(len(cvs), MAX_CVS_PER_ANALYSIS)
+    try:
+        criteria = parse_job_criteria(criteria_json)
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+
+    matching_job_description, explanation_job_description = build_job_descriptions(
+        job_description, criteria
+    )
+    scoring_criteria = build_scoring_criteria(criteria)
 
     async def event_stream():
         yield f"data: {json.dumps({'event': 'start', 'total': total})}\n\n"
 
-        results = []
+        parsed_candidates = []
 
-        for i, cv in enumerate(cvs[:10]):
+        for i, cv in enumerate(cvs[:MAX_CVS_PER_ANALYSIS]):
             raw_text = extract_text_from_pdf(cv.file)
+            candidate_id = f"cv-{i}"
 
             if not validate_pdf_text(raw_text):
                 result = {
+                    "candidate_id": candidate_id,
                     "filename": cv.filename,
                     "match_score": 0,
-                    "analysis": {"error": "PDF sin texto extraíble"}
+                    "ranking_score": 0,
+                    "eligibility_state": "extraction_failed",
+                    "analysis_status": "done",
+                    "analysis": {"error": "PDF sin texto extraible"}
                 }
+                parsed_candidates.append({"result": result, "clean": ""})
             else:
                 clean = clean_text(raw_text)
-                score = compare_cv_to_job(clean, job_description, strictness or "normal", balance=balance)
-                analysis = analyze_with_llm(
-                    truncate_text(clean),
-                    job_description,
+                result = {
+                    "candidate_id": candidate_id,
+                    "filename": cv.filename,
+                    "match_score": 0,
+                    "ranking_score": 0,
+                    "eligibility_state": "pending",
+                    "analysis_status": "pending",
+                    "analysis": {"pending": True}
+                }
+                parsed_candidates.append({"result": result, "clean": clean})
+
+        valid_indexes = [index for index, item in enumerate(parsed_candidates) if item["clean"]]
+        valid_texts = [parsed_candidates[index]["clean"] for index in valid_indexes]
+        if scoring_criteria:
+            score_rows = score_cvs_to_criteria(
+                valid_texts,
+                scoring_criteria,
+                strictness=strictness or "normal",
+                balance=balance,
+            )
+        else:
+            score_rows = score_cvs_to_job(
+                valid_texts,
+                matching_job_description,
+                strictness=strictness or "normal",
+                balance=balance,
+            )
+
+        for index, score_row in zip(valid_indexes, score_rows):
+            result = parsed_candidates[index]["result"]
+            result["match_score"] = round(score_row["display_score"] * 100, 2)
+            result["ranking_score"] = score_row["ranking_score"]
+            result["eligibility_state"] = score_row["eligibility_state"]
+            result["required_coverage"] = score_row["required_coverage"]
+            result["score_components"] = {
+                "semantic_score": score_row["semantic_score"],
+                "keyword_score": score_row["keyword_score"],
+                "criteria": score_row["criteria_scores"],
+            }
+
+        results = rank_candidate_results(item["result"] for item in parsed_candidates)
+
+        for result in results:
+            yield f"data: {json.dumps({'event': 'cv_scored', 'total': total, 'result': result})}\n\n"
+
+        llm_semaphore = asyncio.Semaphore(3)
+
+        async def enrich_candidate(item):
+            result = item["result"]
+            if not item["clean"]:
+                return result
+            async with llm_semaphore:
+                analysis = await asyncio.to_thread(
+                    analyze_with_llm,
+                    truncate_text(item["clean"]),
+                    explanation_job_description,
                     categoria or "",
                     stack or "",
                     strictness or "normal",
-                    match_score=score
+                    result["match_score"] / 100,
                 )
+                result["analysis"] = analysis
+                result["analysis_status"] = "error" if analysis.get("error") else "done"
+                return result
 
-                result = {
-                    "filename": cv.filename,
-                    "match_score": round(score * 100, 2),
-                    "analysis": analysis
-                }
+        pending_items = [item for item in parsed_candidates if item["clean"]]
+        done = len(results) - len(pending_items)
+        for task in asyncio.as_completed([enrich_candidate(item) for item in pending_items]):
+            result = await task
+            done += 1
+            yield f"data: {json.dumps({'event': 'llm_done', 'index': done, 'total': total, 'result': result})}\n\n"
 
-            results.append(result)
-            yield f"data: {json.dumps({'event': 'cv_done', 'index': i + 1, 'total': total, 'result': result})}\n\n"
-            await asyncio.sleep(1.5)
-
-        results.sort(key=lambda x: x["match_score"], reverse=True)
+        results = rank_candidate_results(results)
         yield f"data: {json.dumps({'event': 'complete', 'candidates': results})}\n\n"
-
     return StreamingResponse(event_stream(), media_type="text/event-stream")
 
 
 @app.post("/save-analysis/")
 def save_analysis(data: SaveAnalysisSchema, db: Session = Depends(get_db), current_user=Depends(get_current_user)):
-    """Guarda un análisis explícitamente."""
+    """Guarda un anÃ¡lisis explÃ­citamente."""
     oferta = models.Oferta(
         user_id=current_user.id,
         descripcion=data.descripcion,
@@ -192,15 +262,15 @@ def save_analysis(data: SaveAnalysisSchema, db: Session = Depends(get_db), curre
     return {"status": "ok", "oferta_id": oferta.id}
 
 
-# ──────────────────────────────────────
+# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 # Sprint 2: Dashboard & Posiciones
-# ──────────────────────────────────────
+# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 from sqlalchemy import func
 
 @app.get("/dashboard")
 def dashboard(db: Session = Depends(get_db), current_user=Depends(get_current_user)):
-    """Métricas del dashboard del usuario."""
+    """MÃ©tricas del dashboard del usuario."""
     user_ofertas = db.query(models.Oferta).filter(models.Oferta.user_id == current_user.id).all()
     oferta_ids = [o.id for o in user_ofertas]
 
@@ -224,7 +294,7 @@ def dashboard(db: Session = Depends(get_db), current_user=Depends(get_current_us
         models.Candidato.match_score > 0
     ).scalar() or 0
 
-    # Distribución de recomendaciones
+    # DistribuciÃ³n de recomendaciones
     all_candidatos = db.query(models.Candidato).filter(
         models.Candidato.oferta_id.in_(oferta_ids),
         models.Candidato.recomendacion != None,
@@ -241,7 +311,7 @@ def dashboard(db: Session = Depends(get_db), current_user=Depends(get_current_us
         elif "descartar" in rec:
             dist["descartar"] += 1
 
-    # Últimos 5 candidatos
+    # Ãšltimos 5 candidatos
     ultimos = db.query(models.Candidato).filter(
         models.Candidato.oferta_id.in_(oferta_ids)
     ).order_by(models.Candidato.created_at.desc()).limit(5).all()
@@ -291,7 +361,7 @@ def list_ofertas(db: Session = Depends(get_db), current_user=Depends(get_current
 
 @app.get("/ofertas/{oferta_id}/candidatos")
 def get_oferta_candidatos(oferta_id: int, db: Session = Depends(get_db), current_user=Depends(get_current_user)):
-    """Obtiene los candidatos de una oferta específica del usuario."""
+    """Obtiene los candidatos de una oferta especÃ­fica del usuario."""
     oferta = db.query(models.Oferta).filter(
         models.Oferta.id == oferta_id,
         models.Oferta.user_id == current_user.id
@@ -351,7 +421,7 @@ def get_oferta_pdf(oferta_id: int, db: Session = Depends(get_db), current_user=D
 
 @app.delete("/ofertas/{oferta_id}")
 def delete_oferta(oferta_id: int, db: Session = Depends(get_db), current_user=Depends(get_current_user)):
-    """Elimina una oferta (posición) y todos sus candidatos."""
+    """Elimina una oferta (posiciÃ³n) y todos sus candidatos."""
     oferta = db.query(models.Oferta).filter(
         models.Oferta.id == oferta_id,
         models.Oferta.user_id == current_user.id
@@ -364,7 +434,7 @@ def delete_oferta(oferta_id: int, db: Session = Depends(get_db), current_user=De
     db.query(models.Candidato).filter(models.Candidato.oferta_id == oferta_id).delete()
     db.delete(oferta)
     db.commit()
-    return {"message": "Posición y todos sus candidatos eliminados"}
+    return {"message": "PosiciÃ³n y todos sus candidatos eliminados"}
 
 
 @app.get("/talent-pool")
@@ -414,11 +484,11 @@ class ProfileUpdateRequest(BaseModel):
 
 @app.put("/profile")
 def update_profile(data: ProfileUpdateRequest, db: Session = Depends(get_db), current_user=Depends(get_current_user)):
-    """Actualiza la información del perfil del usuario."""
-    # Si se envía nueva contraseña, validar y actualizar
+    """Actualiza la informaciÃ³n del perfil del usuario."""
+    # Si se envÃ­a nueva contraseÃ±a, validar y actualizar
     if data.new_password:
         if not data.current_password or not verify_password(data.current_password, current_user.password_hash):
-            raise HTTPException(status_code=400, detail="Contraseña actual incorrecta")
+            raise HTTPException(status_code=400, detail="ContraseÃ±a actual incorrecta")
         current_user.password_hash = hash_password(data.new_password)
         
     current_user.nombre = data.nombre
@@ -428,7 +498,7 @@ def update_profile(data: ProfileUpdateRequest, db: Session = Depends(get_db), cu
 
 @app.delete("/reset-data")
 def reset_data(db: Session = Depends(get_db), current_user=Depends(get_current_user)):
-    """Borra todos los datos de análisis (ofertas y candidatos) del usuario actual."""
+    """Borra todos los datos de anÃ¡lisis (ofertas y candidatos) del usuario actual."""
     ofertas = db.query(models.Oferta).filter(models.Oferta.user_id == current_user.id).all()
     oferta_ids = [o.id for o in ofertas]
     

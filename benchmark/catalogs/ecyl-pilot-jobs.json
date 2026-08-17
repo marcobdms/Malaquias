@@ -1,0 +1,179 @@
+{
+  "schema_version": "1.0",
+  "id": "ecyl-pilot-jobs-20260810",
+  "purpose": "Spanish input catalogue; not a gold set and not used for metrics yet.",
+  "source_snapshot_sha256": "3f42c210b73195907fdc00abd1849a9b2fad104ebbc23965f75d4d2ad15b8289",
+  "jobs": [
+    {
+      "schema_version": "1.0",
+      "id": "ecyl-1285669061701",
+      "title": "Técnico/a de soporte n2 de automatización y robotización de farmacias para Miranda de Ebro (Burgos)",
+      "language": "es",
+      "location": "Burgos",
+      "professional_family": "it_support",
+      "source": {
+        "source_id": "ecyl_open_jobs",
+        "source_url": "https://empleo.jcyl.es/web/jcyl/Empleo/es/Plantilla100Detalle/1284216458054/OfertasEmpleo/1285669061701/Empleo",
+        "captured_at": "2026-08-10T14:01:12Z",
+        "license": "CC BY 4.0 ES"
+      },
+      "published_at": "20260805",
+      "raw_text_sha256": "76659db7ceedf2f5ceed45a2fd291b1a604b2ecc23c19bbdaf2ecd3d96557dc4",
+      "raw_text": "Qualis consultores de Talento selecciona un/a TÉCNICO/A DE SOPORTE N2 AUTOMATIZACIÓN Y ROBOTIZACIÓN DE FARMACIAS para Miranda de Ebro (Burgos).\nFunciones:\nGarantizar el correcto funcionamiento, mantenimiento y resolución de incidencias avanzadas en sistemas de automatización y robotización de farmacias, proporcionando soporte técnico especializado de segundo nivel (N2) y asegurando la continuidad operativa del servicio.\nSoporte técnico especializado:\nResolver incidencias técnicas escaladas desde Nivel 1.\nDiagnóstico avanzado de fallos en los robots, sistemas de almacenamiento automático, software de gestión de farmacia, hardware asociado.\nAnálisis de logs y trazas del sistema.\nGestión de las incidencias: Recepción de tickets escalados.\nPriorización según SLA.\nSeguimiento hasta resolución completa.\nDocumentación detallada en CRM.\nIntervención remota y/o presencial: Soporte remoto en tiempo real en entornos: Sistemas operativos (Windows / Linux).\nRedes y conectividad (LAN, VPN, DNS…).\nAplicaciones corporativas.\nInfraestructura básica (servidores, virtualización).\nConfiguración y ajuste del sistema.\nCoordinación de intervenciones en campo.\nMantenimiento preventivo y correctivo: Identificación de patrones de fallo. Propuestas de mejora continua.\nMejorar, estabilizar y testear una única versión de SpeedLight estable para instalar y/o actualizar en todas los SpeedLights.\nMejorar, estabilizar y testear la versión de PWINR estable para instalar en todos los FARMABOXWS.\nPreparación de material informático de puesta en marcha de automatización y envíos para SAT de material informático para reparar/sustituir.\nEscalado técnico:\nEscalado a Nivel 3 en incidencias complejas.\nPreparación de documentación técnica para el escalado.\nFormación y soporte interno:\nFormación al equipo N1.\nCreación de documentación técnica (manuales, FAQs).\nRequisitos:\nFormación académica: FP Superior en Informática, Telecomunicaciones o similar.\nValorable grado universitario en IT.\nConocimientos técnicos: Lenguajes de programación: Javascript, C#, PHP, HTML, SQL.\nSistemas operativos (Windows Server / Linux).\nRedes (TCP/IP, DNS, DHCP).\nHerramientas de ticketing.\nVirtualización (VMware, Hyper-V – nivel básico/intermedio).\nSeguridad básica (antivirus, accesos, permisos.\nExperiencia en soporte técnico de primer nivel.\nCapacidad para trabajar con sistemas automatizados a nivel operativo.\nUso de herramientas de ticketing y soporte remoto.\nConocimientos básicos de: Sistemas informáticos y Conectividad y redes a nivel usuario.\nManejo de entornos Windows y software de control.\nCapacidad analítica y resolución de problemas.\nOrientación al cliente.\nTrabajo en equipo.\nOrganización y gestión de prioridades.\nProactividad e iniciativa.\nConocimientos de los softwares de farmacia.\nSe ofrece:\nContratación estable e indefinida.\nDesarrollo profesional.\nRemuneración acorde a las responsabilidades del puesto.",
+      "criteria": [],
+      "benchmark_status": "input_only_unjudged"
+    },
+    {
+      "schema_version": "1.0",
+      "id": "ecyl-1285669061147",
+      "title": "Analista de ciberseguridad N1 (SOC) para León",
+      "language": "es",
+      "location": "León",
+      "professional_family": "it_cybersecurity",
+      "source": {
+        "source_id": "ecyl_open_jobs",
+        "source_url": "https://empleo.jcyl.es/web/jcyl/Empleo/es/Plantilla100Detalle/1284216458054/OfertasEmpleo/1285669061147/Empleo",
+        "captured_at": "2026-08-10T14:01:12Z",
+        "license": "CC BY 4.0 ES"
+      },
+      "published_at": "20260805",
+      "raw_text_sha256": "6e80ace272ca4f3145f57aadb6a693f0d6c6a3278bdb5f43cd8c7e55525407ca",
+      "raw_text": "Sphera-TI selecciona un/a ANALISTA DE CIBERSEGURIDAD para León.\nFunciones:\nMonitorización y análisis: Análisis y gestión de alertas de ciberseguridad en herramientas SIEM y EDR centralizadas a través de la plataforma de ticketing.\nGestión de incidentes: Resolución de incidentes de seguridad de complejidad baja.\nInterlocución: Comunicación fluida con el cliente y el resto de los equipos técnicos durante la gestión y escalado de alertas.\nOperativa técnica: Realización de cambios básicos sobre las configuraciones de las herramientas de ciberseguridad desplegadas.\nRequisitos:\nCiclo Formativo de Grado Superior (Familia de Informática y Comunicaciones o similar).\nHerramientas de Ciberseguridad: Experiencia en el uso de soluciones SIEM / EDR / UEBA (p. ej. Elastic, QRadar, Cytomic, Crowdstrike, Defender, Sentinel).\nGestión de tickets: Experiencia previa con herramientas de ticketing (ServiceNow, OTRS, Freshdesk, Remedy, HPSM).\nOfimática: Nivel medio.\nHabilidades personales: Excelentes dotes de trabajo en equipo, capacidad para interactuar en entornos multidisciplinares y buena comunicación.\nSe ofrece:\nContrato indefinido.\nJornada completa.\nSalario: 18.000€ Bruto/año.\nPara solicitar:\nEn el enlace adjunto se puede acceder a la solicitud para el puesto. Se recuerda que, para poder presentar su candidatura, debe estar inscrito en el portal de empleo que publica la oferta.\nInformación obtenida de: Internet/Prensa. https://www.infojobs.net\nEnlaces relacionados: Más información\nInformación procedente de: Boletín de Empleo de Castilla y León (Ecyl) .",
+      "criteria": [],
+      "benchmark_status": "input_only_unjudged"
+    },
+    {
+      "schema_version": "1.0",
+      "id": "ecyl-1285665706767",
+      "title": "AGENTES COMERCIALES",
+      "language": "es",
+      "location": "Zamora",
+      "professional_family": "sales",
+      "source": {
+        "source_id": "ecyl_open_jobs",
+        "source_url": "https://empleo.jcyl.es/web/jcyl/Empleo/es/Plantilla100Detalle/1284216458054/OfertasEmpleo/1285665706767/Empleo",
+        "captured_at": "2026-08-10T14:01:12Z",
+        "license": "CC BY 4.0 ES"
+      },
+      "published_at": "20260723",
+      "raw_text_sha256": "232b1afa3b6345ac0432e7c2135743034ca8a7b4175ee6c5e02131ef09e9f6a8",
+      "raw_text": "AGENTE COMERCIAL para Benavente (Zamora).Nivel medío de informatica, Permiso de conducir B.Interesados enviar C.V. a: recambierzo@recambierzo.comDeberá gestionar la cartera de clientes. Visitar a clientes tanto en prospección de nuevos como de fidelización de ya existentes. Funciones previas de comercial en el sector. Muy valorable conocimientos de re cambio de vehiculo. Persona proactiva y con habilidad de comunicación. Deberá velar por una correcta gestión comercial, nivel de servicio y disponibilidad de producto en su zona de acuerdo a la estrategia y política de la compañía.· Conocer en profundidad los atributos del Producto y Servicio ofertado, y actualizar los conocimientos técnicos y comerciales necesarios para asesorar al Cliente de un modo satisfactorio.· Solventar problemas técnicos habituales y pasar al departamento de Logística aquellas consultas que no pueda resolver, para su debida atención.· Visitar, de forma periódica y programada, a los Clientes actuales y potenciales de su Zona.\nPara más información acuda a Oficina Virtual",
+      "criteria": [],
+      "benchmark_status": "input_only_unjudged"
+    },
+    {
+      "schema_version": "1.0",
+      "id": "ecyl-1285667274723",
+      "title": "Administrativo/a comercial para Astorga (León)",
+      "language": "es",
+      "location": "León",
+      "professional_family": "sales_administration",
+      "source": {
+        "source_id": "ecyl_open_jobs",
+        "source_url": "https://empleo.jcyl.es/web/jcyl/Empleo/es/Plantilla100Detalle/1284216458054/OfertasEmpleo/1285667274723/Empleo",
+        "captured_at": "2026-08-10T14:01:12Z",
+        "license": "CC BY 4.0 ES"
+      },
+      "published_at": "20260729",
+      "raw_text_sha256": "58ea07d6d5bcaf04bc97ca90d9f7dee72482c236f3025b604c0bb993e48746ea",
+      "raw_text": "Agencias exclusivas de Santalucía selecciona un/a ADMINISTRATIVO COMERCIAL para su agencia en Astorga (León).\nFunciones:\nAtención personalizada a clientes.\nGestión de llamadas y leads entrantes para ofrecer seguros.\nGestión administrativa de la cartera.\nRequisitos:\nEducación Secundaria Obligatoria.\nExperiencia mínima de 1 año en ventas de seguros.\nConocimientos en marketing telefónico.\nConocimientos en tareas administrativas, gestión administrativa, tramitación de documentación, gestión de correspondencia, gestión de expedientes, revisión de documentos, ofimática y aptitudes de secretariado.\nMotivación y orientación a resultados.\nSe ofrece:\nContrato laboral indefinido y alta en la Seguridad Social.\nSalario fijo más comisiones.\nJornada de lunes a viernes.\nFormación continua.\nPara solicitar:\nEn el enlace adjunto se puede acceder a la solicitud para el puesto. Se recuerda que, para poder presentar su candidatura, debe estar inscrito en el portal de empleo que publica la oferta.\nInformación obtenida de: Internet/Prensa. https://www.infojobs.net\nEnlaces relacionados: Más información e inscripción a la oferta\nInformación procedente de: Boletín de Empleo de Castilla y León (Ecyl) .",
+      "criteria": [],
+      "benchmark_status": "input_only_unjudged"
+    },
+    {
+      "schema_version": "1.0",
+      "id": "ecyl-1285669062056",
+      "title": "3 vacantes para Personal de Almacén en Burgos",
+      "language": "es",
+      "location": "Burgos",
+      "professional_family": "logistics",
+      "source": {
+        "source_id": "ecyl_open_jobs",
+        "source_url": "https://empleo.jcyl.es/web/jcyl/Empleo/es/Plantilla100Detalle/1284216458054/OfertasEmpleo/1285669062056/Empleo",
+        "captured_at": "2026-08-10T14:01:12Z",
+        "license": "CC BY 4.0 ES"
+      },
+      "published_at": "20260805",
+      "raw_text_sha256": "f6158209795bb383da87719b9ab5b747631ba08e10e4f9cb81aa32686ffe57ec",
+      "raw_text": "Grupo Cofares necesita cubrir tres plazas de PERSONAL DE ALMACÉN para fines de semana y festivos en Burgos.\nFunciones:\nDescarga y recepción de mercancía.\nUbicación de material en altura.\nVerificación, preparación y repaso de pedidos (picos, picking, PTL).\nRecogida de cajas/cubetas en rampas, montaje, paletizado y flejado.\nManejo sistemas ERP (SAP, radiofrecuencia).\nExpedición o enrutado de pedidos, y carga camiones/ furgonetas.\nLimpieza y orden del puesto de trabajo.\nRequisitos:\nEstudios mínimos: Educación Secundaria Obligatoria.\nExperiencia mínima: Al menos 2 años.\nImprescindible residente en provincia puesto vacante.\nActitud enérgica y positiva, así como proactividad.\nHabilidad para el trabajo en equipo.\nDisponibilidad de incorporación inmediata.\nValorable experiencia previa como operario de almacén en cualquiera de las funciones anteriormente descritas.\nValorable manejo radiofrecuencia y sistemas ERP (SAP).\nSe ofrece:\nContratación directamente por parte de la compañía líder en la distribución de medicamentos.\nContratación temporal de seis meses de duración. En base al rendimiento mostrado, existe la posibilidad de continuidad.\nContratación temporal desde el 08/08/2026.\nHorario:\nSábados de 12:00 a 20:00h (descanso de 16:00 a 17:00).\nDomingos de 12:45 a 20:00h (descanso de 16:00 a 17:00).\nFestivos nacionales y autonómicos: de 13:00 a 14:30 y de 18:30 a 20:30.\nFestivos locales: de 5:30 a 7:30h, de 13:00 a 14:30 y de 18:30 a 20:30h.\nSalario: 8.568,92 € brutos anuales en 12 pagas (15,6 hora).\nLugar de trabajo: C/ Montes De Oca, 11, Polígono Villalonquéjar. 09001 Burgos.",
+      "criteria": [],
+      "benchmark_status": "input_only_unjudged"
+    },
+    {
+      "schema_version": "1.0",
+      "id": "ecyl-1285667274695",
+      "title": "Mozo/a carretilla para Villadangos del Páramo (León)",
+      "language": "es",
+      "location": "León",
+      "professional_family": "logistics",
+      "source": {
+        "source_id": "ecyl_open_jobs",
+        "source_url": "https://empleo.jcyl.es/web/jcyl/Empleo/es/Plantilla100Detalle/1284216458054/OfertasEmpleo/1285667274695/Empleo",
+        "captured_at": "2026-08-10T14:01:12Z",
+        "license": "CC BY 4.0 ES"
+      },
+      "published_at": "20260729",
+      "raw_text_sha256": "aa79163eb8259765ec3e2d63e6995174f6e20855937b135b9925fb14128fe4d8",
+      "raw_text": "Randstad selecciona un/a MOZO/A CON CARNET DE CARRETILLA para Villadangos del Páramo (León)\nFunciones:\nGestión integral del almacén: Recepción de mercancía, preparación de pedidos (picking/packing), ubicación de stock y gestión de expediciones\nManejo de carretilla elevadora: Carga, descarga y movimiento de materiales (el uso de carretilla se alternará con tareas manuales de almacén).\nMantenimiento del espacio: Velar por el orden y la limpieza de las zonas de trabajo para garantizar un entorno seguro.\nRequisitos:\nManejo de carretilla elevadora ( frontal y retráctil) apiladora, recoge pedidos y transpaleta eléctrica.\nExperiencia demostrable de al menos un año en tareas de almacén y manejo de carretilla elevadora.\nCarnet de carretillero/a en vigor (imprescindible).\nDisponibilidad para incorporación inmediata.\nFlexibilidad y disponibilidad para trabajar en turnos rotativos.\nSe ofrece:\nContrato renovable a través de ETT.\nJornada completa.\nHorario a turnos rotativos semanales de mañana y tarde de lunes a viernes. Turno Mañana: 06:00 a 14:00. (Se trabajará habitualmente en turno de mañana, con rotación puntual a tardes según necesidades operativas).\nTurno Tarde: 13:45 a 21:45.\nPara solicitar:\nEn el enlace adjunto se puede acceder a la solicitud para el puesto. Se recuerda que, para poder presentar su candidatura, debe estar inscrito en el portal de empleo que publica la oferta.\nInformación obtenida de: Internet/Prensa. https://www.randstad.es\nEnlaces relacionados: Más información e inscripción a la oferta\nInformación procedente de: Boletín de Empleo de Castilla y León (Ecyl) .",
+      "criteria": [],
+      "benchmark_status": "input_only_unjudged"
+    },
+    {
+      "schema_version": "1.0",
+      "id": "ecyl-1285669061479",
+      "title": "Administrativo/a contable para Salamanca",
+      "language": "es",
+      "location": "Salamanca",
+      "professional_family": "administration_finance",
+      "source": {
+        "source_id": "ecyl_open_jobs",
+        "source_url": "https://empleo.jcyl.es/web/jcyl/Empleo/es/Plantilla100Detalle/1284216458054/OfertasEmpleo/1285669061479/Empleo",
+        "captured_at": "2026-08-10T14:01:12Z",
+        "license": "CC BY 4.0 ES"
+      },
+      "published_at": "20260805",
+      "raw_text_sha256": "09b2347e06724f4621998c624bcc544df48b3ab1ef83e57591bbb1dfd587067c",
+      "raw_text": "Majante, S.L. selecciona un/a ADMINISTRATIVO/A CONTABLE para Salamanca.\nFunciones:\nGestión administrativa y contable de la cartera de clientes.\nIntroducción y contabilización de facturas, cobros y pagos.\nConciliaciones bancarias.\nElaboración y revisión de asientos contables.\nApoyo en la preparación de impuestos y cierres contables.\nArchivo y gestión documental.\nAtención telefónica y soporte administrativo a clientes.\nRequisitos:\nEstudios mínimos: Formación en Administración y Finanzas, Contabilidad o similar.\nExperiencia mínima: 2 años en gestoría, asesoría o departamento de administración y contabilidad.\nCertificado de Discapacidad superior al 33%.\nConocimientos sólidos de contabilidad.\nSe valorará conocimientos de fiscalidad y gestión laboral.\nManejo habitual de herramientas informáticas y Microsoft Office, especialmente Excel.\nSe valorará experiencia en el uso del programa A3 (A3eco, A3ASESOR o aplicaciones relacionadas).\nPersona organizada, responsable, con capacidad de trabajo en equipo y orientación al cliente.\nSe ofrece:\nContrato indefinido.\nJornada completa.\nSalario bruto 20.000-30.000 €/año (acorde con la experiencia y conocimientos aportados).\nIncorporación a una gestoría con buen ambiente de trabajo.\nFormación continua y posibilidades de desarrollo profesional.\nPara solicitar:\nEn el enlace adjunto se puede acceder a la solicitud para el puesto. Se recuerda que, para presentar su candidatura, deberá estar inscrito/a en el portal que publica la oferta.\nInformación obtenida de: Internet/Prensa. http://tutrabajo.org\nEnlaces relacionados: Más información e inscripción a la oferta\nInformación procedente de: Boletín de Empleo de Castilla y León (Ecyl) .",
+      "criteria": [],
+      "benchmark_status": "input_only_unjudged"
+    },
+    {
+      "schema_version": "1.0",
+      "id": "ecyl-1285667274934",
+      "title": "Cajero/a reponedor/a para Valladolid",
+      "language": "es",
+      "location": "Valladolid",
+      "professional_family": "retail_customer_service",
+      "source": {
+        "source_id": "ecyl_open_jobs",
+        "source_url": "https://empleo.jcyl.es/web/jcyl/Empleo/es/Plantilla100Detalle/1284216458054/OfertasEmpleo/1285667274934/Empleo",
+        "captured_at": "2026-08-10T14:01:12Z",
+        "license": "CC BY 4.0 ES"
+      },
+      "published_at": "20260729",
+      "raw_text_sha256": "860e5d82f96254d6bcc82d86d3f51272d95fc83c16eecbe556a17cc80dc5477c",
+      "raw_text": "Lidl selecciona un/a CAJERO/A REPONEDOR/A para Valladolid.\nFunciones:\nCobrar en caja y atención al cliente.\nGestionar la disponibilidad de los productos en la sala de ventas.\nRealizar el control de frescura conforme el procedimiento establecido por la empresa.\nPreparar, hornear y hacer la reposición de artículos de pan.\nImplementar las medidas de inventario y participar de forma activa en la realización de los mismos.\nHacer una correcta reposición de la mercancía según el orden y los criterios de presentación establecidos.\nRealizar la limpieza de la sala de ventas, dependencias y el entorno de la tienda.\nRequisitos:\nEducación Secundaria Obligatoria.\nDisponibilidad horaria para trabajar por turnos rotativos los fines de semana (viernes, sábado y/o domingo y festivos de apertura).\nMotivación, flexibilidad y capacidad para el trabajo en equipo.\nSe valorará experiencia previa en el sector de la distribución.\nSe ofrece:\nContrato indefinido.\nJornada parcial.\nJornada continuada en horarios rotativos durante los fines de semana (viernes, sábado y/o domingo y festivos de apertura) sujeto al horario de la tienda, para una mayor y mejor conciliación.\nPara solicitar:\nEn el enlace adjunto se puede acceder a la solicitud para el puesto. Se recuerda que, para presentar su candidatura, deberá estar inscrito/a en el portal que publica la oferta.\nInformación obtenida de: Internet/Prensa. https://empleo.lidl.es/\nEnlaces relacionados: Más información e inscripción a la oferta\nInformación procedente de: Boletín de Empleo de Castilla y León (Ecyl) .",
+      "criteria": [],
+      "benchmark_status": "input_only_unjudged"
+    },
+    {
+      "schema_version": "1.0",
+      "id": "ecyl-1285669380068",
+      "title": "COCINEROS, EN GENERAL",
+      "language": "es",
+      "location": "Zamora",
+      "professional_family": "hospitality",
+      "source": {
+        "source_id": "ecyl_open_jobs",
+        "source_url": "https://empleo.jcyl.es/web/jcyl/Empleo/es/Plantilla100Detalle/1284216458054/OfertasEmpleo/1285669380068/Empleo",
+        "captured_at": "2026-08-10T14:01:12Z",
+        "license": "CC BY 4.0 ES"
+      },
+      "published_at": "20260806",
+      "raw_text_sha256": "c84dba4d5115d7a6ef5801cb2b9188a778526d60a86276d7e2b72cc869da805d",
+      "raw_text": "Oferta N. 16849 de COCINERO/A para residencia en Toro (Zamora)Los interesados/as deben enviar su CV a ecyltoro@jcyl.es (indicando en el asunto el N. de la oferta).FUNCIONES: confeccionar las preparaciones culinarias, cumplir con especificaciones alimentarias de cada usuario, con regulaciones de nutrición y saneamiento y los estándares de seguridad establecidos por ley.CONDICIONES: Contrato indefinido a jornada de 38,5 horas a la semana, con el siguiente horario: jueves, viernes y domingo de 12:30 a 20:00H y miércoles y sábado de 12:00 a 20:00 H. Salario bruto mensual de 1221 € en 14 pagas.REQUISITOS: carné de manipulador de alimentos. Valorable titulación de restauración, cocina o similar. Conocimiento del proceso de elaboración de línea fría.\nPara más información acuda a Oficina Virtual",
+      "criteria": [],
+      "benchmark_status": "input_only_unjudged"
+    }
+  ]
+}

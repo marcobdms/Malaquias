@@ -10,8 +10,19 @@ import Positions from './components/Positions'
 import TalentPool from './components/TalentPool'
 import Profile from './components/Profile'
 import Login from './pages/Login'
-import './App.css'
 import Confirm from './pages/Confirm'
+import './App.css'
+
+const eligibilityOrder = { eligible: 2, needs_review: 1, extraction_failed: 0, pending: 0 }
+
+function compareCandidates(a, b) {
+  const eligibilityDelta = (eligibilityOrder[b.eligibility_state] || 0) - (eligibilityOrder[a.eligibility_state] || 0)
+  if (eligibilityDelta !== 0) return eligibilityDelta
+  const coverageA = a.required_coverage ?? 1
+  const coverageB = b.required_coverage ?? 1
+  if (coverageA !== coverageB) return coverageB - coverageA
+  return (b.ranking_score ?? b.match_score ?? 0) - (a.ranking_score ?? a.match_score ?? 0)
+}
 
 function App() {
   const [user, setUser] = useState(null)
@@ -19,14 +30,15 @@ function App() {
   const [jobDesc, setJobDesc] = useState('')
   const [categoria, setCategoria] = useState('')
   const [stack, setStack] = useState('')
-  const [strictness, setStrictness] = useState('normal')
+  const [criteria, setCriteria] = useState([])
+  const strictness = 'normal'
   const [files, setFiles] = useState([])
   const [results, setResults] = useState(null)
   const [currentOfertaId, setCurrentOfertaId] = useState(null)
   const [progress, setProgress] = useState({ status: 'idle', done: 0, total: 0 })
   const [error, setError] = useState(null)
   const [abortController, setAbortController] = useState(null)
-  const [balanceValue, setBalanceValue] = useState(50)
+  const balanceValue = 50
 
   useEffect(() => {
     const token = localStorage.getItem('token')
@@ -49,7 +61,6 @@ function App() {
     setCurrentView(view)
   }
 
-  const canAnalyze = jobDesc.trim().length > 20 && files.length > 0
   const loading = progress.status === 'analyzing' || progress.status === 'waking'
 
   function handleReset() {
@@ -57,6 +68,7 @@ function App() {
     setJobDesc('')
     setCategoria('')
     setStack('')
+    setCriteria([])
     setError(null)
     setResults(null)
     setFiles([])
@@ -75,6 +87,15 @@ function App() {
   }
 
   async function handleAnalyze() {
+    if (jobDesc.trim().length <= 20) {
+      setError('Añade una descripción de puesto suficientemente clara antes de analizar.')
+      return
+    }
+    if (files.length === 0) {
+      setError('Añade al menos un CV antes de analizar.')
+      return
+    }
+
     setError(null)
     setResults(null)
     setProgress({ status: 'waking', done: 0, total: files.length })
@@ -89,6 +110,7 @@ function App() {
     const formData = new FormData()
     formData.append('balance', balanceValue / 100)
     formData.append('job_description', jobDesc)
+    if (criteria.length > 0) formData.append('criteria_json', JSON.stringify(criteria))
     if (categoria) formData.append('categoria', categoria)
     if (stack) formData.append('stack', stack)
     formData.append('strictness', strictness)
@@ -129,8 +151,25 @@ function App() {
           if (!line.startsWith('data: ')) continue
           const payload = JSON.parse(line.slice(6))
 
-          if (payload.event === 'cv_done') {
+          if (payload.event === 'llm_done') {
             setProgress(p => ({ ...p, done: payload.index }))
+          }
+          if (payload.event === 'cv_scored') {
+            setResults(prev => {
+              const current = prev || []
+              const next = current.some(c => c.candidate_id === payload.result.candidate_id)
+                ? current.map(c => c.candidate_id === payload.result.candidate_id ? payload.result : c)
+                : [...current, payload.result]
+              return next.sort(compareCandidates)
+            })
+          }
+          if (payload.event === 'llm_done') {
+            setResults(prev => {
+              const current = prev || []
+              return current
+                .map(c => c.candidate_id === payload.result.candidate_id ? payload.result : c)
+                .sort(compareCandidates)
+            })
           }
           if (payload.event === 'complete') {
             setResults(payload.candidates)
@@ -193,7 +232,7 @@ function App() {
           <div className="relative z-10 p-4 md:p-8 xl:flex-1 xl:max-w-3xl flex flex-col xl:overflow-y-auto w-full">
             <div className="mb-8">
               <h2 className="text-3xl font-black text-on-surface tracking-tight mb-2">Cribado de Candidatos</h2>
-              <p className="text-on-surface-variant">Analiza y filtra perfiles automáticamente mediante inteligencia artificial.</p>
+              <p className="text-on-surface-variant">Define qué buscas, comprueba los documentos y prioriza perfiles con contexto.</p>
             </div>
 
             <div className="crystal-card flex flex-col gap-8 mb-8 relative shrink-0">
@@ -204,8 +243,8 @@ function App() {
                 setCategoria={setCategoria}
                 stack={stack}
                 setStack={setStack}
-                strictness={strictness}
-                setStrictness={setStrictness}
+                criteria={criteria}
+                setCriteria={setCriteria}
               />
 
               <DropZone files={files} setFiles={setFiles} />
@@ -220,7 +259,7 @@ function App() {
 
                 <button
                   className="bg-primary text-on-primary px-6 py-3 rounded-full font-bold shadow-crystal hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-50 disabled:pointer-events-none flex items-center justify-center gap-2 w-full sm:w-auto"
-                  disabled={!canAnalyze || loading}
+                  disabled={loading}
                   onClick={handleAnalyze}
                 >
                   {loading ? (
@@ -262,7 +301,7 @@ function App() {
 
 
               {error && (
-                <div className="mt-4 p-4 bg-red-500/10 border border-red-500/20 rounded-2xl">
+                <div role="alert" className="mt-4 p-4 bg-red-500/10 border border-red-500/20 rounded-2xl">
                   <p className="text-sm text-red-400 font-medium">{error}</p>
                 </div>
               )}
@@ -282,7 +321,13 @@ function App() {
           {results ? (
             <div className="xl:flex-1 xl:border-l border-t xl:border-t-0 border-white/5 bg-surface-container-lowest/50 relative xl:overflow-y-auto w-full xl:h-full">
               <div className="p-4 md:p-8 animate-[fade-in_0.5s_ease-out] w-full">
-                <Results candidates={results} onReset={handleReset} ofertaId={currentOfertaId} onNavigate={handleNavigate} />
+                <Results
+                  candidates={results}
+                  onReset={handleReset}
+                  ofertaId={currentOfertaId}
+                  onNavigate={handleNavigate}
+                  jobData={{ descripcion: jobDesc, categoria, stack }}
+                />
               </div>
             </div>
           ) : (

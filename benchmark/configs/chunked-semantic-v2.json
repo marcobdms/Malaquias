@@ -1,0 +1,14 @@
+{
+  "schema_version": "1.0",
+  "name": "chunked-semantic-v2",
+  "seed": 20260810,
+  "model_id": "paraphrase-multilingual-MiniLM-L12-v2",
+  "balance": 0.0,
+  "strictness": "normal",
+  "keyword_multiplier": 2.5,
+  "chunk_tokens": 96,
+  "chunk_overlap": 24,
+  "semantic_top_k": 2,
+  "batch_size": 32,
+  "cutoffs": [5, 10, 20]
+}

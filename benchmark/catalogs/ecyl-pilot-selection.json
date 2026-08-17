@@ -1,0 +1,18 @@
+{
+  "schema_version": "1.0",
+  "source_snapshot": "../data/downloaded/ecyl_open_jobs/20260810T140112Z.json",
+  "source_id": "ecyl_open_jobs",
+  "captured_at": "2026-08-10T14:01:12Z",
+  "license": "CC BY 4.0 ES",
+  "jobs": [
+    {"id": "1285669061701", "professional_family": "it_support"},
+    {"id": "1285669061147", "professional_family": "it_cybersecurity"},
+    {"id": "1285665706767", "professional_family": "sales"},
+    {"id": "1285667274723", "professional_family": "sales_administration"},
+    {"id": "1285669062056", "professional_family": "logistics"},
+    {"id": "1285667274695", "professional_family": "logistics"},
+    {"id": "1285669061479", "professional_family": "administration_finance"},
+    {"id": "1285667274934", "professional_family": "retail_customer_service"},
+    {"id": "1285669380068", "professional_family": "hospitality"}
+  ]
+}
