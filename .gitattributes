@@ -1,0 +1,3 @@
+# The v2 catalog records the byte-level SHA-256 of this source catalog.
+# Keep its working-tree representation stable across Windows, macOS and Linux.
+benchmark/criteria/talentclef-development-es-v1.json text eol=lf
